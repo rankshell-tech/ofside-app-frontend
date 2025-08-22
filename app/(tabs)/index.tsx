@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Modal, Linking, Animated, TextInput } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Modal, Linking, Animated, TextInput, ImageBackground } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
   const theme = useTheme();
-  
+
   const { user, isGuest } = useSelector((state: RootState) => state.auth);
   const { filteredVenues, searchQuery, selectedSports } = useSelector((state: RootState) => state.venues);
   const { bookings } = useSelector((state: RootState) => state.bookings);
@@ -60,7 +60,7 @@ export default function HomeScreen() {
       sport: 'tennis',
     },
     {
-      id: 'trending2', 
+      id: 'trending2',
       name: 'XYZ Sport',
       image: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg',
       location: 'Ghaziabad, UP',
@@ -89,7 +89,7 @@ export default function HomeScreen() {
     },
     {
       id: 'top2',
-      name: 'XYZ Sport', 
+      name: 'XYZ Sport',
       image: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg',
       location: 'Ghaziabad, UP',
       rating: 4.6,
@@ -211,7 +211,7 @@ export default function HomeScreen() {
   };
 
   const renderSportCard = ({ item, index }: { item: typeof sportsWithImages[0], index: number }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.sportCard, { marginRight: (index + 1) % 5 === 0 ? 0 : 8 }]}
       onPress={() => handleSportPress(item.id)}
       activeOpacity={0.8}
@@ -226,7 +226,7 @@ export default function HomeScreen() {
   );
 
   const renderVenueCard = ({ item }: { item: typeof trendingVenues[0] }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.venueCard}
       onPress={() => handleVenuePress(item.id)}
       activeOpacity={0.8}
@@ -247,7 +247,7 @@ export default function HomeScreen() {
   );
 
   const renderEventCard = ({ item }: { item: typeof sportEvents[0] }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.eventCard}
       onPress={() => handleEventPress(item.id)}
       activeOpacity={0.8}
@@ -262,7 +262,7 @@ export default function HomeScreen() {
   );
 
   const renderInterestCard = ({ item }: { item: typeof interestSports[0] }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.interestCard}
       onPress={() => handleSportPress(item.id)}
       activeOpacity={0.8}
@@ -278,376 +278,373 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Enhanced Fixed Header */}
-      <View style={[styles.fixedHeader, { backgroundColor: theme.colors.background }]}>
-        <View style={styles.headerContent}>
-          <View style={styles.headerLeft}>
-            <Image
-              source={{ uri: 'https://ofside.in/assets/ofside-logo.png' }}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <TouchableOpacity style={styles.locationContainer}>
-              <MapPin size={16} color={theme.colors.primary} />
-              <ThemedText size="sm" weight="medium" style={styles.locationText}>
-                Vaishali, UP
-              </ThemedText>
-              <ChevronDown size={14} color={theme.colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.headerActions}>
-            <TouchableOpacity style={[styles.walletButton, { backgroundColor: theme.colors.primary }]}>
-              <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
-                ₹
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.menuButton}
-              onPress={openMenu}
-            >
-              <Menu size={24} color={theme.colors.text} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Hero Banner */}
-        <View style={styles.bannerContainer}>
-          <Image
-            source={{ uri: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg' }}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-          <View style={styles.bannerOverlay}>
-            <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
-              Find Your Perfect
-            </ThemedText>
-            <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
-              Sports Venue
-            </ThemedText>
-            <ThemedText size="base" style={styles.bannerSubtitle}>
-              Book premium sports facilities in your area
-            </ThemedText>
-          </View>
-        </View>
-
-        {/* Enhanced Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            <TextInput
-              style={[styles.searchInput, { color: theme.colors.text }]}
-              value={localSearchQuery}
-              onChangeText={setLocalSearchQuery}
-              placeholder="Search game, venue, trending sport..."
-              placeholderTextColor={theme.colors.textSecondary}
-              onSubmitEditing={handleSearchSubmit}
-            />
-            <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
-              <Search size={20} color={theme.colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Choose your Sport Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText size="lg" weight="bold">
-              Choose your Sport
-            </ThemedText>
-            <TouchableOpacity onPress={() => router.push('/search-results')}>
-              <View style={styles.moreButton}>
-                <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                  more
+      <ImageBackground
+        source={require("../../assets/images/background.png")} // Put your image in assets/images
+        resizeMode="contain"
+        className="flex-1"
+      >
+        {/* Enhanced Fixed Header */}
+        <View style={[styles.fixedHeader, { backgroundColor: theme.colors.background }]}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Image
+                source={{ uri: 'https://ofside.in/assets/ofside-logo.png' }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <TouchableOpacity style={styles.locationContainer}>
+                <MapPin size={16} color={theme.colors.primary} />
+                <ThemedText size="sm" weight="medium" style={styles.locationText}>
+                  Vaishali, UP
                 </ThemedText>
-                <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                  <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                    ?
-                  </ThemedText>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-          
-          <FlatList
-            data={sportsWithImages}
-            renderItem={renderSportCard}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
-            numColumns={5}
-            scrollEnabled={false}
-            contentContainerStyle={styles.sportsGrid}
-          />
-        </View>
-
-        {/* Trending in the city */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText size="lg" weight="bold">
-              Trending in the city
-            </ThemedText>
-            <TouchableOpacity onPress={() => router.push('/search-results?trending=true')}>
-              <View style={styles.moreButton}>
-                <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                  more
-                </ThemedText>
-                <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                  <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                    ?
-                  </ThemedText>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-          
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={trendingVenues}
-            renderItem={renderVenueCard}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.venuesList}
-          />
-        </View>
-
-        {/* Top rated Venues */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText size="lg" weight="bold">
-              Top rated Venues
-            </ThemedText>
-            <TouchableOpacity onPress={() => router.push('/search-results?sort=rating')}>
-              <View style={styles.moreButton}>
-                <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                  more
-                </ThemedText>
-                <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                  <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                    ?
-                  </ThemedText>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-          
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={topRatedVenues}
-            renderItem={renderVenueCard}
-            keyExtractor={(item) => `top-${item.id}`}
-            contentContainerStyle={styles.venuesList}
-          />
-        </View>
-
-        {/* NEW: Sport Events Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText size="lg" weight="bold">
-              Sporting Events
-            </ThemedText>
-            <TouchableOpacity onPress={() => router.push('/search-results?category=events')}>
-              <View style={styles.moreButton}>
-                <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                  more
-                </ThemedText>
-                <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                  <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                    ?
-                  </ThemedText>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-          
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={sportEvents}
-            renderItem={renderEventCard}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.venuesList}
-          />
-        </View>
-
-        {/* NEW: From your Interest Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText size="lg" weight="bold">
-              From your Interest
-            </ThemedText>
-          </View>
-          
-          <View style={styles.interestContainer}>
-            {interestSports.map((item, index) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.interestCard}
-                onPress={() => handleSportPress(item.id)}
-                activeOpacity={0.8}
-              >
-                <Image source={{ uri: item.image }} style={styles.interestImage} />
-                <View style={styles.interestOverlay}>
-                  <ThemedText size="sm" weight="bold" style={styles.interestText}>
-                    {item.name}
-                  </ThemedText>
-                </View>
+                <ChevronDown size={14} color={theme.colors.textSecondary} />
               </TouchableOpacity>
-            ))}
+            </View>
+            <View style={styles.headerActions}>
+              <TouchableOpacity style={[styles.walletButton, { backgroundColor: theme.colors.primary }]}>
+                <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
+                  ₹
+                </ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={openMenu}
+              >
+                <Menu size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
-        {/* Enhanced CTA Section */}
-        <View style={[styles.ctaSection, { backgroundColor: theme.colors.background }]}>
-          <View style={styles.ctaContent}>
-            <ThemedText size="2xl" weight="bold" style={styles.ctaTitle}>
-              Book your play space in
-            </ThemedText>
-            <ThemedText size="2xl" weight="bold" style={styles.ctaTitle}>
-              seconds with <Text style={{ color: theme.colors.primary }}>Ofside</Text>
-            </ThemedText>
-            
-            <TouchableOpacity 
-              style={[styles.ctaButton, { backgroundColor: theme.colors.primary }]}
-              onPress={() => router.push('/search-results')}
-            >
-              <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
-                Start Booking Now
+          {/* Hero Banner */}
+          <View style={styles.bannerContainer}>
+            <Image
+              source={{ uri: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg' }}
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+            <View style={styles.bannerOverlay}>
+              <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
+                Find Your Perfect
               </ThemedText>
-            </TouchableOpacity>
+              <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
+                Sports Venue
+              </ThemedText>
+              <ThemedText size="base" style={styles.bannerSubtitle}>
+                Book premium sports facilities in your area
+              </ThemedText>
+            </View>
           </View>
-        </View>
 
-        {/* Upcoming Bookings for logged in users */}
-        {!isGuest && bookings.length > 0 && (
+          {/* Enhanced Search Bar */}
+          <View style={styles.searchContainer}>
+            <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              <TextInput
+                style={[styles.searchInput, { color: theme.colors.text }]}
+                value={localSearchQuery}
+                onChangeText={setLocalSearchQuery}
+                placeholder="Search game, venue, trending sport..."
+                placeholderTextColor={theme.colors.textSecondary}
+                onSubmitEditing={handleSearchSubmit}
+              />
+              <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
+                <Search size={20} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Choose your Sport Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <ThemedText size="lg" weight="bold">
-                Your Upcoming Bookings
+                Choose your Sport
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/(tabs)/bookings')}>
-                <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                  View All
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-            {bookings.slice(0, 2).map((booking) => (
-              <BookingCard key={booking.id} booking={booking} showActions={false} />
-            ))}
-          </View>
-        )}
-      </ScrollView>
-
-      {/* Enhanced Hamburger Menu Modal */}
-      <Modal
-        visible={isMenuOpen}
-        animationType="none"
-        transparent={true}
-        onRequestClose={closeMenu}
-      >
-        <TouchableOpacity 
-          style={styles.menuOverlay} 
-          activeOpacity={1} 
-          onPress={closeMenu}
-        >
-          <Animated.View 
-            style={[
-              styles.menuContainer, 
-              { 
-                backgroundColor: theme.colors.background,
-                transform: [{ translateX: slideAnim }]
-              }
-            ]}
-          >
-            {/* Enhanced Menu Header */}
-            <View style={[styles.menuHeader, { borderBottomColor: theme.colors.border }]}>
-              <View style={styles.menuHeaderContent}>
-                <View style={[styles.userAvatar, { backgroundColor: theme.colors.primary }]}>
-                  <User size={28} color={theme.colors.accent} />
-                </View>
-                <View style={styles.userInfo}>
-                  <ThemedText size="lg" weight="bold">
-                    {isGuest ? 'Guest User' : user?.name || 'Guest User'}
+              <TouchableOpacity onPress={() => router.push('/search-results')}>
+                <View style={styles.moreButton}>
+                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                    more
                   </ThemedText>
-                  <ThemedText variant="secondary" size="sm">
-                    {isGuest ? 'Browsing as Guest' : user?.email || 'Welcome to Ofside'}
-                  </ThemedText>
-                </View>
-              </View>
-              <TouchableOpacity 
-                style={[styles.closeButton, { backgroundColor: theme.colors.surface }]}
-                onPress={closeMenu}
-              >
-                <X size={20} color={theme.colors.text} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Enhanced Menu Items */}
-            <View style={styles.menuItems}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[styles.menuItem, { backgroundColor: theme.colors.background }]}
-                  onPress={() => {
-                    closeMenu();
-                    item.onPress();
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <View style={[styles.menuItemIcon, { backgroundColor: theme.colors.surface }]}>
-                    {item.icon}
-                  </View>
-                  <View style={styles.menuItemContent}>
-                    <ThemedText size="base" weight="medium" style={styles.menuItemText}>
-                      {item.title}
+                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
+                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
+                      ?
                     </ThemedText>
                   </View>
-                  <View style={styles.menuItemArrow}>
-                    <ThemedText variant="secondary" size="lg">›</ThemedText>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={sportsWithImages}
+              renderItem={renderSportCard}
+              keyExtractor={(item, index) => `${item.id}-${index}`}
+              numColumns={5}
+              scrollEnabled={false}
+              contentContainerStyle={styles.sportsGrid}
+            />
+          </View>
+
+          {/* Trending in the city */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText size="lg" weight="bold">
+                Trending in the city
+              </ThemedText>
+              <TouchableOpacity onPress={() => router.push('/search-results?trending=true')}>
+                <View style={styles.moreButton}>
+                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                    more
+                  </ThemedText>
+                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
+                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
+                      ?
+                    </ThemedText>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={trendingVenues}
+              renderItem={renderVenueCard}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.venuesList}
+            />
+          </View>
+
+          {/* Top rated Venues */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText size="lg" weight="bold">
+                Top rated Venues
+              </ThemedText>
+              <TouchableOpacity onPress={() => router.push('/search-results?sort=rating')}>
+                <View style={styles.moreButton}>
+                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                    more
+                  </ThemedText>
+                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
+                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
+                      ?
+                    </ThemedText>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={topRatedVenues}
+              renderItem={renderVenueCard}
+              keyExtractor={(item) => `top-${item.id}`}
+              contentContainerStyle={styles.venuesList}
+            />
+          </View>
+
+          {/* NEW: Sport Events Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText size="lg" weight="bold">
+                Sporting Events
+              </ThemedText>
+              <TouchableOpacity onPress={() => router.push('/search-results?category=events')}>
+                <View style={styles.moreButton}>
+                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                    more
+                  </ThemedText>
+                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
+                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
+                      ?
+                    </ThemedText>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={sportEvents}
+              renderItem={renderEventCard}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.venuesList}
+            />
+          </View>
+
+          {/* NEW: From your Interest Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText size="lg" weight="bold">
+                From your Interest
+              </ThemedText>
+            </View>
+
+            <View style={styles.interestContainer}>
+              {interestSports.map((item, index) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.interestCard}
+                  onPress={() => handleSportPress(item.id)}
+                  activeOpacity={0.8}
+                >
+                  <Image source={{ uri: item.image }} style={styles.interestImage} />
+                  <View style={styles.interestOverlay}>
+                    <ThemedText size="sm" weight="bold" style={styles.interestText}>
+                      {item.name}
+                    </ThemedText>
                   </View>
                 </TouchableOpacity>
               ))}
             </View>
+          </View>
 
-            {/* Enhanced Social Section */}
-            <View style={[styles.socialSection, { borderTopColor: theme.colors.border }]}>
-              <ThemedText size="sm" weight="medium" style={styles.socialTitle}>
-                Follow Us
-              </ThemedText>
-              <View style={styles.socialIcons}>
-                {socialIcons.map((social, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[styles.socialIcon, { backgroundColor: theme.colors.surface }]}
-                    onPress={() => handleSocialPress(social.url)}
-                    activeOpacity={0.7}
-                  >
-                    {social.icon}
-                  </TouchableOpacity>
-                ))}
-              </View>
+          {/* Enhanced CTA Section */}
+          <View className="flex-1 justify-center px-6 py-10">
+            <Text className="text-3xl font-bold text-black">
+              Book your play space in
+            </Text>
+            <Text className="text-3xl font-bold text-black">
+              seconds with{" "}
+              <Text className="text-3xl font-bold text-blue-600">Ofside</Text>
+            </Text>
+          </View>
 
-              {/* Legal Links */}
-              <View style={styles.legalLinks}>
-                <TouchableOpacity>
+          {/* Upcoming Bookings for logged in users */}
+          {!isGuest && bookings.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <ThemedText size="lg" weight="bold">
+                  Your Upcoming Bookings
+                </ThemedText>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/bookings')}>
                   <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                    Terms of Use
-                  </ThemedText>
-                </TouchableOpacity>
-                <ThemedText size="sm" variant="secondary"> • </ThemedText>
-                <TouchableOpacity>
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                    Privacy Policy
+                    View All
                   </ThemedText>
                 </TouchableOpacity>
               </View>
-              
-              <ThemedText variant="secondary" size="xs" style={styles.versionText}>
-                Ofside v1.0.0
-              </ThemedText>
+              {bookings.slice(0, 2).map((booking) => (
+                <BookingCard key={booking.id} booking={booking} showActions={false} />
+              ))}
             </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </Modal>
+          )}
+        </ScrollView>
+
+        {/* Enhanced Hamburger Menu Modal */}
+        <Modal
+          visible={isMenuOpen}
+          animationType="none"
+          transparent={true}
+          onRequestClose={closeMenu}
+        >
+            <TouchableOpacity
+              style={styles.menuOverlay}
+              activeOpacity={1}
+              onPress={closeMenu}
+            >
+              <Animated.View
+                style={[
+                  styles.menuContainer,
+                  {
+                    backgroundColor: theme.colors.background,
+                    transform: [{ translateX: slideAnim }]
+                  }
+                ]}
+              >
+                {/* Enhanced Menu Header */}
+                <View style={[styles.menuHeader, { borderBottomColor: theme.colors.border }]}>
+                  <View style={styles.menuHeaderContent}>
+                    <View style={[styles.userAvatar, { backgroundColor: theme.colors.primary }]}>
+                      <User size={28} color={theme.colors.accent} />
+                    </View>
+                    <View style={styles.userInfo}>
+                      <ThemedText size="lg" weight="bold">
+                        {isGuest ? 'Guest User' : user?.name || 'Guest User'}
+                      </ThemedText>
+                      <ThemedText variant="secondary" size="sm">
+                        {isGuest ? 'Browsing as Guest' : user?.email || 'Welcome to Ofside'}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.closeButton, { backgroundColor: theme.colors.surface }]}
+                    onPress={closeMenu}
+                  >
+                    <X size={20} color={theme.colors.text} />
+                  </TouchableOpacity>
+                </View>
+              <ScrollView>
+                {/* Enhanced Menu Items */}
+                <View style={styles.menuItems}>
+                  {menuItems.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[styles.menuItem, { backgroundColor: theme.colors.background }]}
+                      onPress={() => {
+                        closeMenu();
+                        item.onPress();
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <View style={[styles.menuItemIcon, { backgroundColor: theme.colors.surface }]}>
+                        {item.icon}
+                      </View>
+                      <View style={styles.menuItemContent}>
+                        <ThemedText size="base" weight="medium" style={styles.menuItemText}>
+                          {item.title}
+                        </ThemedText>
+                      </View>
+                      <View style={styles.menuItemArrow}>
+                        <ThemedText variant="secondary" size="lg">›</ThemedText>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Enhanced Social Section */}
+                <View style={[styles.socialSection, { borderTopColor: theme.colors.border }]}>
+                  <ThemedText size="sm" weight="medium" style={styles.socialTitle}>
+                    Follow Us
+                  </ThemedText>
+                  <View style={styles.socialIcons}>
+                    {socialIcons.map((social, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[styles.socialIcon, { backgroundColor: theme.colors.surface }]}
+                        onPress={() => handleSocialPress(social.url)}
+                        activeOpacity={0.7}
+                      >
+                        {social.icon}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                  {/* Legal Links */}
+                  <View style={styles.legalLinks}>
+                    <TouchableOpacity>
+                      <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                        Terms of Use
+                      </ThemedText>
+                    </TouchableOpacity>
+                    <ThemedText size="sm" variant="secondary"> • </ThemedText>
+                    <TouchableOpacity>
+                      <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                        Privacy Policy
+                      </ThemedText>
+                    </TouchableOpacity>
+                  </View>
+
+                  <ThemedText variant="secondary" size="xs" style={styles.versionText}>
+                    Ofside v1.0.0
+                  </ThemedText>
+                </View>
+              </ScrollView>
+              </Animated.View>
+            </TouchableOpacity>
+        </Modal>
+      </ImageBackground>
     </ThemedView>
   );
 }

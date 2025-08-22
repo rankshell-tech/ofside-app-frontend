@@ -15,7 +15,7 @@ export default function Index() {
       if (isAuthenticated || isGuest) {
         router.replace('/(tabs)');
       } else {
-        router.replace('/onboarding/');
+        router.replace('/onboarding');
       }
     }, 1000);
 

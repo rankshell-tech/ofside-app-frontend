@@ -3,33 +3,35 @@ import { Chrome as Home, Calendar, User, Building, Heart } from 'lucide-react-na
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useTheme } from '@/hooks/useTheme';
+import { Platform } from 'react-native';
 
 export default function TabLayout() {
   const user = useSelector((state: RootState) => state.auth.user);
   const isGuest = useSelector((state: RootState) => state.auth.isGuest);
   const theme = useTheme();
-  
+
   const isVenueOwner = user?.role === 'venue_owner';
   const isAdmin = user?.role === 'admin';
-  
+
   console.log('Current user role:', user?.role, 'isVenueOwner:', isVenueOwner, 'isAdmin:', isAdmin);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: theme.colors.background,
-          borderTopColor: theme.colors.border,
-          paddingBottom: 8,
-          height: 65,
-        },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarLabelStyle: {
           fontSize: 12,
           fontFamily: 'Inter-Medium',
         },
+        tabBarStyle: Platform.select({
+          ios: {
+            // Use a transparent background on iOS to show the blur effect
+            position: 'absolute',
+          },
+          default: {},
+        }),
       }}
     >
       <Tabs.Screen
