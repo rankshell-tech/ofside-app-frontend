@@ -6,6 +6,9 @@ import { Mail } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { useTheme } from '@/hooks/useTheme';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Zocial } from '@expo/vector-icons';
+import GoogleIcon from "../../components/GoogleIcon";
 
 export default function Login() {
   const router = useRouter();
@@ -53,8 +56,8 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ThemedView style={styles.container}>
@@ -89,10 +92,10 @@ export default function Login() {
                 <View style={styles.inputWrapper}>
                   <Mail size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
-                      color: theme.colors.text, 
+                    style={[styles.input, {
+                      color: theme.colors.text,
                       backgroundColor: theme.colors.background,
-                      borderColor: errors.email ? theme.colors.error : theme.colors.border 
+                      borderColor: errors.email ? theme.colors.error : theme.colors.border
                     }]}
                     value={email}
                     onChangeText={(text) => {
@@ -132,27 +135,25 @@ export default function Login() {
                   </Text>
                   <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
                 </View>
-
-                <View style={styles.socialButtons}>
+                {/* Social Icons */}
+                <View className="flex-row justify-center mt-10">
                   <TouchableOpacity
-                    style={[styles.socialButton, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}
-                    onPress={() => handleSocialLogin('Google')}
-                  >
-                    <Text style={styles.socialButtonText}>G</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.socialButton, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}
+                    className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white"
                     onPress={() => handleSocialLogin('Apple')}
                   >
-                    <Text style={styles.socialButtonText}>🍎</Text>
+                      <Zocial name="email" size={36} color="black" />
                   </TouchableOpacity>
-
                   <TouchableOpacity
-                    style={[styles.socialButton, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}
-                    onPress={() => handleSocialLogin('Facebook')}
+                    className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white"
+                    onPress={() => handleSocialLogin('Google')}
                   >
-                    <Text style={styles.socialButtonText}>f</Text>
+                      <GoogleIcon size={36} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className="w-16 h-16 border border-black rounded-lg items-center justify-center bg-white"
+                    onPress={() => handleSocialLogin('Apple')}
+                  >
+                      <AntDesign name="apple1" size={36} color="black" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -291,6 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+    marginBottom: 10,
   },
   footerText: {
     fontSize: 14,
