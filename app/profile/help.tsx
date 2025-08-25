@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/ui/ThemedText';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { ArrowLeft, CircleHelp as HelpCircle, MessageCircle, Phone, Mail, ChevronRight, Send } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HelpSupport() {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function HelpSupport() {
       Alert.alert('Error', 'Please enter your message');
       return;
     }
-    
+
     Alert.alert(
       'Message Sent',
       'Thank you for contacting us! We\'ll get back to you within 24 hours.',
@@ -80,159 +81,161 @@ export default function HelpSupport() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Help & Support
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Quick Contact */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Contact Support
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView  medView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Help & Support
           </ThemedText>
-          <View style={styles.contactContainer}>
-            {contactOptions.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.contactItem, { backgroundColor: theme.colors.background }]}
-                onPress={option.action}
-              >
-                <View style={styles.contactIcon}>
-                  {option.icon}
-                </View>
-                <View style={styles.contactContent}>
-                  <ThemedText size="base" weight="medium">
-                    {option.title}
-                  </ThemedText>
-                  <ThemedText variant="secondary" size="sm">
-                    {option.description}
-                  </ThemedText>
-                </View>
-                <ChevronRight size={16} color={theme.colors.textSecondary} />
-              </TouchableOpacity>
-            ))}
-          </View>
+          <View style={{ width: 24 }} />
         </View>
 
-        {/* Send Message */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Send us a Message
-          </ThemedText>
-          
-          <View style={[styles.messageCard, { backgroundColor: theme.colors.background }]}>
-            <View style={styles.categoryContainer}>
-              <ThemedText size="sm" weight="medium" style={styles.categoryLabel}>
-                Category
-              </ThemedText>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                {categories.map((category) => (
-                  <TouchableOpacity
-                    key={category}
-                    style={[
-                      styles.categoryChip,
-                      {
-                        backgroundColor: selectedCategory === category 
-                          ? theme.colors.primary 
-                          : theme.colors.surface,
-                        borderColor: selectedCategory === category 
-                          ? theme.colors.primary 
-                          : theme.colors.border,
-                      },
-                    ]}
-                    onPress={() => setSelectedCategory(category)}
-                  >
-                    <ThemedText
-                      size="xs"
-                      weight="medium"
-                      style={{
-                        color: selectedCategory === category 
-                          ? theme.colors.accent 
-                          : theme.colors.textSecondary,
-                      }}
-                    >
-                      {category}
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Quick Contact */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Contact Support
+            </ThemedText>
+            <View style={styles.contactContainer}>
+              {contactOptions.map((option, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.contactItem, { backgroundColor: theme.colors.background }]}
+                  onPress={option.action}
+                >
+                  <View style={styles.contactIcon}>
+                    {option.icon}
+                  </View>
+                  <View style={styles.contactContent}>
+                    <ThemedText size="base" weight="medium">
+                      {option.title}
                     </ThemedText>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
+                    <ThemedText variant="secondary" size="sm">
+                      {option.description}
+                    </ThemedText>
+                  </View>
+                  <ChevronRight size={16} color={theme.colors.textSecondary} />
+                </TouchableOpacity>
+              ))}
             </View>
+          </View>
 
-            <View style={styles.messageContainer}>
-              <ThemedText size="sm" weight="medium" style={styles.messageLabel}>
-                Your Message
-              </ThemedText>
-              <TextInput
-                style={[styles.messageInput, { 
-                  color: theme.colors.text, 
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border 
-                }]}
-                value={message}
-                onChangeText={setMessage}
-                placeholder="Describe your issue or question..."
-                placeholderTextColor={theme.colors.textSecondary}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
+          {/* Send Message */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Send us a Message
+            </ThemedText>
+
+            <View style={[styles.messageCard, { backgroundColor: theme.colors.background }]}>
+              <View style={styles.categoryContainer}>
+                <ThemedText size="sm" weight="medium" style={styles.categoryLabel}>
+                  Category
+                </ThemedText>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+                  {categories.map((category) => (
+                    <TouchableOpacity
+                      key={category}
+                      style={[
+                        styles.categoryChip,
+                        {
+                          backgroundColor: selectedCategory === category
+                            ? theme.colors.primary
+                            : theme.colors.surface,
+                          borderColor: selectedCategory === category
+                            ? theme.colors.primary
+                            : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => setSelectedCategory(category)}
+                    >
+                      <ThemedText
+                        size="xs"
+                        weight="medium"
+                        style={{
+                          color: selectedCategory === category
+                            ? theme.colors.accent
+                            : theme.colors.textSecondary,
+                        }}
+                      >
+                        {category}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <View style={styles.messageContainer}>
+                <ThemedText size="sm" weight="medium" style={styles.messageLabel}>
+                  Your Message
+                </ThemedText>
+                <TextInput
+                  style={[styles.messageInput, {
+                    color: theme.colors.text,
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.border
+                  }]}
+                  value={message}
+                  onChangeText={setMessage}
+                  placeholder="Describe your issue or question..."
+                  placeholderTextColor={theme.colors.textSecondary}
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+
+              <Button
+                title="Send Message"
+                onPress={handleSendMessage}
+                size="md"
+                style={styles.sendButton}
               />
             </View>
-
-            <Button
-              title="Send Message"
-              onPress={handleSendMessage}
-              size="md"
-              style={styles.sendButton}
-            />
           </View>
-        </View>
 
-        {/* FAQ */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Frequently Asked Questions
-          </ThemedText>
-          
-          <View style={styles.faqContainer}>
-            {faqItems.map((item, index) => (
-              <View key={index} style={[styles.faqItem, { backgroundColor: theme.colors.background }]}>
-                <View style={styles.faqQuestion}>
-                  <HelpCircle size={16} color={theme.colors.primary} />
-                  <ThemedText size="sm" weight="medium" style={styles.questionText}>
-                    {item.question}
+          {/* FAQ */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Frequently Asked Questions
+            </ThemedText>
+
+            <View style={styles.faqContainer}>
+              {faqItems.map((item, index) => (
+                <View key={index} style={[styles.faqItem, { backgroundColor: theme.colors.background }]}>
+                  <View style={styles.faqQuestion}>
+                    <HelpCircle size={16} color={theme.colors.primary} />
+                    <ThemedText size="sm" weight="medium" style={styles.questionText}>
+                      {item.question}
+                    </ThemedText>
+                  </View>
+                  <ThemedText variant="secondary" size="sm" style={styles.answerText}>
+                    {item.answer}
                   </ThemedText>
                 </View>
-                <ThemedText variant="secondary" size="sm" style={styles.answerText}>
-                  {item.answer}
-                </ThemedText>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
 
-        {/* App Info */}
-        <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
-            Need More Help?
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.infoText}>
-            Visit our website at ofside.in for detailed guides, video tutorials, and community forums.
-          </ThemedText>
-          <TouchableOpacity style={styles.linkButton}>
-            <ThemedText size="xs" style={{ color: theme.colors.primary }}>
-              Visit Help Center
+          {/* App Info */}
+          <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
+              Need More Help?
             </ThemedText>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ThemedView>
+            <ThemedText variant="secondary" size="xs" style={styles.infoText}>
+              Visit our website at ofside.in for detailed guides, video tutorials, and community forums.
+            </ThemedText>
+            <TouchableOpacity style={styles.linkButton}>
+              <ThemedText size="xs" style={{ color: theme.colors.primary }}>
+                Visit Help Center
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -245,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 20,
     paddingBottom: 20,
   },
   scrollView: {

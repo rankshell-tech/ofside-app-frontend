@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/ui/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { toggleTheme } from '@/store/slices/themeSlice';
 import { ArrowLeft, Moon, Sun, Globe, Volume2, Smartphone, Download, RefreshCw } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AppSettings() {
   const router = useRouter();
@@ -82,161 +83,163 @@ export default function AppSettings() {
   ];
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          App Settings
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Theme Settings */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Appearance
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            App Settings
           </ThemedText>
+          <View style={{ width: 24 }} />
         </View>
 
-        <View style={[styles.themeCard, { backgroundColor: theme.colors.background }]}>
-          <View style={styles.themeInfo}>
-            {isDark ? (
-              <Moon size={20} color={theme.colors.textSecondary} />
-            ) : (
-              <Sun size={20} color={theme.colors.textSecondary} />
-            )}
-            <View style={styles.themeText}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Theme Settings */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Appearance
+            </ThemedText>
+          </View>
+
+          <View style={[styles.themeCard, { backgroundColor: theme.colors.background }]}>
+            <View style={styles.themeInfo}>
+              {isDark ? (
+                <Moon size={20} color={theme.colors.textSecondary} />
+              ) : (
+                <Sun size={20} color={theme.colors.textSecondary} />
+              )}
+              <View style={styles.themeText}>
+                <ThemedText size="base" weight="medium">
+                  {isDark ? 'Dark Mode' : 'Light Mode'}
+                </ThemedText>
+                <ThemedText variant="secondary" size="sm">
+                  Switch between light and dark themes
+                </ThemedText>
+              </View>
+            </View>
+            <Switch
+              value={isDark}
+              onValueChange={() => dispatch(toggleTheme())}
+              trackColor={{
+                false: theme.colors.border,
+                true: theme.colors.primary
+              }}
+              thumbColor={isDark ? theme.colors.accent : theme.colors.textSecondary}
+            />
+          </View>
+
+          {/* Language Settings */}
+          <TouchableOpacity
+            style={[styles.settingItem, { backgroundColor: theme.colors.background }]}
+            onPress={handleLanguageChange}
+          >
+            <View style={styles.settingIcon}>
+              <Globe size={20} color={theme.colors.textSecondary} />
+            </View>
+            <View style={styles.settingContent}>
               <ThemedText size="base" weight="medium">
-                {isDark ? 'Dark Mode' : 'Light Mode'}
+                Language
               </ThemedText>
               <ThemedText variant="secondary" size="sm">
-                Switch between light and dark themes
+                English (US)
               </ThemedText>
             </View>
-          </View>
-          <Switch
-            value={isDark}
-            onValueChange={() => dispatch(toggleTheme())}
-            trackColor={{ 
-              false: theme.colors.border, 
-              true: theme.colors.primary 
-            }}
-            thumbColor={isDark ? theme.colors.accent : theme.colors.textSecondary}
-          />
-        </View>
+          </TouchableOpacity>
 
-        {/* Language Settings */}
-        <TouchableOpacity 
-          style={[styles.settingItem, { backgroundColor: theme.colors.background }]}
-          onPress={handleLanguageChange}
-        >
-          <View style={styles.settingIcon}>
-            <Globe size={20} color={theme.colors.textSecondary} />
-          </View>
-          <View style={styles.settingContent}>
-            <ThemedText size="base" weight="medium">
-              Language
-            </ThemedText>
-            <ThemedText variant="secondary" size="sm">
-              English (US)
+          {/* App Behavior */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              App Behavior
             </ThemedText>
           </View>
-        </TouchableOpacity>
 
-        {/* App Behavior */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            App Behavior
-          </ThemedText>
-        </View>
-
-        <View style={styles.settingsContainer}>
-          {appSettings.map((item) => (
-            <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
-              <View style={styles.settingIcon}>
-                {item.icon}
+          <View style={styles.settingsContainer}>
+            {appSettings.map((item) => (
+              <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
+                <View style={styles.settingIcon}>
+                  {item.icon}
+                </View>
+                <View style={styles.settingContent}>
+                  <ThemedText size="base" weight="medium">
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
+                    {item.description}
+                  </ThemedText>
+                </View>
+                <Switch
+                  value={settings[item.key]}
+                  onValueChange={() => toggleSetting(item.key)}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary
+                  }}
+                  thumbColor={settings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
+                />
               </View>
-              <View style={styles.settingContent}>
-                <ThemedText size="base" weight="medium">
-                  {item.title}
-                </ThemedText>
-                <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
-                  {item.description}
-                </ThemedText>
+            ))}
+          </View>
+
+          {/* Storage & Data */}
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Storage & Data
+            </ThemedText>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.settingItem, { backgroundColor: theme.colors.background }]}
+            onPress={handleClearCache}
+          >
+            <View style={styles.settingIcon}>
+              <RefreshCw size={20} color={theme.colors.textSecondary} />
+            </View>
+            <View style={styles.settingContent}>
+              <ThemedText size="base" weight="medium">
+                Clear Cache
+              </ThemedText>
+              <ThemedText variant="secondary" size="sm">
+                Free up storage space by clearing cached data
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+
+          <View style={[styles.storageCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.storageTitle}>
+              Storage Usage
+            </ThemedText>
+            <View style={styles.storageInfo}>
+              <View style={styles.storageItem}>
+                <ThemedText variant="secondary" size="xs">App Data:</ThemedText>
+                <ThemedText size="xs" weight="medium">12.5 MB</ThemedText>
               </View>
-              <Switch
-                value={settings[item.key]}
-                onValueChange={() => toggleSetting(item.key)}
-                trackColor={{ 
-                  false: theme.colors.border, 
-                  true: theme.colors.primary 
-                }}
-                thumbColor={settings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
-              />
+              <View style={styles.storageItem}>
+                <ThemedText variant="secondary" size="xs">Cache:</ThemedText>
+                <ThemedText size="xs" weight="medium">8.2 MB</ThemedText>
+              </View>
+              <View style={styles.storageItem}>
+                <ThemedText variant="secondary" size="xs">Images:</ThemedText>
+                <ThemedText size="xs" weight="medium">24.1 MB</ThemedText>
+              </View>
             </View>
-          ))}
-        </View>
-
-        {/* Storage & Data */}
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Storage & Data
-          </ThemedText>
-        </View>
-
-        <TouchableOpacity 
-          style={[styles.settingItem, { backgroundColor: theme.colors.background }]}
-          onPress={handleClearCache}
-        >
-          <View style={styles.settingIcon}>
-            <RefreshCw size={20} color={theme.colors.textSecondary} />
           </View>
-          <View style={styles.settingContent}>
-            <ThemedText size="base" weight="medium">
-              Clear Cache
+
+          <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
+              App Version
             </ThemedText>
-            <ThemedText variant="secondary" size="sm">
-              Free up storage space by clearing cached data
+            <ThemedText variant="secondary" size="xs" style={styles.infoText}>
+              Ofside v1.0.0 (Build 1)
+            </ThemedText>
+            <ThemedText variant="secondary" size="xs" style={styles.infoText}>
+              Last updated: January 2025
             </ThemedText>
           </View>
-        </TouchableOpacity>
-
-        <View style={[styles.storageCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.storageTitle}>
-            Storage Usage
-          </ThemedText>
-          <View style={styles.storageInfo}>
-            <View style={styles.storageItem}>
-              <ThemedText variant="secondary" size="xs">App Data:</ThemedText>
-              <ThemedText size="xs" weight="medium">12.5 MB</ThemedText>
-            </View>
-            <View style={styles.storageItem}>
-              <ThemedText variant="secondary" size="xs">Cache:</ThemedText>
-              <ThemedText size="xs" weight="medium">8.2 MB</ThemedText>
-            </View>
-            <View style={styles.storageItem}>
-              <ThemedText variant="secondary" size="xs">Images:</ThemedText>
-              <ThemedText size="xs" weight="medium">24.1 MB</ThemedText>
-            </View>
-          </View>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
-            App Version
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.infoText}>
-            Ofside v1.0.0 (Build 1)
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.infoText}>
-            Last updated: January 2025
-          </ThemedText>
-        </View>
-      </ScrollView>
-    </ThemedView>
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -249,7 +252,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { mockVenues } from '@/data/mockData';
 import { ArrowLeft, Star, MapPin, Clock, Users } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
@@ -17,9 +18,9 @@ export default function VenueDetails() {
   const theme = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  
+
   const venue = mockVenues.find(v => v.id === id);
-  
+
   if (!venue) {
     return (
       <ThemedView style={styles.container}>
@@ -29,158 +30,160 @@ export default function VenueDetails() {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header with back button */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={[styles.backButton, { backgroundColor: theme.colors.background }]}
-            onPress={() => router.back()}
-          >
-            <ArrowLeft size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Image Slider */}
-        <View style={styles.imageContainer}>
-          <ScrollView 
-            horizontal 
-            pagingEnabled 
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(event) => {
-              const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-              setSelectedImageIndex(newIndex);
-            }}
-          >
-            {venue.images.map((image, index) => (
-              <Image
-                key={index}
-                source={{ uri: image }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            ))}
-          </ScrollView>
-          
-          {/* Image indicator */}
-          <View style={styles.imageIndicator}>
-            {venue.images.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  {
-                    backgroundColor: selectedImageIndex === index 
-                      ? theme.colors.primary 
-                      : theme.colors.textSecondary,
-                  },
-                ]}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Venue Info */}
-        <View style={styles.content}>
-          <View style={styles.venueHeader}>
-            <ThemedText size="2xl" weight="bold" style={styles.venueName}>
-              {venue.name}
-            </ThemedText>
-            
-            <View style={styles.ratingContainer}>
-              <Star size={16} color={theme.colors.primary} fill={theme.colors.primary} />
-              <ThemedText size="base" weight="medium" style={styles.ratingText}>
-                {`${venue.rating.toFixed(1)} (${venue.reviewCount} reviews)`}
-              </ThemedText>
-            </View>
-            
-            <View style={styles.locationContainer}>
-              <MapPin size={16} color={theme.colors.textSecondary} />
-              <ThemedText variant="secondary" size="sm" style={styles.addressText}>
-                {venue.address}
-              </ThemedText>
-            </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Header with back button */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={[styles.backButton, { backgroundColor: theme.colors.background }]}
+              onPress={() => router.back()}
+            >
+              <ArrowLeft size={24} color={theme.colors.text} />
+            </TouchableOpacity>
           </View>
 
-          {/* Description */}
-          <View style={styles.section}>
-            <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-              About
-            </ThemedText>
-            <ThemedText variant="secondary" size="base" style={styles.description}>
-              {venue.description}
-            </ThemedText>
-          </View>
+          {/* Image Slider */}
+          <View style={styles.imageContainer}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(event) => {
+                const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+                setSelectedImageIndex(newIndex);
+              }}
+            >
+              {venue.images.map((image, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: image }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
 
-          {/* Amenities */}
-          <View style={styles.section}>
-            <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-              Amenities
-            </ThemedText>
-            <View style={styles.amenitiesContainer}>
-              {venue.amenities.map((amenity, index) => (
-                <View key={index} style={[styles.amenityTag, { backgroundColor: theme.colors.surface }]}>
-                  <ThemedText size="sm" style={{ color: theme.colors.textSecondary }}>
-                    {amenity}
-                  </ThemedText>
-                </View>
+            {/* Image indicator */}
+            <View style={styles.imageIndicator}>
+              {venue.images.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    {
+                      backgroundColor: selectedImageIndex === index
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary,
+                    },
+                  ]}
+                />
               ))}
             </View>
           </View>
 
-          {/* Facilities */}
-          <View style={styles.section}>
-            <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-              Facilities
-            </ThemedText>
-            {venue.facilities.map((facility) => (
-              <View key={facility.id} style={[styles.facilityCard, { backgroundColor: theme.colors.surface }]}>
-                <ThemedText size="base" weight="bold" style={styles.facilityName}>
-                  {facility.name}
-                </ThemedText>
-                <View style={styles.courtsContainer}>
-                  {facility.courts.map((court) => (
-                    <View key={court.id} style={styles.courtRow}>
-                      <View style={styles.courtInfo}>
-                        <ThemedText size="sm" weight="medium">
-                          {court.name}
-                        </ThemedText>
-                        <ThemedText variant="secondary" size="xs">
-                          ${court.hourlyRate}/hour
-                        </ThemedText>
-                      </View>
-                      <Button
-                        title="Book"
-                        onPress={() => router.push(`/booking?venueId=${venue.id}&courtId=${court.id}`)}
-                        size="sm"
-                        style={styles.bookButton}
-                      />
-                    </View>
-                  ))}
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
+          {/* Venue Info */}
+          <View style={styles.content}>
+            <View style={styles.venueHeader}>
+              <ThemedText size="2xl" weight="bold" style={styles.venueName}>
+                {venue.name}
+              </ThemedText>
 
-      {/* Bottom Book Button */}
-      <View style={[styles.bottomBar, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
-        <View style={styles.priceInfo}>
-          <ThemedText variant="secondary" size="sm">
-            Starting from
-          </ThemedText>
-          <ThemedText size="lg" weight="bold">
-            {`$40/hour`}
-          </ThemedText>
+              <View style={styles.ratingContainer}>
+                <Star size={16} color={theme.colors.primary} fill={theme.colors.primary} />
+                <ThemedText size="base" weight="medium" style={styles.ratingText}>
+                  {`${venue.rating.toFixed(1)} (${venue.reviewCount} reviews)`}
+                </ThemedText>
+              </View>
+
+              <View style={styles.locationContainer}>
+                <MapPin size={16} color={theme.colors.textSecondary} />
+                <ThemedText variant="secondary" size="sm" style={styles.addressText}>
+                  {venue.address}
+                </ThemedText>
+              </View>
+            </View>
+
+            {/* Description */}
+            <View style={styles.section}>
+              <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
+                About
+              </ThemedText>
+              <ThemedText variant="secondary" size="base" style={styles.description}>
+                {venue.description}
+              </ThemedText>
+            </View>
+
+            {/* Amenities */}
+            <View style={styles.section}>
+              <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
+                Amenities
+              </ThemedText>
+              <View style={styles.amenitiesContainer}>
+                {venue.amenities.map((amenity, index) => (
+                  <View key={index} style={[styles.amenityTag, { backgroundColor: theme.colors.surface }]}>
+                    <ThemedText size="sm" style={{ color: theme.colors.textSecondary }}>
+                      {amenity}
+                    </ThemedText>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Facilities */}
+            <View style={styles.section}>
+              <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
+                Facilities
+              </ThemedText>
+              {venue.facilities.map((facility) => (
+                <View key={facility.id} style={[styles.facilityCard, { backgroundColor: theme.colors.surface }]}>
+                  <ThemedText size="base" weight="bold" style={styles.facilityName}>
+                    {facility.name}
+                  </ThemedText>
+                  <View style={styles.courtsContainer}>
+                    {facility.courts.map((court) => (
+                      <View key={court.id} style={styles.courtRow}>
+                        <View style={styles.courtInfo}>
+                          <ThemedText size="sm" weight="medium">
+                            {court.name}
+                          </ThemedText>
+                          <ThemedText variant="secondary" size="xs">
+                            ${court.hourlyRate}/hour
+                          </ThemedText>
+                        </View>
+                        <Button
+                          title="Book"
+                          onPress={() => router.push(`/booking?venueId=${venue.id}&courtId=${court.id}`)}
+                          size="sm"
+                          style={styles.bookButton}
+                        />
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Bottom Book Button */}
+        <View style={[styles.bottomBar, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
+          <View style={styles.priceInfo}>
+            <ThemedText variant="secondary" size="sm">
+              Starting from
+            </ThemedText>
+            <ThemedText size="lg" weight="bold">
+              {`$40/hour`}
+            </ThemedText>
+          </View>
+          <Button
+            title="Book Now"
+            onPress={() => router.push(`/booking?venueId=${venue.id}`)}
+            style={styles.bottomBookButton}
+          />
         </View>
-        <Button
-          title="Book Now"
-          onPress={() => router.push(`/booking?venueId=${venue.id}`)}
-          style={styles.bottomBookButton}
-        />
-      </View>
-    </ThemedView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 

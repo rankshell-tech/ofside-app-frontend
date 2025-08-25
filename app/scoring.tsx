@@ -10,11 +10,12 @@ import { ScorerFactory } from '@/lib/scoring/ScorerFactory';
 import { IScorer } from '@/lib/scoring/base/IScorer';
 import { SportName, Side, MatchState, Player, MatchPlayers } from '@/types/scoring';
 import { SPORT_CONFIGS } from '@/lib/scoring/configs';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScoringScreen() {
   const router = useRouter();
   const theme = useTheme();
-  
+
   const [selectedSport, setSelectedSport] = useState<SportName>('badminton');
   const [scorer, setScorer] = useState<IScorer | null>(null);
   const [matchState, setMatchState] = useState<MatchState | null>(null);
@@ -22,7 +23,7 @@ export default function ScoringScreen() {
   const [showSportSelector, setShowSportSelector] = useState(false);
   const [showPlayerSetup, setShowPlayerSetup] = useState(false);
   const [matchPlayers, setMatchPlayers] = useState<MatchPlayers | null>(null);
-  
+
   // Player registration form state
   const [playerAForm, setPlayerAForm] = useState({
     name: '',
@@ -129,7 +130,7 @@ export default function ScoringScreen() {
 
     setMatchPlayers(players);
     setShowPlayerSetup(false);
-    
+
     // Auto-start match after player setup
     setIsMatchActive(true);
   };
@@ -144,11 +145,11 @@ export default function ScoringScreen() {
 
   const addPoint = (side: Side) => {
     if (!scorer || !isMatchActive || !matchPlayers) return;
-    
+
     scorer.addPoint(side);
     const newState = scorer.getState();
     setMatchState(newState);
-    
+
     if (newState.over) {
       setIsMatchActive(false);
       const winnerPlayer = newState.winner === 0 ? matchPlayers.playerA : matchPlayers.playerB;
@@ -162,7 +163,7 @@ export default function ScoringScreen() {
 
   const undoLastPoint = () => {
     if (!scorer) return;
-    
+
     scorer.undoLast();
     setMatchState(scorer.getState());
   };
@@ -243,11 +244,11 @@ export default function ScoringScreen() {
               {matchState.currentUnit.a}
             </ThemedText>
           </View>
-          
+
           <View style={styles.scoreDivider}>
             <ThemedText size="2xl" weight="bold" variant="secondary">–</ThemedText>
           </View>
-          
+
           <View style={styles.playerScore}>
             <ThemedText size="sm" variant="secondary">{matchPlayers.playerB.name}</ThemedText>
             <ThemedText size="4xl" weight="bold" style={{ color: theme.colors.primary }}>
@@ -343,8 +344,8 @@ export default function ScoringScreen() {
       presentationStyle="pageSheet"
       onRequestClose={() => setShowPlayerSetup(false)}
     >
-      <KeyboardAvoidingView 
-        style={styles.modalContainer} 
+      <KeyboardAvoidingView
+        style={styles.modalContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ThemedView style={styles.modalContainer}>
@@ -380,10 +381,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <User size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerAName ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerAName ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerAForm.name}
                     onChangeText={(text) => {
@@ -410,10 +411,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <Mail size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerAEmail ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerAEmail ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerAForm.email}
                     onChangeText={(text) => {
@@ -442,10 +443,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <Phone size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerAPhone ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerAPhone ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerAForm.phone}
                     onChangeText={(text) => {
@@ -485,10 +486,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <User size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerBName ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerBName ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerBForm.name}
                     onChangeText={(text) => {
@@ -515,10 +516,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <Mail size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerBEmail ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerBEmail ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerBForm.email}
                     onChangeText={(text) => {
@@ -547,10 +548,10 @@ export default function ScoringScreen() {
                 <View style={styles.inputWrapper}>
                   <Phone size={16} color={theme.colors.textSecondary} style={styles.inputIcon} />
                   <TextInput
-                    style={[styles.input, { 
+                    style={[styles.input, {
                       color: theme.colors.text,
                       backgroundColor: theme.colors.surface,
-                      borderColor: formErrors.playerBPhone ? theme.colors.error : theme.colors.border 
+                      borderColor: formErrors.playerBPhone ? theme.colors.error : theme.colors.border
                     }]}
                     value={playerBForm.phone}
                     onChangeText={(text) => {
@@ -602,234 +603,236 @@ export default function ScoringScreen() {
   );
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Live Scoring
-        </ThemedText>
-        <TouchableOpacity onPress={() => setShowSportSelector(true)}>
-          <Settings size={24} color={theme.colors.primary} />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Sport Selection */}
-        <View style={[styles.sportSelector, { backgroundColor: theme.colors.background }]}>
-          <TouchableOpacity 
-            style={styles.currentSport}
-            onPress={() => setShowSportSelector(true)}
-          >
-            <ThemedText size="lg">{getSportIcon(selectedSport)}</ThemedText>
-            <ThemedText size="base" weight="bold" style={styles.sportName}>
-              {getSportName(selectedSport)}
-            </ThemedText>
-            <ThemedText size="sm" variant="secondary">Tap to change sport</ThemedText>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Live Scoring
+          </ThemedText>
+          <TouchableOpacity onPress={() => setShowSportSelector(true)}>
+            <Settings size={24} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>
 
-        {/* Player Setup Status */}
-        {!matchPlayers && (
-          <View style={[styles.setupPrompt, { backgroundColor: theme.colors.surface }]}>
-            <Users size={24} color={theme.colors.primary} />
-            <ThemedText size="base" weight="medium" style={styles.setupTitle}>
-              Setup {getParticipantLabel(selectedSport)}s
-            </ThemedText>
-            <ThemedText size="sm" variant="secondary" style={styles.setupDescription}>
-              Add {getParticipantLabel(selectedSport).toLowerCase()} details before starting the match
-            </ThemedText>
-            <Button
-              title={`Add ${getParticipantLabel(selectedSport)}s`}
-              onPress={() => setShowPlayerSetup(true)}
-              size="md"
-              style={styles.setupButton}
-            />
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Sport Selection */}
+          <View style={[styles.sportSelector, { backgroundColor: theme.colors.background }]}>
+            <TouchableOpacity
+              style={styles.currentSport}
+              onPress={() => setShowSportSelector(true)}
+            >
+              <ThemedText size="lg">{getSportIcon(selectedSport)}</ThemedText>
+              <ThemedText size="base" weight="bold" style={styles.sportName}>
+                {getSportName(selectedSport)}
+              </ThemedText>
+              <ThemedText size="sm" variant="secondary">Tap to change sport</ThemedText>
+            </TouchableOpacity>
           </View>
-        )}
 
-        {/* Score Display */}
-        {renderScoreDisplay()}
-
-        {/* Control Buttons */}
-        <View style={styles.controlsContainer}>
-          {!isMatchActive ? (
-            <Button
-              title={matchPlayers ? "Start Match" : `Setup ${getParticipantLabel(selectedSport)}s`}
-              onPress={startMatch}
-              size="lg"
-              style={styles.startButton}
-            />
-          ) : (
-            <View style={styles.scoringButtons}>
-              <TouchableOpacity
-                style={[styles.scoreButton, { backgroundColor: theme.colors.primary }]}
-                onPress={() => addPoint(0)}
-              >
-                <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
-                  +1
-                </ThemedText>
-                <ThemedText size="sm" style={{ color: theme.colors.accent }}>
-                  {matchPlayers?.playerA.name || 'Player A'}
-                </ThemedText>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.scoreButton, { backgroundColor: theme.colors.accent }]}
-                onPress={() => addPoint(1)}
-              >
-                <ThemedText size="lg" weight="bold" style={{ color: theme.colors.background }}>
-                  +1
-                </ThemedText>
-                <ThemedText size="sm" style={{ color: theme.colors.background }}>
-                  {matchPlayers?.playerB.name || 'Player B'}
-                </ThemedText>
-              </TouchableOpacity>
+          {/* Player Setup Status */}
+          {!matchPlayers && (
+            <View style={[styles.setupPrompt, { backgroundColor: theme.colors.surface }]}>
+              <Users size={24} color={theme.colors.primary} />
+              <ThemedText size="base" weight="medium" style={styles.setupTitle}>
+                Setup {getParticipantLabel(selectedSport)}s
+              </ThemedText>
+              <ThemedText size="sm" variant="secondary" style={styles.setupDescription}>
+                Add {getParticipantLabel(selectedSport).toLowerCase()} details before starting the match
+              </ThemedText>
+              <Button
+                title={`Add ${getParticipantLabel(selectedSport)}s`}
+                onPress={() => setShowPlayerSetup(true)}
+                size="md"
+                style={styles.setupButton}
+              />
             </View>
           )}
 
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
-              onPress={undoLastPoint}
-              disabled={!scorer || scorer.getEvents().length === 0}
-            >
-              <Undo size={20} color={theme.colors.textSecondary} />
-              <ThemedText size="sm" variant="secondary" style={styles.actionText}>
-                Undo
-              </ThemedText>
-            </TouchableOpacity>
+          {/* Score Display */}
+          {renderScoreDisplay()}
 
-            <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
-              onPress={resetMatch}
-            >
-              <RotateCcw size={20} color={theme.colors.textSecondary} />
-              <ThemedText size="sm" variant="secondary" style={styles.actionText}>
-                Reset
-              </ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
-              onPress={() => setShowPlayerSetup(true)}
-            >
-              <Users size={20} color={theme.colors.textSecondary} />
-              <ThemedText size="sm" variant="secondary" style={styles.actionText}>
-                Players
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Match Info */}
-        <View style={[styles.matchInfo, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="bold" style={styles.infoTitle}>
-            Match Configuration
-          </ThemedText>
-          <View style={styles.infoGrid}>
-            <View style={styles.infoItem}>
-              <ThemedText variant="secondary" size="xs">Format:</ThemedText>
-              <ThemedText size="xs" weight="medium">
-                Best of {SPORT_CONFIGS[selectedSport].bestOf}
-              </ThemedText>
-            </View>
-            <View style={styles.infoItem}>
-              <ThemedText variant="secondary" size="xs">Participants:</ThemedText>
-              <ThemedText size="xs" weight="medium">
-                {SPORT_CONFIGS[selectedSport].participants}
-              </ThemedText>
-            </View>
-            {SPORT_CONFIGS[selectedSport].winUnitsTo && (
-              <View style={styles.infoItem}>
-                <ThemedText variant="secondary" size="xs">Points to win:</ThemedText>
-                <ThemedText size="xs" weight="medium">
-                  {SPORT_CONFIGS[selectedSport].winUnitsTo}
-                </ThemedText>
-              </View>
-            )}
-            {SPORT_CONFIGS[selectedSport].mustWinBy && (
-              <View style={styles.infoItem}>
-                <ThemedText variant="secondary" size="xs">Must win by:</ThemedText>
-                <ThemedText size="xs" weight="medium">
-                  {SPORT_CONFIGS[selectedSport].mustWinBy}
-                </ThemedText>
-              </View>
-            )}
-          </View>
-        </View>
-      </ScrollView>
-
-      {/* Player Setup Modal */}
-      {renderPlayerSetupModal()}
-
-      {/* Sport Selector Modal */}
-      <Modal
-        visible={showSportSelector}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowSportSelector(false)}
-      >
-        <ThemedView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <ThemedText size="lg" weight="bold">
-              Select Sport
-            </ThemedText>
-            <TouchableOpacity onPress={() => setShowSportSelector(false)}>
-              <X size={24} color={theme.colors.text} />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView style={styles.modalContent}>
-            {supportedSports.map((sport) => (
-              <TouchableOpacity
-                key={sport.id}
-                style={[
-                  styles.sportOption,
-                  {
-                    backgroundColor: selectedSport === sport.id 
-                      ? theme.colors.primary 
-                      : theme.colors.background,
-                  },
-                ]}
-                onPress={() => changeSport(sport.id)}
-              >
-                <ThemedText size="2xl">{sport.icon}</ThemedText>
-                <View style={styles.sportOptionContent}>
-                  <ThemedText
-                    size="base"
-                    weight="bold"
-                    style={{
-                      color: selectedSport === sport.id 
-                        ? theme.colors.accent 
-                        : theme.colors.text,
-                    }}
-                  >
-                    {sport.name}
+          {/* Control Buttons */}
+          <View style={styles.controlsContainer}>
+            {!isMatchActive ? (
+              <Button
+                title={matchPlayers ? "Start Match" : `Setup ${getParticipantLabel(selectedSport)}s`}
+                onPress={startMatch}
+                size="lg"
+                style={styles.startButton}
+              />
+            ) : (
+              <View style={styles.scoringButtons}>
+                <TouchableOpacity
+                  style={[styles.scoreButton, { backgroundColor: theme.colors.primary }]}
+                  onPress={() => addPoint(0)}
+                >
+                  <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
+                    +1
                   </ThemedText>
-                  <ThemedText
-                    size="sm"
-                    variant="secondary"
-                    style={{
-                      color: selectedSport === sport.id 
-                        ? theme.colors.accent 
-                        : theme.colors.textSecondary,
-                    }}
-                  >
-                    {SPORT_CONFIGS[sport.id].participants} • Best of {SPORT_CONFIGS[sport.id].bestOf}
+                  <ThemedText size="sm" style={{ color: theme.colors.accent }}>
+                    {matchPlayers?.playerA.name || 'Player A'}
+                  </ThemedText>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.scoreButton, { backgroundColor: theme.colors.accent }]}
+                  onPress={() => addPoint(1)}
+                >
+                  <ThemedText size="lg" weight="bold" style={{ color: theme.colors.background }}>
+                    +1
+                  </ThemedText>
+                  <ThemedText size="sm" style={{ color: theme.colors.background }}>
+                    {matchPlayers?.playerB.name || 'Player B'}
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              <TouchableOpacity
+                style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
+                onPress={undoLastPoint}
+                disabled={!scorer || scorer.getEvents().length === 0}
+              >
+                <Undo size={20} color={theme.colors.textSecondary} />
+                <ThemedText size="sm" variant="secondary" style={styles.actionText}>
+                  Undo
+                </ThemedText>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
+                onPress={resetMatch}
+              >
+                <RotateCcw size={20} color={theme.colors.textSecondary} />
+                <ThemedText size="sm" variant="secondary" style={styles.actionText}>
+                  Reset
+                </ThemedText>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
+                onPress={() => setShowPlayerSetup(true)}
+              >
+                <Users size={20} color={theme.colors.textSecondary} />
+                <ThemedText size="sm" variant="secondary" style={styles.actionText}>
+                  Players
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Match Info */}
+          <View style={[styles.matchInfo, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="bold" style={styles.infoTitle}>
+              Match Configuration
+            </ThemedText>
+            <View style={styles.infoGrid}>
+              <View style={styles.infoItem}>
+                <ThemedText variant="secondary" size="xs">Format:</ThemedText>
+                <ThemedText size="xs" weight="medium">
+                  Best of {SPORT_CONFIGS[selectedSport].bestOf}
+                </ThemedText>
+              </View>
+              <View style={styles.infoItem}>
+                <ThemedText variant="secondary" size="xs">Participants:</ThemedText>
+                <ThemedText size="xs" weight="medium">
+                  {SPORT_CONFIGS[selectedSport].participants}
+                </ThemedText>
+              </View>
+              {SPORT_CONFIGS[selectedSport].winUnitsTo && (
+                <View style={styles.infoItem}>
+                  <ThemedText variant="secondary" size="xs">Points to win:</ThemedText>
+                  <ThemedText size="xs" weight="medium">
+                    {SPORT_CONFIGS[selectedSport].winUnitsTo}
                   </ThemedText>
                 </View>
-                {selectedSport === sport.id && (
-                  <Trophy size={20} color={theme.colors.accent} />
-                )}
+              )}
+              {SPORT_CONFIGS[selectedSport].mustWinBy && (
+                <View style={styles.infoItem}>
+                  <ThemedText variant="secondary" size="xs">Must win by:</ThemedText>
+                  <ThemedText size="xs" weight="medium">
+                    {SPORT_CONFIGS[selectedSport].mustWinBy}
+                  </ThemedText>
+                </View>
+              )}
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Player Setup Modal */}
+        {renderPlayerSetupModal()}
+
+        {/* Sport Selector Modal */}
+        <Modal
+          visible={showSportSelector}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => setShowSportSelector(false)}
+        >
+          <ThemedView style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <ThemedText size="lg" weight="bold">
+                Select Sport
+              </ThemedText>
+              <TouchableOpacity onPress={() => setShowSportSelector(false)}>
+                <X size={24} color={theme.colors.text} />
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </ThemedView>
-      </Modal>
-    </ThemedView>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              {supportedSports.map((sport) => (
+                <TouchableOpacity
+                  key={sport.id}
+                  style={[
+                    styles.sportOption,
+                    {
+                      backgroundColor: selectedSport === sport.id
+                        ? theme.colors.primary
+                        : theme.colors.background,
+                    },
+                  ]}
+                  onPress={() => changeSport(sport.id)}
+                >
+                  <ThemedText size="2xl">{sport.icon}</ThemedText>
+                  <View style={styles.sportOptionContent}>
+                    <ThemedText
+                      size="base"
+                      weight="bold"
+                      style={{
+                        color: selectedSport === sport.id
+                          ? theme.colors.accent
+                          : theme.colors.text,
+                      }}
+                    >
+                      {sport.name}
+                    </ThemedText>
+                    <ThemedText
+                      size="sm"
+                      variant="secondary"
+                      style={{
+                        color: selectedSport === sport.id
+                          ? theme.colors.accent
+                          : theme.colors.textSecondary,
+                      }}
+                    >
+                      {SPORT_CONFIGS[sport.id].participants} • Best of {SPORT_CONFIGS[sport.id].bestOf}
+                    </ThemedText>
+                  </View>
+                  {selectedSport === sport.id && (
+                    <Trophy size={20} color={theme.colors.accent} />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </ThemedView>
+        </Modal>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -842,7 +845,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {
@@ -858,6 +861,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    marginTop:10
   },
   currentSport: {
     alignItems: 'center',

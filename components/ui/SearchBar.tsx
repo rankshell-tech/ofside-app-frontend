@@ -37,8 +37,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           {...textInputProps}
         />
         {showSearchButton && onSearchPress && (
-          <TouchableOpacity 
-            onPress={onSearchPress} 
+          <TouchableOpacity
+            onPress={onSearchPress}
             style={[styles.searchButton, { backgroundColor: theme.colors.primary }]}
           >
             <ThemedText size="sm" weight="medium" style={{ color: theme.colors.accent }}>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Inter-Regular',
   },
   searchButton: {

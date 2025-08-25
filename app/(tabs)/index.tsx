@@ -18,6 +18,8 @@ import { setBookings } from '@/store/slices/bookingSlice';
 import { SportType } from '@/types';
 import { Menu, X, User, Wallet, Calendar, Gift, Star, MessageCircle, Facebook, Twitter, Instagram, Search, MapPin, ChevronDown } from 'lucide-react-native';
 import { Trophy } from 'lucide-react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 
 const { width } = Dimensions.get('window');
 
@@ -367,7 +369,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
                     <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      ?
+                      <AntDesign name="right" size={10}/>
                     </ThemedText>
                   </View>
                 </View>
@@ -397,7 +399,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
                     <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      ?
+                      <AntDesign name="right" size={10}/>
                     </ThemedText>
                   </View>
                 </View>
@@ -427,7 +429,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
                     <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      ?
+                      <AntDesign name="right" size={10}/>
                     </ThemedText>
                   </View>
                 </View>
@@ -457,7 +459,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
                     <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      ?
+                      <AntDesign name="right" size={10}/>
                     </ThemedText>
                   </View>
                 </View>
@@ -557,7 +559,7 @@ export default function HomeScreen() {
                 <View style={[styles.menuHeader, { borderBottomColor: theme.colors.border }]}>
                   <View style={styles.menuHeaderContent}>
                     <View style={[styles.userAvatar, { backgroundColor: theme.colors.primary }]}>
-                      <User size={28} color={theme.colors.accent} />
+                      <FontAwesome name="user" size={40} color={theme.colors.accent} />
                     </View>
                     <View style={styles.userInfo}>
                       <ThemedText size="lg" weight="bold">
@@ -693,7 +695,6 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
   },
   walletButton: {
     width: 40,
@@ -779,7 +780,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Inter-Regular',
   },
   searchButton: {

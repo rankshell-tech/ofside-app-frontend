@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Mail } from 'lucide-react-native';
@@ -9,6 +9,7 @@ import { useTheme } from '@/hooks/useTheme';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Zocial } from '@expo/vector-icons';
 import GoogleIcon from "../../components/GoogleIcon";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function Login() {
   const router = useRouter();
@@ -56,9 +57,9 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      enableOnAndroid
     >
       <ThemedView style={styles.container}>
         <LinearGradient
@@ -172,7 +173,7 @@ export default function Login() {
           </View>
         </LinearGradient>
       </ThemedView>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }
 
