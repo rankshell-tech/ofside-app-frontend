@@ -54,7 +54,7 @@ export default function Login() {
       console.error("API_URL environment variable is not set");
       throw new Error("API_URL environment variable is not set");
     }
-    const response = await fetch(`http://localhost:5000/api/auth/login`, {
+    const response = await fetch(`${apiUrl}api/auth/login`, {
       method: "POST",
       headers: {
       "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export default function Login() {
     Alert.alert("Success", data.message);
 
     // Navigate to verify screen with email
-    router.push(`/auth/verify-code?contact=${encodeURIComponent(email)}&type=email`);
+    router.push(`/auth/verify-code?contact=${encodeURIComponent(email)}&type=login`);
   } catch (error: any) {
     Alert.alert("Error", error.message || "Failed to send code");
   } finally {

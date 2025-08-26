@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingVi
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
+import Constants from 'expo-constants';
 import { ArrowLeft } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { ThemedView } from '@/components/ui/ThemedView';
@@ -15,14 +16,16 @@ export default function VerifyCode() {
   const theme = useTheme();
   const { contact, type, name, role } = useLocalSearchParams<{ 
     contact: string; 
-    type: 'email' | 'phone';
+    type: 'signup' | 'login';
     name?: string;
     role?: 'player' | 'venue_owner';
   }>();
 
   const [code, setCode] = useState(['', '', '', '']);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+  const apiUrl = Constants.expoConfig?.extra?.API_URL;
 
   const handleCodeChange = (text: string, index: number) => {
     const newCode = [...code];
@@ -49,22 +52,36 @@ export default function VerifyCode() {
     }
 
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      // For demo purposes, accept any 4-digit code
-      const user = {
-        id: Date.now().toString(),
-        email: type === 'email' ? contact : `${contact}@example.com`,
-        name: name || (contact.includes('owner') ? 'Venue Owner' : 'John Player'),
-        role: role || (contact.includes('owner') ? 'venue_owner' as const : 'player' as const),
-        phone: type === 'phone' ? contact : '+1234567890',
-        location: 'New York, NY',
-      };
+    try {
+      const response = await fetch(`${apiUrl}api/auth/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          identifier: contact,
+          otp: enteredCode,
+          type,
+        }),
+      });
+
+      console.log('Response ------------', response);
+      const data = await response.json();
       
-      dispatch(loginSuccess(user));
-      setIsLoading(false);
+      if (!response.ok) {
+        setErrorMessage(data.message || 'Failed to verify code');
+        throw new Error(data.message || 'Verification failed');
+      }
+      console.log('Verification successful:', data);
+
+      // Assuming the API returns user data on success
+      dispatch(loginSuccess(data.data.user));
       router.replace('/(tabs)');
-    }, 1000);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to verify code');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResendCode = () => {
@@ -91,7 +108,7 @@ export default function VerifyCode() {
 
             <View style={styles.header}>
               <Text style={[styles.title, { color: theme.colors.text }]}>
-                Verify Your {type === 'email' ? 'Email' : 'Phone'}
+                Verify Your Email
               </Text>
               <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
                 We've sent a 4-digit verification code to
@@ -106,7 +123,7 @@ export default function VerifyCode() {
                 {code.map((digit, index) => (
                   <TextInput
                     key={index}
-                    ref={(ref) => (inputRefs.current[index] = ref)}
+                    ref={(ref) => { inputRefs.current[index] = ref; }}
                     style={[styles.codeInput, { 
                       color: theme.colors.text, 
                       backgroundColor: theme.colors.background,
@@ -122,13 +139,20 @@ export default function VerifyCode() {
                 ))}
               </View>
 
-              <Button
+                <Button
                 title={isLoading ? "Verifying..." : "Verify Code"}
                 onPress={handleVerifyCode}
                 disabled={isLoading || code.join('').length !== 4}
                 size="lg"
                 style={styles.verifyButton}
-              />
+                />
+                {/* Error Text */}
+                {/* You can use a state for error message */}
+                {errorMessage ? (
+                <Text style={{ color: 'red', textAlign: 'center', marginBottom: 16 }}>
+                  {errorMessage}
+                </Text>
+                ) : null}
 
               <View style={styles.resendContainer}>
                 <Text style={[styles.resendText, { color: theme.colors.textSecondary }]}>
