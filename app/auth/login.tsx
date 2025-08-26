@@ -9,6 +9,9 @@ import { useTheme } from '@/hooks/useTheme';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Zocial } from '@expo/vector-icons';
 import GoogleIcon from "../../components/GoogleIcon";
+import Constants from "expo-constants";
+
+const apiUrl = Constants.expoConfig?.extra?.API_URL;
 
 export default function Login() {
   const router = useRouter();
@@ -36,19 +39,47 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSendCode = async () => {
-    if (!validateForm()) {
-      return;
+ const handleSendCode = async () => {
+  console.log("Sending code to:", email);
+  if (!validateForm()) {
+    console.log("Form validation failed:", errors);
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    if (!apiUrl) {
+      console.error("API_URL environment variable is not set");
+      throw new Error("API_URL environment variable is not set");
+    }
+    const response = await fetch(`http://localhost:5000/api/auth/login`, {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ identifier: email }),
+    });
+
+    console.log("Response:", response);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong");
     }
 
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // Navigate to verification screen with email
-      router.push(`/auth/verify-code?contact=${encodeURIComponent(email)}&type=email`);
-    }, 1000);
-  };
+    // ✅ Success
+    Alert.alert("Success", data.message);
+
+    // Navigate to verify screen with email
+    router.push(`/auth/verify-code?contact=${encodeURIComponent(email)}&type=email`);
+  } catch (error: any) {
+    Alert.alert("Error", error.message || "Failed to send code");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleSocialLogin = (provider: string) => {
     // Placeholder for social login implementation
