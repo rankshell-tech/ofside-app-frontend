@@ -20,6 +20,7 @@ import { Menu, X, User, Wallet, Calendar, Gift, Star, MessageCircle, Facebook, T
 import { Trophy } from 'lucide-react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 
@@ -143,6 +144,7 @@ export default function HomeScreen() {
   const menuItems = [
     { icon: <User size={20} color={theme.colors.textSecondary} />, title: 'My Profile', onPress: () => router.push('/(tabs)/profile') },
     { icon: <Wallet size={20} color={theme.colors.textSecondary} />, title: 'My Wallet', onPress: () => {} },
+    { icon: <MaterialIcons name="scoreboard" size={24} color={theme.colors.textSecondary} />, title: 'Sports Scoring', onPress: () => router.push('/scoring/sportsScoring') },
     { icon: <Calendar size={20} color={theme.colors.textSecondary} />, title: 'My Bookings', onPress: () => router.push('/(tabs)/bookings') },
     { icon: <Trophy size={20} color={theme.colors.textSecondary} />, title: 'Live Scoring', onPress: () => { closeMenu(); router.push('/scoring'); } },
     { icon: <Gift size={20} color={theme.colors.textSecondary} />, title: 'Refer and Earn', onPress: () => {} },
