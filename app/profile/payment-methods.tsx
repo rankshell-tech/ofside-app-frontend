@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/ui/ThemedText';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { ArrowLeft, CreditCard, Plus, MoveVertical as MoreVertical, Trash2 } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface PaymentMethod {
   id: string;
@@ -77,112 +78,114 @@ export default function PaymentMethods() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Payment Methods
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Saved Payment Methods
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Payment Methods
           </ThemedText>
-          <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
-            Manage your payment methods for quick and secure bookings
-          </ThemedText>
+          <View style={{ width: 24 }} />
         </View>
 
-        <View style={styles.paymentMethodsContainer}>
-          {paymentMethods.map((method) => (
-            <View key={method.id} style={[styles.paymentMethodCard, { backgroundColor: theme.colors.background }]}>
-              <View style={styles.cardHeader}>
-                <View style={styles.cardInfo}>
-                  {getCardIcon(method.brand || '')}
-                  <View style={styles.cardDetails}>
-                    <ThemedText size="base" weight="medium">
-                      {method.brand} {formatCardNumber(method.last4 || '', method.brand || '')}
-                    </ThemedText>
-                    <ThemedText variant="secondary" size="sm">
-                      Expires {method.expiryMonth?.toString().padStart(2, '0')}/{method.expiryYear}
-                    </ThemedText>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  style={styles.moreButton}
-                  onPress={() => handleDeletePaymentMethod(method.id)}
-                >
-                  <Trash2 size={16} color={theme.colors.error} />
-                </TouchableOpacity>
-              </View>
-              
-              {method.isDefault && (
-                <View style={[styles.defaultBadge, { backgroundColor: theme.colors.primary }]}>
-                  <ThemedText size="xs" weight="medium" style={{ color: theme.colors.accent }}>
-                    Default
-                  </ThemedText>
-                </View>
-              )}
-              
-              {!method.isDefault && (
-                <TouchableOpacity
-                  style={styles.setDefaultButton}
-                  onPress={() => handleSetDefault(method.id)}
-                >
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                    Set as Default
-                  </ThemedText>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.addButtonContainer}>
-          <Button
-            title="Add New Payment Method"
-            onPress={() => {
-              // TODO: Navigate to add payment method screen
-              Alert.alert('Coming Soon', 'Payment method integration will be available soon.');
-            }}
-            variant="outline"
-            size="lg"
-            style={styles.addButton}
-          />
-        </View>
-
-        <View style={[styles.securityCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.securityTitle}>
-            🔒 Secure Payments
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.securityText}>
-            Your payment information is encrypted and secure. We use industry-standard security measures to protect your financial data.
-          </ThemedText>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
-            Supported Payment Methods
-          </ThemedText>
-          <View style={styles.supportedMethods}>
-            <ThemedText variant="secondary" size="xs">
-              • Credit & Debit Cards (Visa, Mastercard, American Express)
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Saved Payment Methods
             </ThemedText>
-            <ThemedText variant="secondary" size="xs">
-              • PayPal (Coming Soon)
-            </ThemedText>
-            <ThemedText variant="secondary" size="xs">
-              • Apple Pay & Google Pay (Coming Soon)
+            <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
+              Manage your payment methods for quick and secure bookings
             </ThemedText>
           </View>
-        </View>
-      </ScrollView>
-    </ThemedView>
+
+          <View style={styles.paymentMethodsContainer}>
+            {paymentMethods.map((method) => (
+              <View key={method.id} style={[styles.paymentMethodCard, { backgroundColor: theme.colors.background }]}>
+                <View style={styles.cardHeader}>
+                  <View style={styles.cardInfo}>
+                    {getCardIcon(method.brand || '')}
+                    <View style={styles.cardDetails}>
+                      <ThemedText size="base" weight="medium">
+                        {method.brand} {formatCardNumber(method.last4 || '', method.brand || '')}
+                      </ThemedText>
+                      <ThemedText variant="secondary" size="sm">
+                        Expires {method.expiryMonth?.toString().padStart(2, '0')}/{method.expiryYear}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.moreButton}
+                    onPress={() => handleDeletePaymentMethod(method.id)}
+                  >
+                    <Trash2 size={16} color={theme.colors.error} />
+                  </TouchableOpacity>
+                </View>
+
+                {method.isDefault && (
+                  <View style={[styles.defaultBadge, { backgroundColor: theme.colors.primary }]}>
+                    <ThemedText size="xs" weight="medium" style={{ color: theme.colors.accent }}>
+                      Default
+                    </ThemedText>
+                  </View>
+                )}
+
+                {!method.isDefault && (
+                  <TouchableOpacity
+                    style={styles.setDefaultButton}
+                    onPress={() => handleSetDefault(method.id)}
+                  >
+                    <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                      Set as Default
+                    </ThemedText>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.addButtonContainer}>
+            <Button
+              title="Add New Payment Method"
+              onPress={() => {
+                // TODO: Navigate to add payment method screen
+                Alert.alert('Coming Soon', 'Payment method integration will be available soon.');
+              }}
+              variant="outline"
+              size="lg"
+              style={styles.addButton}
+            />
+          </View>
+
+          <View style={[styles.securityCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.securityTitle}>
+              🔒 Secure Payments
+            </ThemedText>
+            <ThemedText variant="secondary" size="xs" style={styles.securityText}>
+              Your payment information is encrypted and secure. We use industry-standard security measures to protect your financial data.
+            </ThemedText>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
+              Supported Payment Methods
+            </ThemedText>
+            <View style={styles.supportedMethods}>
+              <ThemedText variant="secondary" size="xs">
+                • Credit & Debit Cards (Visa, Mastercard, American Express)
+              </ThemedText>
+              <ThemedText variant="secondary" size="xs">
+                • PayPal (Coming Soon)
+              </ThemedText>
+              <ThemedText variant="secondary" size="xs">
+                • Apple Pay & Google Pay (Coming Soon)
+              </ThemedText>
+            </View>
+          </View>
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {

@@ -5,6 +5,7 @@ import { ThemedView } from '@/components/ui/ThemedView';
 import { ThemedText } from '@/components/ui/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { ArrowLeft, Bell, MessageSquare, Calendar, Trophy } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NotificationSettings() {
   const router = useRouter();
@@ -63,64 +64,66 @@ export default function NotificationSettings() {
   ];
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Notifications
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Push Notifications
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Notifications
           </ThemedText>
-          <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
-            Choose what notifications you want to receive
-          </ThemedText>
+          <View style={{ width: 24 }} />
         </View>
 
-        <View style={styles.settingsContainer}>
-          {notificationTypes.map((item) => (
-            <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
-              <View style={styles.settingIcon}>
-                {item.icon}
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Push Notifications
+            </ThemedText>
+            <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
+              Choose what notifications you want to receive
+            </ThemedText>
+          </View>
+
+          <View style={styles.settingsContainer}>
+            {notificationTypes.map((item) => (
+              <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
+                <View style={styles.settingIcon}>
+                  {item.icon}
+                </View>
+                <View style={styles.settingContent}>
+                  <ThemedText size="base" weight="medium">
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
+                    {item.description}
+                  </ThemedText>
+                </View>
+                <Switch
+                  value={settings[item.key]}
+                  onValueChange={() => toggleSetting(item.key)}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary
+                  }}
+                  thumbColor={settings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
+                />
               </View>
-              <View style={styles.settingContent}>
-                <ThemedText size="base" weight="medium">
-                  {item.title}
-                </ThemedText>
-                <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
-                  {item.description}
-                </ThemedText>
-              </View>
-              <Switch
-                value={settings[item.key]}
-                onValueChange={() => toggleSetting(item.key)}
-                trackColor={{ 
-                  false: theme.colors.border, 
-                  true: theme.colors.primary 
-                }}
-                thumbColor={settings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
-              />
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
 
-        <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
-            Notification Permissions
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.infoText}>
-            You can manage notification permissions in your device settings. Go to Settings > Apps > SportBook > Notifications to control system-level notification settings.
-          </ThemedText>
-        </View>
-      </ScrollView>
-    </ThemedView>
+          <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
+              Notification Permissions
+            </ThemedText>
+            <ThemedText variant="secondary" size="xs" style={styles.infoText}>
+              You can manage notification permissions in your device settings. Go to Settings > Apps > SportBook > Notifications to control system-level notification settings.
+            </ThemedText>
+          </View>
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {

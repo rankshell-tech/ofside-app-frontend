@@ -23,93 +23,93 @@ export default function GetStarted() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
-        <ScrollView className="px-6">
-        <LinearGradient
-          colors={[theme.colors.primary, '#FFF8DC', theme.colors.background]}
-          style={styles.gradient}
-        >
-          <View style={styles.content}>
-            <View style={styles.headerContainer}>
-              <Text style={[styles.title, { color: theme.colors.text }]}>
-                Choose Your Role
-              </Text>
-              <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-                How would you like to use Ofside?
-              </Text>
+        <ScrollView>
+          <LinearGradient
+            colors={[theme.colors.primary, '#FFF8DC', theme.colors.background]}
+            style={styles.gradient}
+          >
+            <View style={styles.content}>
+              <View style={styles.headerContainer}>
+                <Text style={[styles.title, { color: theme.colors.text }]}>
+                  Choose Your Role
+                </Text>
+                <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+                  How would you like to use Ofside?
+                </Text>
+              </View>
+
+              <View style={styles.optionsContainer}>
+                {/* Player Option */}
+                <View style={[styles.optionCard, { backgroundColor: theme.colors.background }]}>
+                  <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]}>
+                    <Users size={32} color={theme.colors.accent} />
+                  </View>
+                  <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                    I'm a Player
+                  </Text>
+                  <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
+                    Book courts and venues for your games
+                  </Text>
+                  <Button
+                    title="Continue as Player"
+                  onPress={() => router.push('/auth/login')}
+                    style={styles.optionButton}
+                  />
+                </View>
+
+                {/* Venue Owner Option */}
+                <View style={[styles.optionCard, { backgroundColor: theme.colors.background }]}>
+                  <View style={[styles.iconContainer, { backgroundColor: theme.colors.accent }]}>
+                    <Building size={32} color={theme.colors.background} />
+                  </View>
+                  <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                    I'm a Venue Owner
+                  </Text>
+                  <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
+                    Manage and rent out your sports facilities
+                  </Text>
+                  <Button
+                    title="Continue as Owner"
+                  onPress={() => router.push('/auth/login')}
+                    variant="outline"
+                    style={styles.optionButton}
+                  />
+                </View>
+
+                {/* Guest Option */}
+                <View style={[styles.guestCard, { backgroundColor: theme.colors.surface }]}>
+                  <View style={[styles.guestIconContainer, { backgroundColor: theme.colors.textSecondary }]}>
+                    <Eye size={24} color={theme.colors.background} />
+                  </View>
+                  <Text style={[styles.guestTitle, { color: theme.colors.text }]}>
+                    Just Browsing?
+                  </Text>
+                  <Text style={[styles.guestDescription, { color: theme.colors.textSecondary }]}>
+                    Explore venues and features without signing up
+                  </Text>
+                  <Button
+                    title="Continue as Guest"
+                    onPress={handleContinueAsGuest}
+                    variant="ghost"
+                    style={styles.guestButton}
+                  />
+                </View>
+              </View>
             </View>
 
-            <View style={styles.optionsContainer}>
-              {/* Player Option */}
-              <View style={[styles.optionCard, { backgroundColor: theme.colors.background }]}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]}>
-                  <Users size={32} color={theme.colors.accent} />
-                </View>
-                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
-                  I'm a Player
-                </Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
-                  Book courts and venues for your games
-                </Text>
-                <Button
-                  title="Continue as Player"
-                onPress={() => router.push('/auth/login')}
-                  style={styles.optionButton}
-                />
-              </View>
 
-              {/* Venue Owner Option */}
-              <View style={[styles.optionCard, { backgroundColor: theme.colors.background }]}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.colors.accent }]}>
-                  <Building size={32} color={theme.colors.background} />
-                </View>
-                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
-                  I'm a Venue Owner
-                </Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
-                  Manage and rent out your sports facilities
-                </Text>
-                <Button
-                  title="Continue as Owner"
+            <View style={styles.loginContainer}>
+              <Text style={[styles.loginText, { color: theme.colors.textSecondary }]}>
+                Already have an account?
+              </Text>
+              <Button
+                title="Sign In"
                 onPress={() => router.push('/auth/login')}
-                  variant="outline"
-                  style={styles.optionButton}
-                />
-              </View>
-
-              {/* Guest Option */}
-              <View style={[styles.guestCard, { backgroundColor: theme.colors.surface }]}>
-                <View style={[styles.guestIconContainer, { backgroundColor: theme.colors.textSecondary }]}>
-                  <Eye size={24} color={theme.colors.background} />
-                </View>
-                <Text style={[styles.guestTitle, { color: theme.colors.text }]}>
-                  Just Browsing?
-                </Text>
-                <Text style={[styles.guestDescription, { color: theme.colors.textSecondary }]}>
-                  Explore venues and features without signing up
-                </Text>
-                <Button
-                  title="Continue as Guest"
-                  onPress={handleContinueAsGuest}
-                  variant="ghost"
-                  style={styles.guestButton}
-                />
-              </View>
+                variant="ghost"
+                size="sm"
+              />
             </View>
-          </View>
-
-
-        <View style={styles.loginContainer}>
-          <Text style={[styles.loginText, { color: theme.colors.textSecondary }]}>
-            Already have an account?
-          </Text>
-          <Button
-            title="Sign In"
-            onPress={() => router.push('/auth/login')}
-            variant="ghost"
-            size="sm"
-          />
-        </View>
-        </LinearGradient>
+          </LinearGradient>
         </ScrollView>
       </ThemedView>
     </SafeAreaView>

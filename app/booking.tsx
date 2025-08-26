@@ -15,6 +15,7 @@ import { addBooking } from '@/store/slices/bookingSlice';
 import { RootState } from '@/store';
 import { ArrowLeft, Clock, MapPin, CreditCard } from 'lucide-react-native';
 import { TimeSlot } from '@/types';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Make Buffer available globally for web
 if (typeof global !== 'undefined') {
@@ -36,17 +37,17 @@ export default function BookingScreen() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { venueId, courtId } = useLocalSearchParams<{ venueId: string; courtId?: string }>();
-  
+
   const user = useSelector((state: RootState) => state.auth.user);
   const isGuest = useSelector((state: RootState) => state.auth.isGuest);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
   const [selectedCourt, setSelectedCourt] = useState(courtId || '');
-  
+
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  
+
   const venue = mockVenues.find(v => v.id === venueId);
-  
+
   // Redirect guests to login
   if (isGuest) {
     return (
@@ -132,7 +133,7 @@ export default function BookingScreen() {
   const createPhonePePayment = async (amount: number, transactionId: string) => {
     try {
       console.log('Initiating PhonePe payment:', { amount, transactionId });
-      
+
       const paymentData = {
         merchantId: PHONEPE_CONFIG.merchantId,
         merchantTransactionId: transactionId,
@@ -152,12 +153,12 @@ export default function BookingScreen() {
       // Encode payload
       const payload = JSON.stringify(paymentData);
       const base64Payload = encodeBase64(payload);
-      
+
       console.log('Base64 payload:', base64Payload);
-      
+
       // Create checksum
       const checksumString = base64Payload + '/pg/v1/pay' + PHONEPE_CONFIG.saltKey;
-      
+
       // Generate SHA256 hash for checksum
       const sha256Hash = CryptoJS.SHA256(checksumString).toString();
       const checksum = sha256Hash + '###' + PHONEPE_CONFIG.saltIndex;
@@ -181,19 +182,19 @@ export default function BookingScreen() {
       });
 
       console.log('Response status:', response.status);
-      
+
       const result = await response.json();
       console.log('API Response:', result);
-      
+
       if (result.success && result.data?.instrumentResponse?.redirectInfo?.url) {
         // Open PhonePe payment page
         const paymentUrl = result.data.instrumentResponse.redirectInfo.url;
         console.log('Opening payment URL:', paymentUrl);
         await Linking.openURL(paymentUrl);
-        
+
         // Start polling for payment status
         pollPaymentStatus(transactionId);
-        
+
         return { success: true, transactionId };
       } else if (result.success && result.data?.instrumentResponse?.redirectInfo?.url) {
         // Handle different response structure
@@ -204,24 +205,24 @@ export default function BookingScreen() {
         return { success: true, transactionId };
       } else {
         console.error('Payment initiation failed:', result);
-        
+
         // For demo purposes, simulate successful payment after 3 seconds
         console.log('Simulating payment for demo...');
         setTimeout(() => {
           handlePaymentSuccess(transactionId);
         }, 3000);
-        
+
         return { success: true, transactionId };
       }
     } catch (error) {
       console.error('PhonePe payment error:', error);
-      
+
       // For demo purposes, simulate successful payment after 3 seconds
       console.log('Error occurred, simulating payment for demo...');
       setTimeout(() => {
         handlePaymentSuccess(transactionId);
       }, 3000);
-      
+
       return { success: true, transactionId };
     }
   };
@@ -234,7 +235,7 @@ export default function BookingScreen() {
     const checkStatus = async () => {
       try {
         console.log(`Checking payment status (attempt ${attempts + 1}/${maxAttempts}):`, transactionId);
-        
+
         const checksumString = `/pg/v1/status/${PHONEPE_CONFIG.merchantId}/${transactionId}` + PHONEPE_CONFIG.saltKey;
         const sha256Hash = CryptoJS.SHA256(checksumString).toString();
         const checksum = sha256Hash + '###' + PHONEPE_CONFIG.saltIndex;
@@ -254,7 +255,7 @@ export default function BookingScreen() {
 
         const result = await response.json();
         console.log('Status check response:', result);
-        
+
         if (result.success && result.data?.state === 'COMPLETED') {
           // Payment successful
           console.log('Payment completed successfully');
@@ -266,7 +267,7 @@ export default function BookingScreen() {
           handlePaymentFailure('Payment failed');
           return;
         }
-        
+
         // Continue polling if payment is still pending
         attempts++;
         if (attempts < maxAttempts) {
@@ -295,7 +296,7 @@ export default function BookingScreen() {
   const handlePaymentSuccess = (transactionId: string) => {
     console.log('Handling payment success:', transactionId);
     setIsProcessingPayment(false);
-    
+
     const newBooking = {
       id: Date.now().toString(),
       venueId: venue!.id,
@@ -313,7 +314,7 @@ export default function BookingScreen() {
 
     dispatch(addBooking(newBooking));
     Alert.alert(
-      'Payment Successful!', 
+      'Payment Successful!',
       `Your booking has been confirmed. Transaction ID: ${transactionId}`,
       [{ text: 'OK', onPress: () => router.back() }]
     );
@@ -334,23 +335,23 @@ export default function BookingScreen() {
 
     console.log('Starting booking process...');
     setIsProcessingPayment(true);
-    
+
     try {
       const transactionId = generateTransactionId();
       console.log('Generated transaction ID:', transactionId);
-      
+
       // Initiate PhonePe payment
       await createPhonePePayment(selectedTimeSlot.price, transactionId);
-      
+
     } catch (error) {
       console.error('Booking error:', error);
       setIsProcessingPayment(false);
       Alert.alert(
-        'Payment Error', 
+        'Payment Error',
         'Failed to initiate payment. For demo purposes, we\'ll simulate a successful payment.',
         [{ text: 'OK' }]
       );
-      
+
       // Simulate successful payment for demo
       const transactionId = generateTransactionId();
       setTimeout(() => {
@@ -360,213 +361,215 @@ export default function BookingScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Book Venue
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Venue Info */}
-        <View style={[styles.venueInfo, { backgroundColor: theme.colors.background }]}>
-          <ThemedText size="xl" weight="bold">
-            {venue.name}
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Book Venue
           </ThemedText>
-          <View style={styles.venueDetails}>
-            <MapPin size={16} color={theme.colors.textSecondary} />
-            <ThemedText variant="secondary" size="sm" style={styles.address}>
-              {venue.address}
+          <View style={{ width: 24 }} />
+        </View>
+
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Venue Info */}
+          <View style={[styles.venueInfo, { backgroundColor: theme.colors.background }]}>
+            <ThemedText size="xl" weight="bold">
+              {venue.name}
             </ThemedText>
+            <View style={styles.venueDetails}>
+              <MapPin size={16} color={theme.colors.textSecondary} />
+              <ThemedText variant="secondary" size="sm" style={styles.address}>
+                {venue.address}
+              </ThemedText>
+            </View>
           </View>
-        </View>
 
-        {/* Court Selection */}
-        <View style={styles.section}>
-          <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-            Select Court
-          </ThemedText>
-          <View style={styles.courtsContainer}>
-            {allCourts.map((court) => (
-              <TouchableOpacity
-                key={court.id}
-                style={[
-                  styles.courtCard,
-                  {
-                    backgroundColor: selectedCourt === court.id 
-                      ? theme.colors.primary 
-                      : theme.colors.surface,
-                    borderColor: selectedCourt === court.id 
-                      ? theme.colors.primary 
-                      : theme.colors.border,
-                  },
-                ]}
-                onPress={() => setSelectedCourt(court.id)}
-              >
-                <ThemedText 
-                  size="base" 
-                  weight="medium"
-                  style={{
-                    color: selectedCourt === court.id 
-                      ? theme.colors.accent 
-                      : theme.colors.text,
-                  }}
-                >
-                  {court.name}
-                </ThemedText>
-                <ThemedText 
-                  size="sm"
-                  style={{
-                    color: selectedCourt === court.id 
-                      ? theme.colors.accent 
-                      : theme.colors.textSecondary,
-                  }}
-                >
-                  <ThemedText>${court.hourlyRate}/hour</ThemedText>
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Date Selection */}
-        <View style={styles.section}>
-          <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-            Select Date
-          </ThemedText>
-          <Calendar
-            onDayPress={(day) => setSelectedDate(day.dateString)}
-            markedDates={{
-              [selectedDate]: {
-                selected: true,
-                selectedColor: theme.colors.primary,
-              },
-            }}
-            minDate={new Date().toISOString().split('T')[0]}
-            theme={{
-              backgroundColor: theme.colors.background,
-              calendarBackground: theme.colors.background,
-              textSectionTitleColor: theme.colors.text,
-              dayTextColor: theme.colors.text,
-              todayTextColor: theme.colors.primary,
-              selectedDayTextColor: theme.colors.accent,
-              monthTextColor: theme.colors.text,
-              arrowColor: theme.colors.primary,
-              textDisabledColor: theme.colors.textSecondary,
-            }}
-            style={styles.calendar}
-          />
-        </View>
-
-        {/* Time Selection */}
-        {selectedDate && (
+          {/* Court Selection */}
           <View style={styles.section}>
             <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
-              Select Time
+              Select Court
             </ThemedText>
-            <View style={styles.timeSlotsContainer}>
-              {timeSlots.map((slot) => (
+            <View style={styles.courtsContainer}>
+              {allCourts.map((court) => (
                 <TouchableOpacity
-                  key={slot.time}
+                  key={court.id}
                   style={[
-                    styles.timeSlot,
+                    styles.courtCard,
                     {
-                      backgroundColor: selectedTimeSlot?.time === slot.time
+                      backgroundColor: selectedCourt === court.id
                         ? theme.colors.primary
-                        : slot.available
-                        ? theme.colors.surface
-                        : theme.colors.border,
-                      borderColor: selectedTimeSlot?.time === slot.time
+                        : theme.colors.surface,
+                      borderColor: selectedCourt === court.id
                         ? theme.colors.primary
                         : theme.colors.border,
                     },
                   ]}
-                  onPress={() => slot.available && setSelectedTimeSlot(slot)}
-                  disabled={!slot.available}
+                  onPress={() => setSelectedCourt(court.id)}
                 >
-                  <Clock size={16} color={
-                    selectedTimeSlot?.time === slot.time
-                      ? theme.colors.accent
-                      : slot.available
-                      ? theme.colors.textSecondary
-                      : theme.colors.textSecondary
-                  } />
                   <ThemedText
-                    size="sm"
+                    size="base"
                     weight="medium"
                     style={{
-                      color: selectedTimeSlot?.time === slot.time
+                      color: selectedCourt === court.id
                         ? theme.colors.accent
-                        : slot.available
-                        ? theme.colors.text
-                        : theme.colors.textSecondary,
-                      marginLeft: 8,
+                        : theme.colors.text,
                     }}
                   >
-                    {slot.time}
+                    {court.name}
+                  </ThemedText>
+                  <ThemedText
+                    size="sm"
+                    style={{
+                      color: selectedCourt === court.id
+                        ? theme.colors.accent
+                        : theme.colors.textSecondary,
+                    }}
+                  >
+                    <ThemedText>${court.hourlyRate}/hour</ThemedText>
                   </ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-        )}
 
-        {/* Booking Summary */}
-        {selectedDate && selectedTimeSlot && selectedCourtData && (
-          <View style={[styles.summaryCard, { backgroundColor: theme.colors.background }]}>
-            <ThemedText size="lg" weight="bold" style={styles.summaryTitle}>
-              Booking Summary
+          {/* Date Selection */}
+          <View style={styles.section}>
+            <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
+              Select Date
             </ThemedText>
-            
-            <View style={styles.summaryRow}>
-              <ThemedText variant="secondary" size="sm">Court:</ThemedText>
-              <ThemedText size="sm" weight="medium">{selectedCourtData.name}</ThemedText>
-            </View>
-            
-            <View style={styles.summaryRow}>
-              <ThemedText variant="secondary" size="sm">Date:</ThemedText>
-              <ThemedText size="sm" weight="medium">
-                {new Date(selectedDate).toLocaleDateString()}
-              </ThemedText>
-            </View>
-            
-            <View style={styles.summaryRow}>
-              <ThemedText variant="secondary" size="sm">Time:</ThemedText>
-              <ThemedText size="sm" weight="medium">
-                {selectedTimeSlot.time} - {parseInt(selectedTimeSlot.time.split(':')[0]) + 1}:00
-              </ThemedText>
-            </View>
-            
-            <View style={[styles.summaryRow, styles.totalRow]}>
-              <ThemedText size="base" weight="bold">Total:</ThemedText>
-              <ThemedText size="base" weight="bold">
-                <ThemedText>${selectedTimeSlot.price}</ThemedText>
-              </ThemedText>
-            </View>
-
-            <Button
-              title={isProcessingPayment ? "Processing Payment..." : "Pay & Confirm Booking"}
-              onPress={handleBooking}
-              disabled={isProcessingPayment}
-              size="lg"
-              style={styles.confirmButton}
+            <Calendar
+              onDayPress={(day) => setSelectedDate(day.dateString)}
+              markedDates={{
+                [selectedDate]: {
+                  selected: true,
+                  selectedColor: theme.colors.primary,
+                },
+              }}
+              minDate={new Date().toISOString().split('T')[0]}
+              theme={{
+                backgroundColor: theme.colors.background,
+                calendarBackground: theme.colors.background,
+                textSectionTitleColor: theme.colors.text,
+                dayTextColor: theme.colors.text,
+                todayTextColor: theme.colors.primary,
+                selectedDayTextColor: theme.colors.accent,
+                monthTextColor: theme.colors.text,
+                arrowColor: theme.colors.primary,
+                textDisabledColor: theme.colors.textSecondary,
+              }}
+              style={styles.calendar}
             />
-            
-            {/* Payment Info */}
-            <View style={[styles.paymentInfo, { backgroundColor: theme.colors.surface }]}>
-              <CreditCard size={16} color={theme.colors.primary} />
-              <ThemedText size="xs" variant="secondary" style={styles.paymentText}>
-                Secure payment powered by PhonePe
-              </ThemedText>
-            </View>
           </View>
-        )}
-      </ScrollView>
-    </ThemedView>
+
+          {/* Time Selection */}
+          {selectedDate && (
+            <View style={styles.section}>
+              <ThemedText size="lg" weight="bold" style={styles.sectionTitle}>
+                Select Time
+              </ThemedText>
+              <View style={styles.timeSlotsContainer}>
+                {timeSlots.map((slot) => (
+                  <TouchableOpacity
+                    key={slot.time}
+                    style={[
+                      styles.timeSlot,
+                      {
+                        backgroundColor: selectedTimeSlot?.time === slot.time
+                          ? theme.colors.primary
+                          : slot.available
+                          ? theme.colors.surface
+                          : theme.colors.border,
+                        borderColor: selectedTimeSlot?.time === slot.time
+                          ? theme.colors.primary
+                          : theme.colors.border,
+                      },
+                    ]}
+                    onPress={() => slot.available && setSelectedTimeSlot(slot)}
+                    disabled={!slot.available}
+                  >
+                    <Clock size={16} color={
+                      selectedTimeSlot?.time === slot.time
+                        ? theme.colors.accent
+                        : slot.available
+                        ? theme.colors.textSecondary
+                        : theme.colors.textSecondary
+                    } />
+                    <ThemedText
+                      size="sm"
+                      weight="medium"
+                      style={{
+                        color: selectedTimeSlot?.time === slot.time
+                          ? theme.colors.accent
+                          : slot.available
+                          ? theme.colors.text
+                          : theme.colors.textSecondary,
+                        marginLeft: 8,
+                      }}
+                    >
+                      {slot.time}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Booking Summary */}
+          {selectedDate && selectedTimeSlot && selectedCourtData && (
+            <View style={[styles.summaryCard, { backgroundColor: theme.colors.background }]}>
+              <ThemedText size="lg" weight="bold" style={styles.summaryTitle}>
+                Booking Summary
+              </ThemedText>
+
+              <View style={styles.summaryRow}>
+                <ThemedText variant="secondary" size="sm">Court:</ThemedText>
+                <ThemedText size="sm" weight="medium">{selectedCourtData.name}</ThemedText>
+              </View>
+
+              <View style={styles.summaryRow}>
+                <ThemedText variant="secondary" size="sm">Date:</ThemedText>
+                <ThemedText size="sm" weight="medium">
+                  {new Date(selectedDate).toLocaleDateString()}
+                </ThemedText>
+              </View>
+
+              <View style={styles.summaryRow}>
+                <ThemedText variant="secondary" size="sm">Time:</ThemedText>
+                <ThemedText size="sm" weight="medium">
+                  {selectedTimeSlot.time} - {parseInt(selectedTimeSlot.time.split(':')[0]) + 1}:00
+                </ThemedText>
+              </View>
+
+              <View style={[styles.summaryRow, styles.totalRow]}>
+                <ThemedText size="base" weight="bold">Total:</ThemedText>
+                <ThemedText size="base" weight="bold">
+                  <ThemedText>${selectedTimeSlot.price}</ThemedText>
+                </ThemedText>
+              </View>
+
+              <Button
+                title={isProcessingPayment ? "Processing Payment..." : "Pay & Confirm Booking"}
+                onPress={handleBooking}
+                disabled={isProcessingPayment}
+                size="lg"
+                style={styles.confirmButton}
+              />
+
+              {/* Payment Info */}
+              <View style={[styles.paymentInfo, { backgroundColor: theme.colors.surface }]}>
+                <CreditCard size={16} color={theme.colors.primary} />
+                <ThemedText size="xs" variant="secondary" style={styles.paymentText}>
+                  Secure payment powered by PhonePe
+                </ThemedText>
+              </View>
+            </View>
+          )}
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -579,7 +582,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {
@@ -595,6 +598,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    marginTop:10
   },
   venueDetails: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,13 +8,15 @@ import { Button } from '@/components/ui/Button';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { useTheme } from '@/hooks/useTheme';
 import { loginSuccess } from '@/store/slices/authSlice';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Signup() {
   const router = useRouter();
   const dispatch = useDispatch();
   const theme = useTheme();
   const { role } = useLocalSearchParams<{ role?: 'player' | 'venue_owner' }>();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -101,236 +103,238 @@ export default function Signup() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ThemedView style={styles.container}>
-        <LinearGradient
-          colors={[theme.colors.primary, '#FFF8DC', theme.colors.background]}
-          style={styles.gradient}
-        >
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-            <View style={styles.content}>
-              {/* Logo */}
-              <View style={styles.logoContainer}>
-                <Image
-                  source={{ uri: 'https://ofside.in/assets/ofside-logo.png' }}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-              </View>
-
-              <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.colors.text }]}>
-                  Create Account
-                </Text>
-                <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-                  Enter your details to receive a verification code
-                </Text>
-              </View>
-
-              <View style={styles.form}>
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: theme.colors.text }]}>Full Name *</Text>
-                  <View style={styles.inputWrapper}>
-                    <User size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, { 
-                        color: theme.colors.text, 
-                        backgroundColor: theme.colors.background,
-                        borderColor: errors.name ? theme.colors.error : theme.colors.border 
-                      }]}
-                      value={formData.name}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, name: text });
-                        clearError('name');
-                      }}
-                      placeholder="Enter your full name"
-                      placeholderTextColor={theme.colors.textSecondary}
-                      autoComplete="name"
-                    />
-                  </View>
-                  {errors.name && (
-                    <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                      {errors.name}
-                    </Text>
-                  )}
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid
+      >
+        <ThemedView style={styles.container}>
+          <LinearGradient
+            colors={[theme.colors.primary, '#FFF8DC', theme.colors.background]}
+            style={styles.gradient}
+          >
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+              <View style={styles.content}>
+                {/* Logo */}
+                <View style={styles.logoContainer}>
+                  <Image
+                    source={{ uri: 'https://ofside.in/assets/ofside-logo.png' }}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
                 </View>
 
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: theme.colors.text }]}>Email Address *</Text>
-                  <View style={styles.inputWrapper}>
-                    <Mail size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, { 
-                        color: theme.colors.text, 
-                        backgroundColor: theme.colors.background,
-                        borderColor: errors.email ? theme.colors.error : theme.colors.border 
-                      }]}
-                      value={formData.email}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, email: text });
-                        clearError('email');
-                      }}
-                      placeholder="Enter your email address"
-                      placeholderTextColor={theme.colors.textSecondary}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                    />
-                  </View>
-                  {errors.email && (
-                    <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                      {errors.email}
-                    </Text>
-                  )}
+                <View style={styles.header}>
+                  <Text style={[styles.title, { color: theme.colors.text }]}>
+                    Create Account
+                  </Text>
+                  <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+                    Enter your details to receive a verification code
+                  </Text>
                 </View>
 
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: theme.colors.text }]}>Phone Number *</Text>
-                  <View style={styles.inputWrapper}>
-                    <Phone size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, { 
-                        color: theme.colors.text, 
-                        backgroundColor: theme.colors.background,
-                        borderColor: errors.phone ? theme.colors.error : theme.colors.border 
-                      }]}
-                      value={formData.phone}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, phone: text });
-                        clearError('phone');
-                      }}
-                      placeholder="Enter your phone number"
-                      placeholderTextColor={theme.colors.textSecondary}
-                      keyboardType="phone-pad"
-                      autoComplete="tel"
-                    />
+                <View style={styles.form}>
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.label, { color: theme.colors.text }]}>Full Name *</Text>
+                    <View style={styles.inputWrapper}>
+                      <User size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                      <TextInput
+                        style={[styles.input, {
+                          color: theme.colors.text,
+                          backgroundColor: theme.colors.background,
+                          borderColor: errors.name ? theme.colors.error : theme.colors.border
+                        }]}
+                        value={formData.name}
+                        onChangeText={(text) => {
+                          setFormData({ ...formData, name: text });
+                          clearError('name');
+                        }}
+                        placeholder="Enter your full name"
+                        placeholderTextColor={theme.colors.textSecondary}
+                        autoComplete="name"
+                      />
+                    </View>
+                    {errors.name && (
+                      <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                        {errors.name}
+                      </Text>
+                    )}
                   </View>
-                  {errors.phone && (
-                    <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                      {errors.phone}
-                    </Text>
-                  )}
-                </View>
 
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: theme.colors.text }]}>Referral Code (Optional)</Text>
-                  <View style={styles.inputWrapper}>
-                    <Gift size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, { 
-                        color: theme.colors.text, 
-                        backgroundColor: theme.colors.background,
-                        borderColor: theme.colors.border 
-                      }]}
-                      value={formData.referralCode}
-                      onChangeText={(text) => setFormData({ ...formData, referralCode: text })}
-                      placeholder="Enter referral code"
-                      placeholderTextColor={theme.colors.textSecondary}
-                      autoCapitalize="characters"
-                    />
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.label, { color: theme.colors.text }]}>Email Address *</Text>
+                    <View style={styles.inputWrapper}>
+                      <Mail size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                      <TextInput
+                        style={[styles.input, {
+                          color: theme.colors.text,
+                          backgroundColor: theme.colors.background,
+                          borderColor: errors.email ? theme.colors.error : theme.colors.border
+                        }]}
+                        value={formData.email}
+                        onChangeText={(text) => {
+                          setFormData({ ...formData, email: text });
+                          clearError('email');
+                        }}
+                        placeholder="Enter your email address"
+                        placeholderTextColor={theme.colors.textSecondary}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                      />
+                    </View>
+                    {errors.email && (
+                      <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                        {errors.email}
+                      </Text>
+                    )}
                   </View>
-                </View>
 
-                {/* Checkboxes */}
-                <View style={styles.checkboxContainer}>
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.label, { color: theme.colors.text }]}>Phone Number *</Text>
+                    <View style={styles.inputWrapper}>
+                      <Phone size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                      <TextInput
+                        style={[styles.input, {
+                          color: theme.colors.text,
+                          backgroundColor: theme.colors.background,
+                          borderColor: errors.phone ? theme.colors.error : theme.colors.border
+                        }]}
+                        value={formData.phone}
+                        onChangeText={(text) => {
+                          setFormData({ ...formData, phone: text });
+                          clearError('phone');
+                        }}
+                        placeholder="Enter your phone number"
+                        placeholderTextColor={theme.colors.textSecondary}
+                        keyboardType="phone-pad"
+                        autoComplete="tel"
+                      />
+                    </View>
+                    {errors.phone && (
+                      <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                        {errors.phone}
+                      </Text>
+                    )}
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.label, { color: theme.colors.text }]}>Referral Code (Optional)</Text>
+                    <View style={styles.inputWrapper}>
+                      <Gift size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                      <TextInput
+                        style={[styles.input, {
+                          color: theme.colors.text,
+                          backgroundColor: theme.colors.background,
+                          borderColor: theme.colors.border
+                        }]}
+                        value={formData.referralCode}
+                        onChangeText={(text) => setFormData({ ...formData, referralCode: text })}
+                        placeholder="Enter referral code"
+                        placeholderTextColor={theme.colors.textSecondary}
+                        autoCapitalize="characters"
+                      />
+                    </View>
+                  </View>
+
+                  {/* Checkboxes */}
+                  <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                      style={styles.checkboxRow}
+                      onPress={() => setWhatsappUpdates(!whatsappUpdates)}
+                    >
+                      <View style={[
+                        styles.checkbox,
+                        {
+                          backgroundColor: whatsappUpdates ? theme.colors.primary : 'transparent',
+                          borderColor: theme.colors.border,
+                        }
+                      ]}>
+                        {whatsappUpdates && <Check size={16} color={theme.colors.accent} />}
+                      </View>
+                      <Text style={[styles.checkboxText, { color: theme.colors.text }]}>
+                        Get updates on WhatsApp
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.checkboxRow}
+                      onPress={() => setOfsideUpdates(!ofsideUpdates)}
+                    >
+                      <View style={[
+                        styles.checkbox,
+                        {
+                          backgroundColor: ofsideUpdates ? theme.colors.primary : 'transparent',
+                          borderColor: theme.colors.border,
+                        }
+                      ]}>
+                        {ofsideUpdates && <Check size={16} color={theme.colors.accent} />}
+                      </View>
+                      <Text style={[styles.checkboxText, { color: theme.colors.text }]}>
+                        Receive updates from Ofside
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <Button
+                    title={isLoading ? "Sending Code..." : "Send Verification Code"}
+                    onPress={handleSignup}
+                    disabled={isLoading}
+                    size="lg"
+                    style={styles.signupButton}
+                  />
+
+                  {/* Terms Agreement */}
                   <TouchableOpacity
-                    style={styles.checkboxRow}
-                    onPress={() => setWhatsappUpdates(!whatsappUpdates)}
+                    style={styles.termsContainer}
+                    onPress={() => {
+                      setAgreeTerms(!agreeTerms);
+                      clearError('terms');
+                    }}
                   >
                     <View style={[
                       styles.checkbox,
                       {
-                        backgroundColor: whatsappUpdates ? theme.colors.primary : 'transparent',
-                        borderColor: theme.colors.border,
+                        backgroundColor: agreeTerms ? theme.colors.primary : 'transparent',
+                        borderColor: errors.terms ? theme.colors.error : theme.colors.border,
                       }
                     ]}>
-                      {whatsappUpdates && <Check size={16} color={theme.colors.accent} />}
+                      {agreeTerms && <Check size={16} color={theme.colors.accent} />}
                     </View>
-                    <Text style={[styles.checkboxText, { color: theme.colors.text }]}>
-                      Get updates on WhatsApp
+                    <Text style={[styles.termsText, { color: theme.colors.text }]}>
+                      I agree to the{' '}
+                      <Text style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}>
+                        Terms of Use
+                      </Text>
+                      {' '}and{' '}
+                      <Text style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}>
+                        Privacy Policy
+                      </Text>
                     </Text>
                   </TouchableOpacity>
+                  {errors.terms && (
+                    <Text style={[styles.errorText, { color: theme.colors.error, textAlign: 'center' }]}>
+                      {errors.terms}
+                    </Text>
+                  )}
+                </View>
 
-                  <TouchableOpacity
-                    style={styles.checkboxRow}
-                    onPress={() => setOfsideUpdates(!ofsideUpdates)}
-                  >
-                    <View style={[
-                      styles.checkbox,
-                      {
-                        backgroundColor: ofsideUpdates ? theme.colors.primary : 'transparent',
-                        borderColor: theme.colors.border,
-                      }
-                    ]}>
-                      {ofsideUpdates && <Check size={16} color={theme.colors.accent} />}
-                    </View>
-                    <Text style={[styles.checkboxText, { color: theme.colors.text }]}>
-                      Receive updates from Ofside
+                <View style={styles.footer}>
+                  <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>
+                    Already have an account?
+                  </Text>
+                  <TouchableOpacity onPress={() => router.push('/auth/login')}>
+                    <Text style={[styles.loginLink, { color: theme.colors.primary }]}>
+                      Sign In
                     </Text>
                   </TouchableOpacity>
                 </View>
-
-                <Button
-                  title={isLoading ? "Sending Code..." : "Send Verification Code"}
-                  onPress={handleSignup}
-                  disabled={isLoading}
-                  size="lg"
-                  style={styles.signupButton}
-                />
-
-                {/* Terms Agreement */}
-                <TouchableOpacity
-                  style={styles.termsContainer}
-                  onPress={() => {
-                    setAgreeTerms(!agreeTerms);
-                    clearError('terms');
-                  }}
-                >
-                  <View style={[
-                    styles.checkbox,
-                    {
-                      backgroundColor: agreeTerms ? theme.colors.primary : 'transparent',
-                      borderColor: errors.terms ? theme.colors.error : theme.colors.border,
-                    }
-                  ]}>
-                    {agreeTerms && <Check size={16} color={theme.colors.accent} />}
-                  </View>
-                  <Text style={[styles.termsText, { color: theme.colors.text }]}>
-                    I agree to the{' '}
-                    <Text style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}>
-                      Terms of Use
-                    </Text>
-                    {' '}and{' '}
-                    <Text style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}>
-                      Privacy Policy
-                    </Text>
-                  </Text>
-                </TouchableOpacity>
-                {errors.terms && (
-                  <Text style={[styles.errorText, { color: theme.colors.error, textAlign: 'center' }]}>
-                    {errors.terms}
-                  </Text>
-                )}
               </View>
-
-              <View style={styles.footer}>
-                <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>
-                  Already have an account?
-                </Text>
-                <TouchableOpacity onPress={() => router.push('/auth/login')}>
-                  <Text style={[styles.loginLink, { color: theme.colors.primary }]}>
-                    Sign In
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
-        </LinearGradient>
-      </ThemedView>
-    </KeyboardAvoidingView>
+            </ScrollView>
+          </LinearGradient>
+        </ThemedView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }
 

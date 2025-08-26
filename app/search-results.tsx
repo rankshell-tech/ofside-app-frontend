@@ -16,6 +16,7 @@ import { sports } from '@/constants/theme';
 import { SportType, Venue } from '@/types';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, runOnJS } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SortOption = 'relevance' | 'rating' | 'price_low' | 'price_high' | 'distance';
 type CategoryType = 'all' | 'team' | 'individual';
@@ -26,7 +27,7 @@ export default function SearchResults() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { query } = useLocalSearchParams<{ query: string }>();
-  
+
   const { venues, searchQuery, selectedSports } = useSelector((state: RootState) => state.venues);
   const [localSearchQuery, setLocalSearchQuery] = useState(query || searchQuery);
   const [showFilters, setShowFilters] = useState(false);
@@ -77,7 +78,7 @@ export default function SearchResults() {
   const getCourtType = (venue: Venue): CourtType[] => {
     // Mock court types based on venue - in real app this would come from venue data
     const courtTypes: CourtType[] = [];
-    
+
     venue.facilities.forEach(facility => {
       switch (facility.sport) {
         case 'football':
@@ -98,20 +99,20 @@ export default function SearchResults() {
           courtTypes.push('outdoor');
       }
     });
-    
+
     return [...new Set(courtTypes)]; // Remove duplicates
   };
 
   const filterVenues = (venues: Venue[]): Venue[] => {
     let filtered = venues.filter(venue => {
       // Text search
-      const matchesSearch = !localSearchQuery || 
+      const matchesSearch = !localSearchQuery ||
         venue.name.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
         venue.address.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
         venue.description.toLowerCase().includes(localSearchQuery.toLowerCase());
 
       // Sport filter
-      const matchesSport = selectedSports.length === 0 || 
+      const matchesSport = selectedSports.length === 0 ||
         venue.facilities.some(facility => selectedSports.includes(facility.sport));
 
       // Rating filter
@@ -122,7 +123,7 @@ export default function SearchResults() {
       const matchesPrice = minPrice >= minPrice && minPrice <= maxPrice;
 
       // Category filter
-      const matchesCategory = category === 'all' || 
+      const matchesCategory = category === 'all' ||
         venue.facilities.some(facility => getSportCategory(facility.sport) === category);
 
       // Court type filter
@@ -247,329 +248,331 @@ export default function SearchResults() {
   });
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <ThemedText size="lg" weight="bold">
-            Search Results
-          </ThemedText>
-          <ThemedText variant="secondary" size="sm">
-            {filteredVenues.length} venues found
-          </ThemedText>
-        </View>
-        <TouchableOpacity onPress={() => setShowFilters(true)}>
-          <Filter size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar */}
-      <SearchBar
-        value={localSearchQuery}
-        onChangeText={handleSearch}
-        placeholder="Search venues by name or location..."
-      />
-
-      {/* Active Filters */}
-      {hasActiveFilters && (
-        <View style={styles.activeFiltersContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.activeFilters}>
-            {selectedSports.map((sport) => {
-              const sportData = sports.find(s => s.id === sport);
-              return (
-                <TouchableOpacity
-                  key={sport}
-                  style={[styles.activeFilterChip, { backgroundColor: theme.colors.primary }]}
-                  onPress={() => dispatch(toggleSportFilter(sport))}
-                >
-                  <ThemedText size="xs" style={{ color: theme.colors.accent }}>
-                    {sportData?.name}
-                  </ThemedText>
-                  <X size={12} color={theme.colors.accent} style={styles.filterRemoveIcon} />
-                </TouchableOpacity>
-              );
-            })}
-            {sortBy !== 'relevance' && (
-              <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
-                <ThemedText size="xs" style={{ color: theme.colors.background }}>
-                  {sortOptions.find(o => o.value === sortBy)?.label}
-                </ThemedText>
-              </View>
-            )}
-            {(minPrice > 0 || maxPrice < 200) && (
-              <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
-                <ThemedText size="xs" style={{ color: theme.colors.background }}>
-                  ${minPrice} - ${maxPrice}
-                </ThemedText>
-              </View>
-            )}
-            {minRating > 0 && (
-              <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
-                <ThemedText size="xs" style={{ color: theme.colors.background }}>
-                  {ratingOptions.find(o => o.value === minRating)?.label}
-                </ThemedText>
-              </View>
-            )}
-            {category !== 'all' && (
-              <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
-                <ThemedText size="xs" style={{ color: theme.colors.background }}>
-                  {categoryOptions.find(o => o.value === category)?.label}
-                </ThemedText>
-              </View>
-            )}
-            {courtType !== 'all' && (
-              <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
-                <ThemedText size="xs" style={{ color: theme.colors.background }}>
-                  {courtTypeOptions.find(o => o.value === courtType)?.label}
-                </ThemedText>
-              </View>
-            )}
-          </ScrollView>
-          <TouchableOpacity onPress={clearAllFilters} style={styles.clearFiltersButton}>
-            <ThemedText size="xs" style={{ color: theme.colors.primary }}>
-              Clear All
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <View style={styles.headerTitle}>
+            <ThemedText size="lg" weight="bold">
+              Search Results
             </ThemedText>
+            <ThemedText variant="secondary" size="sm">
+              {filteredVenues.length} venues found
+            </ThemedText>
+          </View>
+          <TouchableOpacity onPress={() => setShowFilters(true)}>
+            <Filter size={24} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
-      )}
 
-      {/* Results */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {filteredVenues.length > 0 ? (
-          filteredVenues.map((venue) => (
-            <VenueCard
-              key={venue.id}
-              venue={venue}
-              onPress={() => router.push(`/venue/${venue.id}`)}
-            />
-          ))
-        ) : (
-          <View style={styles.emptyState}>
-            <ThemedText size="lg" weight="medium" style={styles.emptyTitle}>
-              No venues found
-            </ThemedText>
-            <ThemedText variant="secondary" size="base" style={styles.emptyDescription}>
-              Try adjusting your search terms or filters to find more venues.
-            </ThemedText>
-            <Button
-              title="Clear Filters"
-              onPress={clearAllFilters}
-              variant="outline"
-              style={styles.clearButton}
-            />
-          </View>
-        )}
-      </ScrollView>
+        {/* Search Bar */}
+        <SearchBar
+          value={localSearchQuery}
+          onChangeText={handleSearch}
+          placeholder="Search venues by name or location..."
+        />
 
-      {/* Filters Modal */}
-      <Modal
-        visible={showFilters}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowFilters(false)}
-      >
-        <ThemedView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <ThemedText size="lg" weight="bold">
-              Filters & Sorting
-            </ThemedText>
-            <TouchableOpacity onPress={() => setShowFilters(false)}>
-              <X size={24} color={theme.colors.text} />
+        {/* Active Filters */}
+        {hasActiveFilters && (
+          <View style={styles.activeFiltersContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.activeFilters}>
+              {selectedSports.map((sport) => {
+                const sportData = sports.find(s => s.id === sport);
+                return (
+                  <TouchableOpacity
+                    key={sport}
+                    style={[styles.activeFilterChip, { backgroundColor: theme.colors.primary }]}
+                    onPress={() => dispatch(toggleSportFilter(sport))}
+                  >
+                    <ThemedText size="xs" style={{ color: theme.colors.accent }}>
+                      {sportData?.name}
+                    </ThemedText>
+                    <X size={12} color={theme.colors.accent} style={styles.filterRemoveIcon} />
+                  </TouchableOpacity>
+                );
+              })}
+              {sortBy !== 'relevance' && (
+                <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
+                  <ThemedText size="xs" style={{ color: theme.colors.background }}>
+                    {sortOptions.find(o => o.value === sortBy)?.label}
+                  </ThemedText>
+                </View>
+              )}
+              {(minPrice > 0 || maxPrice < 200) && (
+                <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
+                  <ThemedText size="xs" style={{ color: theme.colors.background }}>
+                    ${minPrice} - ${maxPrice}
+                  </ThemedText>
+                </View>
+              )}
+              {minRating > 0 && (
+                <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
+                  <ThemedText size="xs" style={{ color: theme.colors.background }}>
+                    {ratingOptions.find(o => o.value === minRating)?.label}
+                  </ThemedText>
+                </View>
+              )}
+              {category !== 'all' && (
+                <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
+                  <ThemedText size="xs" style={{ color: theme.colors.background }}>
+                    {categoryOptions.find(o => o.value === category)?.label}
+                  </ThemedText>
+                </View>
+              )}
+              {courtType !== 'all' && (
+                <View style={[styles.activeFilterChip, { backgroundColor: theme.colors.accent }]}>
+                  <ThemedText size="xs" style={{ color: theme.colors.background }}>
+                    {courtTypeOptions.find(o => o.value === courtType)?.label}
+                  </ThemedText>
+                </View>
+              )}
+            </ScrollView>
+            <TouchableOpacity onPress={clearAllFilters} style={styles.clearFiltersButton}>
+              <ThemedText size="xs" style={{ color: theme.colors.primary }}>
+                Clear All
+              </ThemedText>
             </TouchableOpacity>
           </View>
+        )}
 
-          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
-            {/* Sort By */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Sort By
+        {/* Results */}
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {filteredVenues.length > 0 ? (
+            filteredVenues.map((venue) => (
+              <VenueCard
+                key={venue.id}
+                venue={venue}
+                onPress={() => router.push(`/venue/${venue.id}`)}
+              />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <ThemedText size="lg" weight="medium" style={styles.emptyTitle}>
+                No venues found
               </ThemedText>
-              <View style={styles.optionsContainer}>
-                {sortOptions.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.optionButton,
-                      {
-                        backgroundColor: sortBy === option.value ? theme.colors.primary : theme.colors.surface,
-                        borderColor: sortBy === option.value ? theme.colors.primary : theme.colors.border,
-                      },
-                    ]}
-                    onPress={() => setSortBy(option.value as SortOption)}
-                  >
-                    <ThemedText
-                      size="sm"
-                      style={{
-                        color: sortBy === option.value ? theme.colors.accent : theme.colors.text,
-                      }}
+              <ThemedText variant="secondary" size="base" style={styles.emptyDescription}>
+                Try adjusting your search terms or filters to find more venues.
+              </ThemedText>
+              <Button
+                title="Clear Filters"
+                onPress={clearAllFilters}
+                variant="outline"
+                style={styles.clearButton}
+              />
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Filters Modal */}
+        <Modal
+          visible={showFilters}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => setShowFilters(false)}
+        >
+          <ThemedView style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <ThemedText size="lg" weight="bold">
+                Filters & Sorting
+              </ThemedText>
+              <TouchableOpacity onPress={() => setShowFilters(false)}>
+                <X size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              {/* Sort By */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Sort By
+                </ThemedText>
+                <View style={styles.optionsContainer}>
+                  {sortOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.optionButton,
+                        {
+                          backgroundColor: sortBy === option.value ? theme.colors.primary : theme.colors.surface,
+                          borderColor: sortBy === option.value ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => setSortBy(option.value as SortOption)}
                     >
-                      {option.label}
-                    </ThemedText>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            {/* Sports Filter */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Sports
-              </ThemedText>
-              <View style={styles.sportsContainer}>
-                {sports.map((sport) => (
-                  <SportChip
-                    key={sport.id}
-                    sport={sport.id as SportType}
-                    selected={selectedSports.includes(sport.id as SportType)}
-                    onPress={() => dispatch(toggleSportFilter(sport.id as SportType))}
-                  />
-                ))}
-              </View>
-            </View>
-
-            {/* Price Range */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Price Range (${minPrice} - ${maxPrice})
-              </ThemedText>
-              <View style={styles.sliderContainer}>
-                <View style={styles.sliderLabels}>
-                  <ThemedText variant="secondary" size="xs">$0</ThemedText>
-                  <ThemedText variant="secondary" size="xs">$200+</ThemedText>
+                      <ThemedText
+                        size="sm"
+                        style={{
+                          color: sortBy === option.value ? theme.colors.accent : theme.colors.text,
+                        }}
+                      >
+                        {option.label}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
                 </View>
-                <View style={styles.sliderWrapper}>
-                  <View style={[styles.sliderTrack, { backgroundColor: theme.colors.border }]} />
-                  <Animated.View style={[styles.sliderActiveTrack, { backgroundColor: theme.colors.primary }, sliderTrackStyle]} />
-                  
-                  <PanGestureHandler onGestureEvent={minPriceGestureHandler}>
-                    <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, minPriceAnimatedStyle]}>
-                      <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
-                    </Animated.View>
-                  </PanGestureHandler>
-                  
-                  <PanGestureHandler onGestureEvent={maxPriceGestureHandler}>
-                    <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, maxPriceAnimatedStyle]}>
-                      <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
-                    </Animated.View>
-                  </PanGestureHandler>
+              </View>
+
+              {/* Sports Filter */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Sports
+                </ThemedText>
+                <View style={styles.sportsContainer}>
+                  {sports.map((sport) => (
+                    <SportChip
+                      key={sport.id}
+                      sport={sport.id as SportType}
+                      selected={selectedSports.includes(sport.id as SportType)}
+                      onPress={() => dispatch(toggleSportFilter(sport.id as SportType))}
+                    />
+                  ))}
                 </View>
               </View>
-            </View>
 
-            {/* Rating Filter */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Minimum Rating
-              </ThemedText>
-              <View style={styles.optionsContainer}>
-                {ratingOptions.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.optionButton,
-                      {
-                        backgroundColor: minRating === option.value ? theme.colors.primary : theme.colors.surface,
-                        borderColor: minRating === option.value ? theme.colors.primary : theme.colors.border,
-                      },
-                    ]}
-                    onPress={() => setMinRating(option.value)}
-                  >
-                    <ThemedText
-                      size="sm"
-                      style={{
-                        color: minRating === option.value ? theme.colors.accent : theme.colors.text,
-                      }}
-                    >
-                      {option.label}
-                    </ThemedText>
-                  </TouchableOpacity>
-                ))}
+              {/* Price Range */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Price Range (${minPrice} - ${maxPrice})
+                </ThemedText>
+                <View style={styles.sliderContainer}>
+                  <View style={styles.sliderLabels}>
+                    <ThemedText variant="secondary" size="xs">$0</ThemedText>
+                    <ThemedText variant="secondary" size="xs">$200+</ThemedText>
+                  </View>
+                  <View style={styles.sliderWrapper}>
+                    <View style={[styles.sliderTrack, { backgroundColor: theme.colors.border }]} />
+                    <Animated.View style={[styles.sliderActiveTrack, { backgroundColor: theme.colors.primary }, sliderTrackStyle]} />
+
+                    <PanGestureHandler onGestureEvent={minPriceGestureHandler}>
+                      <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, minPriceAnimatedStyle]}>
+                        <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
+                      </Animated.View>
+                    </PanGestureHandler>
+
+                    <PanGestureHandler onGestureEvent={maxPriceGestureHandler}>
+                      <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, maxPriceAnimatedStyle]}>
+                        <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
+                      </Animated.View>
+                    </PanGestureHandler>
+                  </View>
+                </View>
               </View>
-            </View>
 
-            {/* Category Filter */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Category
-              </ThemedText>
-              <View style={styles.optionsContainer}>
-                {categoryOptions.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.optionButton,
-                      {
-                        backgroundColor: category === option.value ? theme.colors.primary : theme.colors.surface,
-                        borderColor: category === option.value ? theme.colors.primary : theme.colors.border,
-                      },
-                    ]}
-                    onPress={() => setCategory(option.value as CategoryType)}
-                  >
-                    <ThemedText
-                      size="sm"
-                      style={{
-                        color: category === option.value ? theme.colors.accent : theme.colors.text,
-                      }}
+              {/* Rating Filter */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Minimum Rating
+                </ThemedText>
+                <View style={styles.optionsContainer}>
+                  {ratingOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.optionButton,
+                        {
+                          backgroundColor: minRating === option.value ? theme.colors.primary : theme.colors.surface,
+                          borderColor: minRating === option.value ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => setMinRating(option.value)}
                     >
-                      {option.label}
-                    </ThemedText>
-                  </TouchableOpacity>
-                ))}
+                      <ThemedText
+                        size="sm"
+                        style={{
+                          color: minRating === option.value ? theme.colors.accent : theme.colors.text,
+                        }}
+                      >
+                        {option.label}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-            </View>
 
-            {/* Court Type Filter */}
-            <View style={styles.filterSection}>
-              <ThemedText size="base" weight="bold" style={styles.filterTitle}>
-                Type of Court
-              </ThemedText>
-              <View style={styles.optionsContainer}>
-                {courtTypeOptions.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.optionButton,
-                      {
-                        backgroundColor: courtType === option.value ? theme.colors.primary : theme.colors.surface,
-                        borderColor: courtType === option.value ? theme.colors.primary : theme.colors.border,
-                      },
-                    ]}
-                    onPress={() => setCourtType(option.value as CourtType)}
-                  >
-                    <ThemedText
-                      size="sm"
-                      style={{
-                        color: courtType === option.value ? theme.colors.accent : theme.colors.text,
-                      }}
+              {/* Category Filter */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Category
+                </ThemedText>
+                <View style={styles.optionsContainer}>
+                  {categoryOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.optionButton,
+                        {
+                          backgroundColor: category === option.value ? theme.colors.primary : theme.colors.surface,
+                          borderColor: category === option.value ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => setCategory(option.value as CategoryType)}
                     >
-                      {option.label}
-                    </ThemedText>
-                  </TouchableOpacity>
-                ))}
+                      <ThemedText
+                        size="sm"
+                        style={{
+                          color: category === option.value ? theme.colors.accent : theme.colors.text,
+                        }}
+                      >
+                        {option.label}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-            </View>
-          </ScrollView>
 
-          {/* Modal Footer */}
-          <View style={styles.modalFooter}>
-            <Button
-              title="Clear All"
-              onPress={clearAllFilters}
-              variant="outline"
-              style={styles.modalButton}
-            />
-            <Button
-              title="Apply Filters"
-              onPress={() => setShowFilters(false)}
-              style={styles.modalButton}
-            />
-          </View>
-        </ThemedView>
-      </Modal>
-    </ThemedView>
+              {/* Court Type Filter */}
+              <View style={styles.filterSection}>
+                <ThemedText size="base" weight="bold" style={styles.filterTitle}>
+                  Type of Court
+                </ThemedText>
+                <View style={styles.optionsContainer}>
+                  {courtTypeOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.optionButton,
+                        {
+                          backgroundColor: courtType === option.value ? theme.colors.primary : theme.colors.surface,
+                          borderColor: courtType === option.value ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => setCourtType(option.value as CourtType)}
+                    >
+                      <ThemedText
+                        size="sm"
+                        style={{
+                          color: courtType === option.value ? theme.colors.accent : theme.colors.text,
+                        }}
+                      >
+                        {option.label}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Modal Footer */}
+            <View style={styles.modalFooter}>
+              <Button
+                title="Clear All"
+                onPress={clearAllFilters}
+                variant="outline"
+                style={styles.modalButton}
+              />
+              <Button
+                title="Apply Filters"
+                onPress={() => setShowFilters(false)}
+                style={styles.modalButton}
+              />
+            </View>
+          </ThemedView>
+        </Modal>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -582,7 +585,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 5,
     paddingBottom: 20,
   },
   headerTitle: {

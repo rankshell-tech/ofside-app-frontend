@@ -10,29 +10,30 @@ import { useTheme } from '@/hooks/useTheme';
 import { toggleTheme } from '@/store/slices/themeSlice';
 import { logout } from '@/store/slices/authSlice';
 import { User, Moon, Sun, Settings, CircleHelp as HelpCircle, LogOut, CreditCard as Edit3, Bell, CreditCard, Shield } from 'lucide-react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
   const theme = useTheme();
-  
+
   const user = useSelector((state: RootState) => state.auth.user);
   const isGuest = useSelector((state: RootState) => state.auth.isGuest);
   const isDark = useSelector((state: RootState) => state.theme.isDark);
 
   const handleLogout = () => {
     const actionText = isGuest ? 'Exit Guest Mode' : 'Logout';
-    const messageText = isGuest 
-      ? 'Are you sure you want to exit guest mode?' 
+    const messageText = isGuest
+      ? 'Are you sure you want to exit guest mode?'
       : 'Are you sure you want to logout?';
-    
+
     Alert.alert(
       actionText,
       messageText,
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: actionText, 
+        {
+          text: actionText,
           style: 'destructive',
           onPress: () => {
             dispatch(logout());
@@ -61,7 +62,7 @@ export default function ProfileScreen() {
                 <User size={40} color={theme.colors.accent} />
               </View>
             </View>
-            
+
             <View style={styles.userInfo}>
               <ThemedText size="lg" weight="bold">
                 Guest User
@@ -121,7 +122,7 @@ export default function ProfileScreen() {
             </View>
             <TouchableOpacity
               style={[
-                styles.themeToggle, 
+                styles.themeToggle,
                 { backgroundColor: isDark ? theme.colors.primary : theme.colors.border }
               ]}
               onPress={() => dispatch(toggleTheme())}
@@ -195,7 +196,6 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <ThemedText size="2xl" weight="bold">
             Profile
@@ -209,11 +209,11 @@ export default function ProfileScreen() {
               <Image source={{ uri: user.avatar }} style={styles.avatar} />
             ) : (
               <View style={[styles.avatarPlaceholder, { backgroundColor: theme.colors.primary }]}>
-                <User size={40} color={theme.colors.accent} />
+                <FontAwesome name="user" size={40} color={theme.colors.accent} />
               </View>
             )}
           </View>
-          
+
           <View style={styles.userInfo}>
             <ThemedText size="lg" weight="bold">
               {user?.name}
@@ -228,6 +228,7 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 
         {/* Theme Toggle */}
         <View style={[styles.themeCard, { backgroundColor: theme.colors.background }]}>
@@ -248,7 +249,7 @@ export default function ProfileScreen() {
           </View>
           <TouchableOpacity
             style={[
-              styles.themeToggle, 
+              styles.themeToggle,
               { backgroundColor: isDark ? theme.colors.primary : theme.colors.border }
             ]}
             onPress={() => dispatch(toggleTheme())}
@@ -373,6 +374,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    margin: 8
   },
   themeText: {
     marginLeft: 12,

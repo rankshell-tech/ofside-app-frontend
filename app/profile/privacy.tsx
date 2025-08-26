@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/ui/ThemedText';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { ArrowLeft, Shield, Eye, Users, MapPin, Bell, Trash2 } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PrivacySettings() {
   const router = useRouter();
@@ -81,128 +82,130 @@ export default function PrivacySettings() {
   ];
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <ThemedText size="lg" weight="bold">
-          Privacy & Security
-        </ThemedText>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Privacy Controls
-          </ThemedText>
-          <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
-            Control how your information is shared and used
-          </ThemedText>
-        </View>
-
-        <View style={styles.settingsContainer}>
-          {privacyOptions.map((item) => (
-            <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
-              <View style={styles.settingIcon}>
-                {item.icon}
-              </View>
-              <View style={styles.settingContent}>
-                <ThemedText size="base" weight="medium">
-                  {item.title}
-                </ThemedText>
-                <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
-                  {item.description}
-                </ThemedText>
-              </View>
-              <Switch
-                value={privacySettings[item.key]}
-                onValueChange={() => toggleSetting(item.key)}
-                trackColor={{ 
-                  false: theme.colors.border, 
-                  true: theme.colors.primary 
-                }}
-                thumbColor={privacySettings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
-              />
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.section}>
-          <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
-            Data Management
-          </ThemedText>
-        </View>
-
-        <View style={styles.dataManagementContainer}>
-          <TouchableOpacity 
-            style={[styles.dataItem, { backgroundColor: theme.colors.background }]}
-            onPress={() => Alert.alert('Export Data', 'Your data export will be sent to your email address within 24 hours.')}
-          >
-            <View style={styles.dataIcon}>
-              <Shield size={20} color={theme.colors.primary} />
-            </View>
-            <View style={styles.dataContent}>
-              <ThemedText size="base" weight="medium">
-                Export My Data
-              </ThemedText>
-              <ThemedText variant="secondary" size="sm">
-                Download a copy of your personal data
-              </ThemedText>
-            </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color={theme.colors.text} />
           </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[styles.dataItem, { backgroundColor: theme.colors.background }]}
-            onPress={() => Alert.alert('Clear Cache', 'App cache has been cleared successfully.')}
-          >
-            <View style={styles.dataIcon}>
-              <Trash2 size={20} color={theme.colors.textSecondary} />
-            </View>
-            <View style={styles.dataContent}>
-              <ThemedText size="base" weight="medium">
-                Clear App Data
-              </ThemedText>
-              <ThemedText variant="secondary" size="sm">
-                Clear cached data and temporary files
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
+          <ThemedText size="lg" weight="bold">
+            Privacy & Security
+          </ThemedText>
+          <View style={{ width: 24 }} />
         </View>
 
-        <View style={[styles.warningCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.warningTitle}>
-            ⚠️ Account Deletion
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.warningText}>
-            Deleting your account will permanently remove all your data, bookings, and profile information. This action cannot be undone.
-          </ThemedText>
-          <Button
-            title="Delete Account"
-            onPress={handleDeleteAccount}
-            variant="outline"
-            size="sm"
-            style={[styles.deleteButton, { borderColor: theme.colors.error }]}
-            textStyle={{ color: theme.colors.error }}
-          />
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
-            Privacy Policy
-          </ThemedText>
-          <ThemedText variant="secondary" size="xs" style={styles.infoText}>
-            You can manage notification permissions in your device settings. Go to Settings > Apps > Ofside > Notifications to control system-level notification settings.
-          </ThemedText>
-          <TouchableOpacity style={styles.linkButton}>
-            <ThemedText size="xs" style={{ color: theme.colors.primary }}>
-              Read Privacy Policy
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Privacy Controls
             </ThemedText>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ThemedView>
+            <ThemedText variant="secondary" size="sm" style={styles.sectionDescription}>
+              Control how your information is shared and used
+            </ThemedText>
+          </View>
+
+          <View style={styles.settingsContainer}>
+            {privacyOptions.map((item) => (
+              <View key={item.key} style={[styles.settingItem, { backgroundColor: theme.colors.background }]}>
+                <View style={styles.settingIcon}>
+                  {item.icon}
+                </View>
+                <View style={styles.settingContent}>
+                  <ThemedText size="base" weight="medium">
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText variant="secondary" size="sm" style={styles.settingDescription}>
+                    {item.description}
+                  </ThemedText>
+                </View>
+                <Switch
+                  value={privacySettings[item.key]}
+                  onValueChange={() => toggleSetting(item.key)}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary
+                  }}
+                  thumbColor={privacySettings[item.key] ? theme.colors.accent : theme.colors.textSecondary}
+                />
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText size="base" weight="medium" style={styles.sectionTitle}>
+              Data Management
+            </ThemedText>
+          </View>
+
+          <View style={styles.dataManagementContainer}>
+            <TouchableOpacity
+              style={[styles.dataItem, { backgroundColor: theme.colors.background }]}
+              onPress={() => Alert.alert('Export Data', 'Your data export will be sent to your email address within 24 hours.')}
+            >
+              <View style={styles.dataIcon}>
+                <Shield size={20} color={theme.colors.primary} />
+              </View>
+              <View style={styles.dataContent}>
+                <ThemedText size="base" weight="medium">
+                  Export My Data
+                </ThemedText>
+                <ThemedText variant="secondary" size="sm">
+                  Download a copy of your personal data
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.dataItem, { backgroundColor: theme.colors.background }]}
+              onPress={() => Alert.alert('Clear Cache', 'App cache has been cleared successfully.')}
+            >
+              <View style={styles.dataIcon}>
+                <Trash2 size={20} color={theme.colors.textSecondary} />
+              </View>
+              <View style={styles.dataContent}>
+                <ThemedText size="base" weight="medium">
+                  Clear App Data
+                </ThemedText>
+                <ThemedText variant="secondary" size="sm">
+                  Clear cached data and temporary files
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.warningCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.warningTitle}>
+              ⚠️ Account Deletion
+            </ThemedText>
+            <ThemedText variant="secondary" size="xs" style={styles.warningText}>
+              Deleting your account will permanently remove all your data, bookings, and profile information. This action cannot be undone.
+            </ThemedText>
+            <Button
+              title="Delete Account"
+              onPress={handleDeleteAccount}
+              variant="outline"
+              size="sm"
+              style={[styles.deleteButton, { borderColor: theme.colors.error }]}
+              textStyle={{ color: theme.colors.error }}
+            />
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.colors.surface }]}>
+            <ThemedText size="sm" weight="medium" style={styles.infoTitle}>
+              Privacy Policy
+            </ThemedText>
+            <ThemedText variant="secondary" size="xs" style={styles.infoText}>
+              You can manage notification permissions in your device settings. Go to Settings > Apps > Ofside > Notifications to control system-level notification settings.
+            </ThemedText>
+            <TouchableOpacity style={styles.linkButton}>
+              <ThemedText size="xs" style={{ color: theme.colors.primary }}>
+                Read Privacy Policy
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   scrollView: {
