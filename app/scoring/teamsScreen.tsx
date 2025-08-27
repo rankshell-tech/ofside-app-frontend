@@ -200,7 +200,7 @@ export default function TeamsScreen() {
             />
 
             {/* Next Button */}
-            <TouchableOpacity className="py-3 rounded-md mt-3" style={{ backgroundColor: theme.colors.primary }}>
+            <TouchableOpacity onPress={() => router.push('/scoring/matchSetupScreen')}   className="py-3 rounded-md mt-3" style={{ backgroundColor: theme.colors.primary }}>
                 <Text className="text-center text-black font-bold text-base">Next</Text>
             </TouchableOpacity>
         </View>

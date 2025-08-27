@@ -1,9 +1,10 @@
 // AddPlayerScreen.tsx
 import React, { JSX, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 const FloatingLabelInput = ({
   label,
@@ -78,7 +79,8 @@ export default function AddPlayerScreen() {
             label="Full name"
             value={fullName}
             onChangeText={setFullName}
-            subLabel={""}          />
+            subLabel={""}
+          />
 
           <FloatingLabelInput
             label="Number"
@@ -98,7 +100,7 @@ export default function AddPlayerScreen() {
 
         {/* Add Player button at bottom-right */}
         <View className="flex-1 justify-end items-end mb-8">
-          <TouchableOpacity className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
+          <TouchableOpacity onPress={() => router.push('/scoring/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
             <Text className="text-black font-bold text-base">Add player</Text>
           </TouchableOpacity>
         </View>
