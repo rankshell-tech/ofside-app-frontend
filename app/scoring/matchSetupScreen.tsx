@@ -9,6 +9,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Slider from "@react-native-community/slider";
 import Modal from "react-native-modal";
 import { router } from "expo-router";
+import {  SlidersHorizontal } from "lucide-react-native";
 
 const MatchSetupScreen = () => {
     const theme = useTheme();
@@ -90,7 +91,7 @@ const MatchSetupScreen = () => {
                     className="absolute top-4 right-4"
                     onPress={() => setRulesVisible(true)}
                 >
-                    <Ionicons name="settings-outline" size={24} color="black" />
+                    <SlidersHorizontal  size={24} color="black" />
                 </TouchableOpacity>
             </View>
 
@@ -217,7 +218,9 @@ const MatchSetupScreen = () => {
 
             {/* Next Button */}
             <View className="px-4 mt-8 mb-10">
-                <TouchableOpacity className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>
+                <TouchableOpacity
+                    onPress={() =>   router.push('/scoring/scoringScreen')}
+                    className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>
                 <Text className="font-bold text-black text-lg">Next</Text>
                 </TouchableOpacity>
             </View>

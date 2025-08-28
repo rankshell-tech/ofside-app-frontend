@@ -41,17 +41,17 @@ export default function MatchRulesScreen() {
         >
             <View className="flex-1 p-5">
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View className="flex-row items-baseline pt-6">
+                <View className="flex-row items-baseline">
                     <Ionicons name="arrow-back" size={24} color="black" />
                     <Text className="text-3xl font-bold ml-6">Match rules</Text>
                 </View>
 
                 {/* Rules with Switch */}
-                <View className="mt-10">
+                <View className="mt-2">
                     {rulesArray.map((rule) => (
                     <View
                         key={rule.key}
-                        className="flex-row justify-between items-center py-3"
+                        className="flex-row justify-between items-center"
                     >
                         <Text className="text-lg font-semibold">{rule.label}</Text>
                         <Switch
@@ -65,7 +65,7 @@ export default function MatchRulesScreen() {
                 </View>
 
                 {/* Goal size selection */}
-                <View className="mt-10 flex-row justify-between">
+                <View className="mt-3 flex-row justify-between">
                 <Text className="text-lg font-semibold">Goal size</Text>
                 <View className="flex-row space-x-3">
                 {["Futsal", "Standard"].map((size) => (
@@ -90,10 +90,10 @@ export default function MatchRulesScreen() {
                 </View>
 
                 {/* Match Break Duration */}
-                <Text className="text-lg font-semibold mt-6 mb-2">
+                <Text className="text-lg font-semibold mt-6">
                 Match Break duration
                 </Text>
-                <Text className="text-gray-500 mb-3">(Between two halfs)</Text>
+                <Text className="text-gray-500">(Between two halfs)</Text>
                 <View className="flex-row space-x-4">
                     <Slider
                         style={{ width: "100%", height: 40 }}
@@ -107,13 +107,13 @@ export default function MatchRulesScreen() {
                         onValueChange={(val) => setBreakDuration(val)}
                     />
                 </View>
-                <Text className="mt-2 text-lg font-bold text-center text-black">
+                <Text className="text-lg font-bold text-center text-black">
                     {breakDuration} mins
                 </Text>
             </ScrollView>
 
             {/* Bottom Buttons */}
-            <View className="flex-row justify-between mt-6">
+            <View className="flex-row justify-between">
                 <TouchableOpacity className="flex-1 bg-blue-800 py-3 rounded-lg mr-3">
                 <Text className="text-white text-center font-semibold">
                     Reset rules
