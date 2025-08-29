@@ -10,9 +10,11 @@ import Slider from "@react-native-community/slider";
 import Modal from "react-native-modal";
 import { router } from "expo-router";
 import {  SlidersHorizontal } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const MatchSetupScreen = () => {
     const theme = useTheme();
+        const navigation = useNavigation();
   const [matchType, setMatchType] = useState("Friendly");
   const [pitchType, setPitchType] = useState("Artificial Turf");
   const [duration, setDuration] = useState(10);
@@ -81,12 +83,13 @@ const MatchSetupScreen = () => {
     <SafeAreaView className="flex-1 bg-white">
         <LinearGradient
             colors={[theme.colors.primary, '#FFFFFF', theme.colors.background]}
-            className="flex-1"
         >
-            <ScrollView className="flex-1">
+            <ScrollView>
             {/* Header */}
-            <View className="flex-row items-center justify-between px-4 pt-6">
-                <Ionicons name="arrow-back" size={24} color="black" />
+            <View className="flex-row items-center justify-between px-4 pt-1">
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
                 <TouchableOpacity
                     className="absolute top-4 right-4"
                     onPress={() => setRulesVisible(true)}
@@ -96,39 +99,40 @@ const MatchSetupScreen = () => {
             </View>
 
             {/* VS Section */}
-            <View className="items-center mt-4">
+            <View className="items-center">
                 <View className="flex-row items-center space-x-6">
                     <View className="items-center">
-                        <View style={{ backgroundColor: theme.colors.accent }} className="w-20 h-20 rounded-full items-center justify-center mr-4 shadow">
+                        <View style={{ backgroundColor: theme.colors.accent }} className="w-20 h-20 rounded-full items-center justify-center shadow">
                             <FontAwesome name="user" size={40} color={theme.colors.primary} />
                         </View>
                         <Text className="mt-2 font-bold">TEAM A</Text>
                     </View>
-
-                    <Image
-                        source={require("../../assets/images/vsIcon.png")}
-                        style={{width:150, height:150}}
-                        resizeMode="contain"
-                    />
+                    <View className="items-center">
+                        <Image
+                            source={require("../../assets/images/vsIcon.png")}
+                            style={{width:120, height:120}}
+                            resizeMode="contain"
+                        />
+                        <Text className="text-gray-600">{date.toLocaleDateString()}</Text>
+                    </View>
 
                     <View className="items-center">
-                        <View style={{ backgroundColor: theme.colors.accent }} className="w-20 h-20 rounded-full items-center justify-center mr-4 shadow">
+                        <View style={{ backgroundColor: theme.colors.accent }} className="w-20 h-20 rounded-full items-center justify-center shadow">
                             <FontAwesome name="user" size={40} color={theme.colors.primary} />
                         </View>
                         <Text className="mt-2 font-bold">TEAM B</Text>
                     </View>
                 </View>
-                <Text className="mt-2 text-gray-600">{date.toLocaleDateString()}</Text>
             </View>
 
             {/* Match Type */}
-            <View className="px-4 mt-6">
+            <View className="px-4 mt-1">
                 <Text className="font-bold text-lg">Select Match Type</Text>
                 <View className="flex-row flex-wrap mt-3">
                 {matchTypes.map((type) => (
                     <TouchableOpacity
                         key={type}
-                        className="px-2 py-2 rounded-full mr-2 mb-2 border"
+                        className="px-2 py-1 rounded-full mr-2 mb-2 border"
                         style={{
                             backgroundColor: matchType === type ? theme.colors.primary : "white",
                             borderColor: matchType === type ? theme.colors.primary : theme.colors.accent
@@ -148,13 +152,13 @@ const MatchSetupScreen = () => {
             </View>
 
             {/* Pitch Type */}
-            <View className="px-4 mt-6">
+            <View className="px-4 mt-2">
                 <Text className="font-bold text-lg">Pitch type</Text>
                 <View className="flex-row flex-wrap mt-3">
                 {pitchTypes.map((type) => (
                     <TouchableOpacity
                     key={type}
-                    className="px-2 py-2 rounded-full mr-2 mb-2 border"
+                    className="px-2 py-1 rounded-full mr-2 mb-2 border"
                     style={{
                             backgroundColor: pitchType === type ? theme.colors.primary : "white",
                             borderColor: pitchType === type ? theme.colors.primary : theme.colors.accent
@@ -174,14 +178,16 @@ const MatchSetupScreen = () => {
             </View>
 
             {/* Match Duration Slider */}
-            <View className="px-4 mt-6">
-                <Text className="font-bold text-lg">Match duration</Text>
-                <Text className="text-gray-500 text-sm mb-2">Total minutes including both half's</Text>
+            <View className="px-4 mt-2">
+                <View className="flex-row items-baseline mb-2">
+                    <Text className="font-bold text-2xl">Match duration</Text>
+                    <Text className="text-gray-500 text-sm ml-2">Total minutes including both half's</Text>
+                </View>
 
                 <Slider
-                    style={{ width: "100%", height: 40 }}
+                    style={{ width: "100%", height: 25 }}
                     minimumValue={5}
-                    maximumValue={120}
+                    maximumValue={60}
                     step={5} // ✅ 5-min intervals
                     value={duration}
                     minimumTrackTintColor="#FFD700"
@@ -190,13 +196,13 @@ const MatchSetupScreen = () => {
                     onValueChange={(val) => setDuration(val)}
                 />
 
-                <Text className="mt-2 text-lg font-bold text-center text-black">
+                <Text className="text-lg font-bold text-center text-black">
                 {duration} mins
                 </Text>
             </View>
 
             {/* Form */}
-            <View className="px-4 mt-6 space-y-4">
+            <View className="px-4 space-y-4">
                 <FloatingLabelInput
                     label="City/Town"
                     value={city}
@@ -217,7 +223,7 @@ const MatchSetupScreen = () => {
             </View>
 
             {/* Next Button */}
-            <View className="px-4 mt-8 mb-10">
+            <View className="px-4 mt-10 mb-5">
                 <TouchableOpacity
                     onPress={() =>   router.push('/scoring/scoringScreen')}
                     className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>

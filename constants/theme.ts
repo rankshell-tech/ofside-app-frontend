@@ -12,6 +12,7 @@ export const lightTheme: AppTheme = {
     success: '#10B981',
     warning: '#F59E0B',
     error: '#EF4444',
+    grey: '#E1E6E2'
   },
   dark: false,
 };
@@ -28,6 +29,7 @@ export const darkTheme: AppTheme = {
     success: '#10B981',
     warning: '#F59E0B',
     error: '#EF4444',
+    grey: '#E1E6E2'
   },
   dark: true,
 };

@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeft } from "lucide-react-native";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 
 export default function ChooseSportScreen() {
+  const navigation = useNavigation();
   const [selectedSport, setSelectedSport] = useState("Football");
   const [selectedFormat, setSelectedFormat] = useState("Team");
 
@@ -19,23 +20,23 @@ export default function ChooseSportScreen() {
         resizeMode="contain"
         className="flex-1"
       >
-        <ScrollView className="px-4 py-6">
+        <ScrollView className="px-4 mt-10">
           <View className="flex-row items-center">
-            <TouchableOpacity className="mr-8">
+            <TouchableOpacity onPress={()=> navigation.goBack()} className="mr-8">
               <ArrowLeft size={24} color="black" />
             </TouchableOpacity>
             <View className="flex-1">
               <Text className="text-2xl font-extrabold text-gray-900 mb-1">
                 Choose the Sport
               </Text>
-              <Text className="text-base text-gray-500 mb-6">
+              <Text className="text-sm text-gray-500 mb-6">
                 Choose Format & Sport according your match
               </Text>
             </View>
           </View>
 
           {/* Sports Section */}
-          <View className="flex-row flex-wrap justify-between">
+          <View className="flex-row flex-wrap justify-between mt-10">
             {sports.map((sport) => {
               const isSelected = selectedSport === sport;
               return (
@@ -66,7 +67,7 @@ export default function ChooseSportScreen() {
           </View>
 
           {/* Format Section */}
-          <Text className="text-2xl font-extrabold text-gray-900 mt-12 mb-12">
+          <Text className="text-2xl font-extrabold text-gray-900 mt-10 mb-5">
             Choose Format
           </Text>
           <View className="flex-row justify-between">
@@ -100,7 +101,7 @@ export default function ChooseSportScreen() {
           </View>
 
           {/* Bottom Button */}
-          <TouchableOpacity onPress={() => router.push('/scoring/selectTeamsScreen')} className="mt-32 h-12 rounded-xl overflow-hidden">
+          <TouchableOpacity onPress={() => router.push('/scoring/selectTeamsScreen')} className="h-12 rounded-xl overflow-hidden mt-48">
             <LinearGradient
               colors={["#FFE600", "#FFE600"]}
               className="flex-1 items-center justify-center rounded-xl"

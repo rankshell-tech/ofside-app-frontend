@@ -1,10 +1,11 @@
 // AddPlayerScreen.tsx
 import React, { JSX, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 const FloatingLabelInput = ({
   label,
@@ -54,57 +55,64 @@ const FloatingLabelInput = ({
 
 export default function AddPlayerScreen() {
   const theme = useTheme();
+      const navigation = useNavigation();
   const [fullName, setFullName] = useState("Swarit Jain");
   const [number, setNumber] = useState("+91 83937 23823");
   const [email, setEmail] = useState("Swarit13@gmail.com");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 bg-white px-6 pt-3">
-        {/* Back button */}
-        <TouchableOpacity className="mb-6">
-          <Ionicons name="arrow-back-circle-outline" size={28} color="black" />
-        </TouchableOpacity>
+      <ImageBackground
+        source={require("../../assets/images/background.png")}
+        resizeMode="contain"
+        className="flex-1 bg-white"
+      >
+        <View className="flex-1 px-6 pt-10">
+          {/* Back button */}
+          <TouchableOpacity onPress={()=> navigation.goBack()} className="mb-6">
+            <Ionicons name="arrow-back-circle-outline" size={28} color="black" />
+          </TouchableOpacity>
 
-        {/* Profile image */}
-        <View className="items-center mb-8">
-          <View style={{ backgroundColor: theme.colors.primary }} className="w-40 h-40 rounded-full items-center justify-center mr-4 shadow">
-            <FontAwesome name="user" size={80} color={theme.colors.accent} />
+          {/* Profile image */}
+          <View className="items-center mb-8">
+            <View style={{ backgroundColor: theme.colors.primary }} className="w-40 h-40 rounded-full items-center justify-center mr-4 shadow">
+              <FontAwesome name="user" size={80} color={theme.colors.accent} />
+            </View>
+          </View>
+
+          {/* Input fields */}
+          <View className="space-y-5">
+            <FloatingLabelInput
+              label="Full name"
+              value={fullName}
+              onChangeText={setFullName}
+              subLabel={""}
+            />
+
+            <FloatingLabelInput
+              label="Number"
+              value={number}
+              onChangeText={setNumber}
+              subLabel={""}
+            />
+
+            <FloatingLabelInput
+              label="Email"
+              subLabel="(optional)"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+          </View>
+
+          {/* Add Player button at bottom-right */}
+          <View className="flex-1 justify-end items-end mb-8">
+            <TouchableOpacity onPress={() => router.push('/scoring/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
+              <Text className="text-black font-bold text-base">Add player</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        {/* Input fields */}
-        <View className="space-y-5">
-          <FloatingLabelInput
-            label="Full name"
-            value={fullName}
-            onChangeText={setFullName}
-            subLabel={""}
-          />
-
-          <FloatingLabelInput
-            label="Number"
-            value={number}
-            onChangeText={setNumber}
-            subLabel={""}
-          />
-
-          <FloatingLabelInput
-            label="Email"
-            subLabel="(optional)"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-        </View>
-
-        {/* Add Player button at bottom-right */}
-        <View className="flex-1 justify-end items-end mb-8">
-          <TouchableOpacity onPress={() => router.push('/scoring/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
-            <Text className="text-black font-bold text-base">Add player</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 }

@@ -54,12 +54,12 @@ export interface Booking {
   paymentId?: string;
 }
 
-export type SportType = 
-  | 'football' 
-  | 'tennis' 
-  | 'basketball' 
-  | 'badminton' 
-  | 'cricket' 
+export type SportType =
+  | 'football'
+  | 'tennis'
+  | 'basketball'
+  | 'badminton'
+  | 'cricket'
   | 'volleyball'
   | 'squash'
   | 'table_tennis';
@@ -82,6 +82,7 @@ export interface AppTheme {
     success: string;
     warning: string;
     error: string;
+    grey: string
   };
   dark: boolean;
 }

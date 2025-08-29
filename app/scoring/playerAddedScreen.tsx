@@ -1,6 +1,6 @@
 // screens/PlayerAddedScreen.tsx
 import React,{ useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ImageBackground } from "react-native";
 import { Feather,  } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from "@react-navigation/native";
@@ -18,7 +18,12 @@ const PlayerAddedScreen = () => {
   }, [navigation]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-white">
+    <ImageBackground
+      source={require("../../assets/images/background.png")}
+      resizeMode="contain"
+      className="flex-1 bg-white"
+    >
+    <View className="flex-1 items-center justify-center">
       {/* Text */}
       <View className="flex-row items-center space-x-2">
         <Text className="text-4xl font-semibold text-blue-700">Player Added</Text>
@@ -29,6 +34,7 @@ const PlayerAddedScreen = () => {
         </View>
       </View>
     </View>
+    </ImageBackground>
   );
 };
 

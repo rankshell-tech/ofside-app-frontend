@@ -1,6 +1,6 @@
 // App.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image, ImageBackground } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronDown, ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,9 +10,11 @@ import { useTheme } from '@/hooks/useTheme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 export default function App() {
   const theme = useTheme();
+  const navigation = useNavigation();
   const [selectedSport, setSelectedSport] = React.useState("Football");
   const { user, isGuest } = useSelector((state: RootState) => state.auth);
 
@@ -27,7 +29,7 @@ export default function App() {
       colors={["#FFE600", "#EAEAEA"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      className="flex-1 rounded-2xl mx-1"
+      className="flex-1 mx-1"
     >
       <TouchableOpacity onPress={()=>handleRoute()} className="p-6 items-center justify-center">
         <Text className="text-lg font-bold text-black">{title}</Text>
@@ -54,7 +56,7 @@ export default function App() {
       >
         {/* Profile Section */}
         <View className="flex-row items-center mx-5 my-5">
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> navigation.goBack()}>
             <ArrowLeft size={20} color="black" />
           </TouchableOpacity>
           <View
@@ -69,7 +71,10 @@ export default function App() {
               <View className="border border-black rounded px-2 py-1 mr-2" >
                 <Text className="text-xs">Hard hitter</Text>
               </View>
-              <View className="border border-yellow-400 bg-yellow-400 rounded px-2 py-1 flex-row items-center">
+              <View
+                className="border rounded px-2 py-1 flex-row items-center"
+                style={{backgroundColor: theme.colors.primary, borderColor: theme.colors.primary}}
+              >
                 <Text className="text-xs text-black mr-1">{selectedSport}</Text>
                 <ChevronDown size={14} color="black" />
               </View>
