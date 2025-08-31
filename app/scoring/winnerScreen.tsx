@@ -19,25 +19,25 @@ const WinnerScreen = () => {
       >
         {/* Confetti Effect (simple - can also use animation lib like lottie) */}
         <Image
-          source={require("../../assets/images/bg.png")} // optional: transparent PNG of confetti
+          source={require("../../assets/images/winner.png")} // optional: transparent PNG of confetti
           className="absolute w-full h-full"
           resizeMode="cover"
         />
 
         {/* Profile / Team Circle */}
-        <View className="w-40 h-40 bg-white rounded-full justify-center items-center shadow-lg" >
-                <FontAwesome name="user" size={60} color={theme.colors.grey} />
+        <View className="w-60 h-60 bg-white rounded-full justify-center items-center shadow-lg mt-14" >
+                <FontAwesome name="user" size={150} color={theme.colors.accent} />
         </View>
 
         {/* Winner Name */}
-        <Text className="mt-6 text-base font-semibold text-black">
+        <Text className="mt-16 text-3xl font-bold text-black">
           Winning Team/Player Name
         </Text>
 
         {/* WINNER Text */}
-        <Text className="text-4xl font-extrabold text-black mt-2 tracking-wider">
+        {/* <Text className="text-4xl font-extrabold text-black mt-2 tracking-wider">
           WINNER
-        </Text>
+        </Text> */}
       </LinearGradient>
     </SafeAreaView>
   );
