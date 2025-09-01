@@ -2,7 +2,7 @@ import { AppTheme } from '@/types';
 
 export const lightTheme: AppTheme = {
   colors: {
-    primary: '#FFE100',
+    primary: '#fff201',
     accent: '#002D3D',
     background: '#FFFFFF',
     surface: '#F8F9FA',
@@ -19,7 +19,7 @@ export const lightTheme: AppTheme = {
 
 export const darkTheme: AppTheme = {
   colors: {
-    primary: '#FFE100',
+    primary: '#fff201',
     accent: '#4A90E2',
     background: '#0F172A',
     surface: '#1E293B',
