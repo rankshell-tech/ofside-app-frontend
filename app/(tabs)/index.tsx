@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Modal, Linking, Animated, TextInput, ImageBackground } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { ThemedText } from '@/components/ui/ThemedText';
-import { SearchBar } from '@/components/ui/SearchBar';
-import { VenueCard } from '@/components/ui/VenueCard';
-import { SportChip } from '@/components/ui/SportChip';
 import { BookingCard } from '@/components/ui/BookingCard';
 import { useTheme } from '@/hooks/useTheme';
-import { sports } from '@/constants/theme';
 import { mockVenues, mockBookings } from '@/data/mockData';
 import { setVenues, setSearchQuery, toggleSportFilter } from '@/store/slices/venueSlice';
 import { setBookings } from '@/store/slices/bookingSlice';
@@ -21,8 +16,13 @@ import { Trophy } from 'lucide-react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
+const NUM_COLUMNS = 3;
+const VENUE_MARGIN = 8;
+const VENUE_CARD_SIZE = (width - (NUM_COLUMNS + 1) * VENUE_MARGIN) / NUM_COLUMNS;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function HomeScreen() {
     {
       id: 'trending1',
       name: 'ABC Sport',
-      image: 'https://images.pexels.com/photos/159698/basketball-court-sport-game-159698.jpeg',
+      image: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg',
       location: 'Vaishali, UP',
       rating: 4.8,
       sport: 'tennis',
@@ -85,7 +85,7 @@ export default function HomeScreen() {
     {
       id: 'top1',
       name: 'ABC Sport',
-      image: 'https://images.pexels.com/photos/159698/basketball-court-sport-game-159698.jpeg',
+      image: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg',
       location: 'Vaishali, UP',
       rating: 4.8,
       sport: 'basketball',
@@ -145,7 +145,7 @@ export default function HomeScreen() {
     { icon: <User size={20} color={theme.colors.textSecondary} />, title: 'My Profile', onPress: () => router.push('/(tabs)/profile') },
     { icon: <Wallet size={20} color={theme.colors.textSecondary} />, title: 'My Wallet', onPress: () => {} },
     { icon: <MaterialIcons name="scoreboard" size={24} color={theme.colors.textSecondary} />, title: 'Sports Scoring', onPress: () => router.push('/scoring/sportsScoring') },
-    { icon: <Calendar size={20} color={theme.colors.textSecondary} />, title: 'My Bookings', onPress: () => router.push('/(tabs)/bookings') },
+    // { icon: <Calendar size={20} color={theme.colors.textSecondary} />, title: 'My Bookings', onPress: () => router.push('/(tabs)/bookings') },
     { icon: <Trophy size={20} color={theme.colors.textSecondary} />, title: 'Live Scoring', onPress: () => { closeMenu(); router.push('/scoring'); } },
     { icon: <Gift size={20} color={theme.colors.textSecondary} />, title: 'Refer and Earn', onPress: () => {} },
     { icon: <Star size={20} color={theme.colors.textSecondary} />, title: 'Rate App', onPress: () => {} },
@@ -240,138 +240,88 @@ export default function HomeScreen() {
         <ThemedText size="sm" weight="bold" style={styles.venueName}>
           {item.name}
         </ThemedText>
-        <View style={styles.venueLocation}>
-          <MapPin size={12} color="white" />
-          <ThemedText size="xs" style={styles.venueLocationText}>
-            {item.location}
-          </ThemedText>
-        </View>
       </View>
     </TouchableOpacity>
   );
 
   const renderEventCard = ({ item }: { item: typeof sportEvents[0] }) => (
-    <TouchableOpacity
-      style={styles.eventCard}
-      onPress={() => handleEventPress(item.id)}
-      activeOpacity={0.8}
-    >
-      <Image source={{ uri: item.image }} style={styles.eventImage} />
-      <View style={styles.eventOverlay}>
-        <ThemedText size="sm" weight="bold" style={styles.eventName}>
-          {item.name}
-        </ThemedText>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const renderInterestCard = ({ item }: { item: typeof interestSports[0] }) => (
-    <TouchableOpacity
-      style={styles.interestCard}
-      onPress={() => handleSportPress(item.id)}
-      activeOpacity={0.8}
-    >
-      <Image source={{ uri: item.image }} style={styles.interestImage} />
-      <View style={styles.interestOverlay}>
-        <ThemedText size="sm" weight="bold" style={styles.interestText}>
-          {item.name}
-        </ThemedText>
-      </View>
-    </TouchableOpacity>
-  );
+      <TouchableOpacity
+        style={styles.venueCard}
+        onPress={() => handleVenuePress(item.id)}
+        activeOpacity={0.8}
+      >
+        <Image source={{ uri: item.image }} style={styles.venueImage} />
+        <View style={styles.venueOverlay}>
+          <ThemedText size="sm" weight="bold" style={styles.venueName}>
+            {item.name}
+          </ThemedText>
+        </View>
+      </TouchableOpacity>
+    );
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-white">
       <ImageBackground
         source={require("../../assets/images/background.png")} // Put your image in assets/images
-        resizeMode="contain"
-        className="flex-1"
+        resizeMode="cover"
+        className='flex-1'
       >
         {/* Enhanced Fixed Header */}
         <View style={[styles.fixedHeader, { backgroundColor: theme.colors.background }]}>
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
-              <Image
-                source={{ uri: 'https://ofside.in/assets/ofside-logo.png' }}
-                style={styles.logo}
-                resizeMode="contain"
-              />
               <TouchableOpacity style={styles.locationContainer}>
-                <MapPin size={16} color={theme.colors.primary} />
+                <MaterialCommunityIcons name="map-marker-radius" size={24} color="blue" />
                 <ThemedText size="sm" weight="medium" style={styles.locationText}>
-                  Vaishali, UP
+                  New Delhi
                 </ThemedText>
-                <ChevronDown size={14} color={theme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             <View style={styles.headerActions}>
-              <TouchableOpacity style={[styles.walletButton, { backgroundColor: theme.colors.primary }]}>
-                <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
-                  ₹
-                </ThemedText>
+              <TouchableOpacity onPress={()=> router.push('/scoring/sportsScoring')}>
+                <FontAwesome6 name="clipboard-list" size={28} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.menuButton}
-                onPress={openMenu}
+                onPress={()=> router.push('/ProfileScreen')}
               >
-                <Menu size={24} color={theme.colors.text} />
+                <FontAwesome name="user-circle-o" size={30} color="black" />
               </TouchableOpacity>
             </View>
           </View>
         </View>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
-          {/* Hero Banner */}
-          <View style={styles.bannerContainer}>
-            <Image
-              source={{ uri: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg' }}
-              style={styles.bannerImage}
-              resizeMode="cover"
+        {/* Enhanced Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <TextInput
+              style={[styles.searchInput, { color: theme.colors.text }]}
+              value={localSearchQuery}
+              onChangeText={setLocalSearchQuery}
+              placeholder="Search game, venue, trending sport..."
+              placeholderTextColor={theme.colors.textSecondary}
+              onSubmitEditing={handleSearchSubmit}
             />
-            <View style={styles.bannerOverlay}>
-              <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
-                Find Your Perfect
-              </ThemedText>
-              <ThemedText size="2xl" weight="bold" style={styles.bannerTitle}>
-                Sports Venue
-              </ThemedText>
-              <ThemedText size="base" style={styles.bannerSubtitle}>
-                Book premium sports facilities in your area
-              </ThemedText>
-            </View>
+            <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
+              <Search size={20} color={theme.colors.textSecondary} />
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Enhanced Search Bar */}
-          <View style={styles.searchContainer}>
-            <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-              <TextInput
-                style={[styles.searchInput, { color: theme.colors.text }]}
-                value={localSearchQuery}
-                onChangeText={setLocalSearchQuery}
-                placeholder="Search game, venue, trending sport..."
-                placeholderTextColor={theme.colors.textSecondary}
-                onSubmitEditing={handleSearchSubmit}
-              />
-              <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
-                <Search size={20} color={theme.colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
+        <ScrollView showsVerticalScrollIndicator={false}>
           {/* Choose your Sport Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText size="lg" weight="bold">
+              <ThemedText className='underline' size="lg" weight="bold">
                 Choose your Sport
               </ThemedText>
               <TouchableOpacity onPress={() => router.push('/search-results')}>
                 <View style={styles.moreButton}>
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                  <ThemedText size="sm" weight='bold'>
                     more
                   </ThemedText>
-                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      <AntDesign name="right" size={10}/>
+                  <View style={[styles.moreIcon]}>
+                    <ThemedText size="xs" weight="bold">
+                      <AntDesign name="rightcircleo" size={12} color="black" />
                     </ThemedText>
                   </View>
                 </View>
@@ -391,97 +341,99 @@ export default function HomeScreen() {
           {/* Trending in the city */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText size="lg" weight="bold">
+              <ThemedText className='underline' size="lg" weight="bold">
                 Trending in the city
               </ThemedText>
               <TouchableOpacity onPress={() => router.push('/search-results?trending=true')}>
-                <View style={styles.moreButton}>
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                    more
-                  </ThemedText>
-                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      <AntDesign name="right" size={10}/>
+                  <View style={styles.moreButton}>
+                    <ThemedText size="sm" weight='bold'>
+                      more
                     </ThemedText>
+                    <View style={[styles.moreIcon]}>
+                      <ThemedText size="xs" weight="bold">
+                        <AntDesign name="rightcircleo" size={12} color="black" />
+                      </ThemedText>
+                    </View>
                   </View>
-                </View>
               </TouchableOpacity>
             </View>
 
             <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
               data={trendingVenues}
               renderItem={renderVenueCard}
               keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.venuesList}
+              numColumns={NUM_COLUMNS}
+              columnWrapperStyle={{ justifyContent: "space-between" }}
+              contentContainerStyle={{ paddingHorizontal: VENUE_MARGIN }}
+              scrollEnabled={false}
             />
           </View>
 
           {/* Top rated Venues */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText size="lg" weight="bold">
+              <ThemedText className='underline' size="lg" weight="bold">
                 Top rated Venues
               </ThemedText>
               <TouchableOpacity onPress={() => router.push('/search-results?sort=rating')}>
                 <View style={styles.moreButton}>
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                    more
-                  </ThemedText>
-                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      <AntDesign name="right" size={10}/>
+                    <ThemedText size="sm" weight='bold'>
+                      more
                     </ThemedText>
+                    <View style={[styles.moreIcon]}>
+                      <ThemedText size="xs" weight="bold">
+                        <AntDesign name="rightcircleo" size={12} color="black" />
+                      </ThemedText>
+                    </View>
                   </View>
-                </View>
               </TouchableOpacity>
             </View>
 
             <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
               data={topRatedVenues}
               renderItem={renderVenueCard}
-              keyExtractor={(item) => `top-${item.id}`}
-              contentContainerStyle={styles.venuesList}
+              keyExtractor={(item) => item.id}
+              numColumns={NUM_COLUMNS}
+              columnWrapperStyle={{ justifyContent: "space-between" }}
+              contentContainerStyle={{ paddingHorizontal: VENUE_MARGIN }}
+              scrollEnabled={false}
             />
           </View>
 
-          {/* NEW: Sport Events Section */}
+           {/* NEW: Sport Events Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText size="lg" weight="bold">
+              <ThemedText className='underline' size="lg" weight="bold">
                 Sporting Events
               </ThemedText>
               <TouchableOpacity onPress={() => router.push('/search-results?category=events')}>
                 <View style={styles.moreButton}>
-                  <ThemedText size="sm" style={{ color: theme.colors.primary }}>
+                  <ThemedText size="sm" weight='bold'>
                     more
                   </ThemedText>
-                  <View style={[styles.moreIcon, { backgroundColor: theme.colors.primary }]}>
-                    <ThemedText size="xs" weight="bold" style={{ color: theme.colors.background }}>
-                      <AntDesign name="right" size={10}/>
+                  <View style={[styles.moreIcon]}>
+                    <ThemedText size="xs" weight="bold">
+                      <AntDesign name="rightcircleo" size={12} color="black" />
                     </ThemedText>
                   </View>
-                </View>
+                 </View>
               </TouchableOpacity>
             </View>
-
             <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
               data={sportEvents}
               renderItem={renderEventCard}
               keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.venuesList}
+              numColumns={NUM_COLUMNS}
+              columnWrapperStyle={{ justifyContent: "space-between" }}
+              contentContainerStyle={{ paddingHorizontal: VENUE_MARGIN }}
+              scrollEnabled={false}
             />
           </View>
 
           {/* NEW: From your Interest Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText size="lg" weight="bold">
+              <ThemedText className='underline' size="lg" weight="bold">
                 From your Interest
               </ThemedText>
             </View>
@@ -506,24 +458,34 @@ export default function HomeScreen() {
           </View>
 
           {/* Enhanced CTA Section */}
-          <View className="flex-1 justify-center px-6 py-10">
+          <View className="flex-1 justify-center px-4 py-10">
             <Text className="text-3xl font-bold text-black">
-              Book your play space in
+              India's only ultimate sports
             </Text>
             <Text className="text-3xl font-bold text-black">
-              seconds with{" "}
-              <Text className="text-3xl font-bold text-blue-600">Ofside</Text>
+              ecosystem{" "}
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontWeight: "bold",
+                  color: theme.colors.primary, // Yellow text
+                  textShadowColor: "#000", // Black outline
+                  textShadowOffset: { width: 1, height: 1 },
+                  textShadowRadius: 1,
+                }}
+              >
+              Ofside
+            </Text>
             </Text>
           </View>
-
           {/* Upcoming Bookings for logged in users */}
-          {!isGuest && bookings.length > 0 && (
+          {/* {!isGuest && bookings.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <ThemedText size="lg" weight="bold">
                   Your Upcoming Bookings
                 </ThemedText>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/bookings')}>
+                <TouchableOpacity>
                   <ThemedText size="sm" style={{ color: theme.colors.primary }}>
                     View All
                   </ThemedText>
@@ -533,123 +495,10 @@ export default function HomeScreen() {
                 <BookingCard key={booking.id} booking={booking} showActions={false} />
               ))}
             </View>
-          )}
+          )} */}
         </ScrollView>
-
-        {/* Enhanced Hamburger Menu Modal */}
-        <Modal
-          visible={isMenuOpen}
-          animationType="none"
-          transparent={true}
-          onRequestClose={closeMenu}
-        >
-            <TouchableOpacity
-              style={styles.menuOverlay}
-              activeOpacity={1}
-              onPress={closeMenu}
-            >
-              <Animated.View
-                style={[
-                  styles.menuContainer,
-                  {
-                    backgroundColor: theme.colors.background,
-                    transform: [{ translateX: slideAnim }]
-                  }
-                ]}
-              >
-                {/* Enhanced Menu Header */}
-                <View style={[styles.menuHeader, { borderBottomColor: theme.colors.border }]}>
-                  <View style={styles.menuHeaderContent}>
-                    <View style={[styles.userAvatar, { backgroundColor: theme.colors.primary }]}>
-                      <FontAwesome name="user" size={40} color={theme.colors.accent} />
-                    </View>
-                    <View style={styles.userInfo}>
-                      <ThemedText size="lg" weight="bold">
-                        {isGuest ? 'Guest User' : user?.name || 'Guest User'}
-                      </ThemedText>
-                      <ThemedText variant="secondary" size="sm">
-                        {isGuest ? 'Browsing as Guest' : user?.email || 'Welcome to Ofside'}
-                      </ThemedText>
-                    </View>
-                  </View>
-                  <TouchableOpacity
-                    style={[styles.closeButton, { backgroundColor: theme.colors.surface }]}
-                    onPress={closeMenu}
-                  >
-                    <X size={20} color={theme.colors.text} />
-                  </TouchableOpacity>
-                </View>
-              <ScrollView>
-                {/* Enhanced Menu Items */}
-                <View style={styles.menuItems}>
-                  {menuItems.map((item, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[styles.menuItem, { backgroundColor: theme.colors.background }]}
-                      onPress={() => {
-                        closeMenu();
-                        item.onPress();
-                      }}
-                      activeOpacity={0.7}
-                    >
-                      <View style={[styles.menuItemIcon, { backgroundColor: theme.colors.surface }]}>
-                        {item.icon}
-                      </View>
-                      <View style={styles.menuItemContent}>
-                        <ThemedText size="base" weight="medium" style={styles.menuItemText}>
-                          {item.title}
-                        </ThemedText>
-                      </View>
-                      <View style={styles.menuItemArrow}>
-                        <ThemedText variant="secondary" size="lg">›</ThemedText>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-                {/* Enhanced Social Section */}
-                <View style={[styles.socialSection, { borderTopColor: theme.colors.border }]}>
-                  <ThemedText size="sm" weight="medium" style={styles.socialTitle}>
-                    Follow Us
-                  </ThemedText>
-                  <View style={styles.socialIcons}>
-                    {socialIcons.map((social, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={[styles.socialIcon, { backgroundColor: theme.colors.surface }]}
-                        onPress={() => handleSocialPress(social.url)}
-                        activeOpacity={0.7}
-                      >
-                        {social.icon}
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-
-                  {/* Legal Links */}
-                  <View style={styles.legalLinks}>
-                    <TouchableOpacity>
-                      <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                        Terms of Use
-                      </ThemedText>
-                    </TouchableOpacity>
-                    <ThemedText size="sm" variant="secondary"> • </ThemedText>
-                    <TouchableOpacity>
-                      <ThemedText size="sm" style={{ color: theme.colors.primary }}>
-                        Privacy Policy
-                      </ThemedText>
-                    </TouchableOpacity>
-                  </View>
-
-                  <ThemedText variant="secondary" size="xs" style={styles.versionText}>
-                    Ofside v1.0.0
-                  </ThemedText>
-                </View>
-              </ScrollView>
-              </Animated.View>
-            </TouchableOpacity>
-        </Modal>
       </ImageBackground>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -658,10 +507,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fixedHeader: {
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 24,
-    elevation: 3,
+    paddingHorizontal: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -685,22 +531,21 @@ const styles = StyleSheet.create({
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
     paddingHorizontal: 8,
-    backgroundColor: 'rgba(255, 225, 0, 0.1)',
     borderRadius: 20,
   },
   locationText: {
     marginLeft: 4,
     marginRight: 2,
+
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   walletButton: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -764,6 +609,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   searchContainer: {
+    marginTop:10,
     paddingHorizontal: 24,
     paddingBottom: 20,
   },
@@ -771,7 +617,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
     borderRadius: 30,
     borderWidth: 1,
     elevation: 2,
@@ -795,13 +640,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 14,
     marginBottom: 20,
   },
   moreButton: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    alignItems: 'baseline',
+    gap: 2,
   },
   moreIcon: {
     width: 18,
@@ -811,85 +656,67 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sportsGrid: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 14,
     gap: 8,
   },
   sportCard: {
-    width: (width - 48 - 32) / 5, // 5 columns with padding and gaps
-    height: 85,
-    marginBottom: 8,
+    width: (width - 48 - 32) / 5, // 5 columns with padding + spacing
+    height: 60,                   // little taller for box look
     borderRadius: 12,
-    overflow: 'hidden',
-    elevation: 3,
-    shadowColor: '#000',
+    backgroundColor: "#fff",
+    marginBottom: 12,
+    marginHorizontal: 4,
+    overflow: "hidden",
+
+    // Shadow for iOS
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
+
+    // Elevation for Android
+    elevation: 3,
   },
   sportImage: {
     width: '100%',
     height: '100%',
   },
   sportOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    alignItems: 'center',
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)", // light overlay
+    justifyContent: "flex-end",
+    alignItems: "center",
+    padding: 4,
   },
   sportText: {
-    color: 'white',
-    fontSize: 11,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-    textAlign: 'center',
-    lineHeight: 12,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    color: "#fff",
+    fontSize: 8,
+    fontWeight: "600",
+    textAlign: "center",
   },
   venuesList: {
     paddingLeft: 24,
   },
   venueCard: {
-    width: 160,
-    height: 130,
-    marginRight: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+  width: VENUE_CARD_SIZE,
+  height: VENUE_CARD_SIZE, // square
+  marginBottom: VENUE_MARGIN,
+  borderRadius: 12,
+  overflow: "hidden",
   },
   venueImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
+    borderRadius: 12,
   },
   venueOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: 12,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-end",
+    padding: 6,
   },
   venueName: {
-    color: 'white',
-    marginBottom: 4,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    color: "#fff",
   },
   venueLocation: {
     flexDirection: 'row',
@@ -973,13 +800,12 @@ const styles = StyleSheet.create({
     top: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent:'flex-end',
     padding: 8,
   },
   interestText: {
     color: 'white',
-    textAlign: 'center',
-    fontSize: 12,
+    fontSize: 8,
     fontWeight: '600',
     fontFamily: 'Inter-SemiBold',
     lineHeight: 13,

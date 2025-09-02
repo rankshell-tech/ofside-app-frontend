@@ -21,12 +21,12 @@ export default function OnboardingFeatures() {
         <View style={styles.content}>
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: 'https://images.pexels.com/photos/159698/basketball-court-sport-game-159698.jpeg' }}
+              source={{ uri: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg' }}
               style={styles.image}
               resizeMode="cover"
             />
           </View>
-          
+
           <View style={styles.textContainer}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
               Discover Amazing Venues

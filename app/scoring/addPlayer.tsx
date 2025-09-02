@@ -61,7 +61,7 @@ export default function AddPlayerScreen() {
   const [email, setEmail] = useState("Swarit13@gmail.com");
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView className="flex-1 bg-white">
       <ImageBackground
         source={require("../../assets/images/background.png")}
         resizeMode="contain"

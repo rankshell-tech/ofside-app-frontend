@@ -11,7 +11,7 @@ export default function ChooseSportScreen() {
   const [selectedFormat, setSelectedFormat] = useState("Team");
 
   const sports = ["Football", "Badminton", "Volleyball", "Basketball", "Tennis", "Pickleball"];
-  const formats = ["Singles", "Doubles", "Team"];
+  const formats = ["Team"];
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -20,20 +20,20 @@ export default function ChooseSportScreen() {
         resizeMode="contain"
         className="flex-1"
       >
-        <ScrollView className="px-4 mt-10">
-          <View className="flex-row items-center">
-            <TouchableOpacity onPress={()=> navigation.goBack()} className="mr-8">
-              <ArrowLeft size={24} color="black" />
-            </TouchableOpacity>
-            <View className="flex-1">
-              <Text className="text-2xl font-extrabold text-gray-900 mb-1">
-                Choose the Sport
-              </Text>
-              <Text className="text-sm text-gray-500 mb-6">
-                Choose Format & Sport according your match
-              </Text>
-            </View>
+        <View className="flex-row items-center mx-5 my-5">
+          <TouchableOpacity onPress={()=> navigation.goBack()} className="mr-8">
+            <ArrowLeft size={24} color="black" />
+          </TouchableOpacity>
+          <View className="flex-1">
+            <Text className="text-2xl font-extrabold text-gray-900 mb-1">
+              Choose the Sport
+            </Text>
+            <Text className="text-sm text-gray-500 mb-6">
+              Choose Format & Sport according your match
+            </Text>
           </View>
+        </View>
+        <ScrollView className="px-4 mt-10 mb-20">
 
           {/* Sports Section */}
           <View className="flex-row flex-wrap justify-between mt-10">
@@ -50,7 +50,7 @@ export default function ChooseSportScreen() {
                       colors={["#FFE600", "#EDEDED"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      className="flex-1 items-center justify-center rounded-xl border border-gray-400"
+                      className="flex-1 items-center justify-center rounded-xl"
                     >
                       <Text className="font-extrabold text-base text-black">
                         {sport}
@@ -84,7 +84,7 @@ export default function ChooseSportScreen() {
                       colors={["#FFE600", "#EDEDED"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      className="flex-1 items-center justify-center rounded-xl border border-gray-400"
+                      className="flex-1 items-center justify-center rounded-xl"
                     >
                       <Text className="font-extrabold text-base text-black">
                         {format}
@@ -99,8 +99,10 @@ export default function ChooseSportScreen() {
               );
             })}
           </View>
+        </ScrollView>
 
-          {/* Bottom Button */}
+        {/* Bottom Button */}
+        <View className="absolute bottom-4 left-4 right-4">
           <TouchableOpacity onPress={() => router.push('/scoring/selectTeamsScreen')} className="h-12 rounded-xl overflow-hidden mt-48">
             <LinearGradient
               colors={["#FFE600", "#FFE600"]}
@@ -111,7 +113,7 @@ export default function ChooseSportScreen() {
               </Text>
             </LinearGradient>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </ImageBackground>
     </SafeAreaView>
   );

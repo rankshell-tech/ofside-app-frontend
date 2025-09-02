@@ -15,23 +15,22 @@ import { useNavigation } from "@react-navigation/native";
 export default function App() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const [selectedSport, setSelectedSport] = React.useState("Football");
   const { user, isGuest } = useSelector((state: RootState) => state.auth);
 
-  const MenuButton = ({
-    title,
-    comingSoon,
-  }: {
+  type MenuButtonProps = {
     title: string;
     comingSoon?: boolean;
-  }) => (
+    onPress?: () => void;
+  };
+
+  const MenuButton = ({title, comingSoon, onPress} : MenuButtonProps) => (
     <LinearGradient
       colors={["#FFE600", "#EAEAEA"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       className="flex-1 mx-1"
     >
-      <TouchableOpacity onPress={()=>handleRoute()} className="p-6 items-center justify-center">
+      <TouchableOpacity className="p-6 items-center justify-center" onPress={onPress}>
         <Text className="text-lg font-bold text-black">{title}</Text>
         {comingSoon && (
           <View className="absolute right-4 top-8 px-2 py-0.5 rounded">
@@ -71,13 +70,6 @@ export default function App() {
               <View className="border border-black rounded px-2 py-1 mr-2" >
                 <Text className="text-xs">Hard hitter</Text>
               </View>
-              <View
-                className="border rounded px-2 py-1 flex-row items-center"
-                style={{backgroundColor: theme.colors.primary, borderColor: theme.colors.primary}}
-              >
-                <Text className="text-xs text-black mr-1">{selectedSport}</Text>
-                <ChevronDown size={14} color="black" />
-              </View>
             </View>
           </View>
         </View>
@@ -85,7 +77,7 @@ export default function App() {
           <View className="p-2">
             {/* Buttons */}
             <View className="flex-row mt-4 w-full h-32">
-              <MenuButton title="Start a match"/>
+              <MenuButton title="Start a match" onPress={()=>handleRoute()} />
               <MenuButton title="Create Tournament" />
             </View>
             <View className="flex-row mt-4 w-full h-32">

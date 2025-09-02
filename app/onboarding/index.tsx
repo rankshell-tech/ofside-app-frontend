@@ -26,7 +26,7 @@ export default function OnboardingWelcome() {
               resizeMode="cover"
             />
           </View>
-          
+
           <View style={styles.textContainer}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
               Welcome to Ofside

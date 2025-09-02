@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
+import RangeSelector from "./rangeSelector"
 
 export default function MatchRulesScreen() {
     const theme = useTheme();
@@ -29,7 +30,7 @@ export default function MatchRulesScreen() {
           { key: "cornerKicks", label: "Corner Kicks" },]
 
   const [goalSize, setGoalSize] = useState<"Futsal" | "Standard">("Standard");
-  const [breakDuration, setBreakDuration] = useState(10);
+    const [matchDuration, setMatchDuration] = useState(5);
 
   const toggleRule = (key: keyof typeof rules) => {
     setRules({ ...rules, [key]: !rules[key] });
@@ -37,58 +38,72 @@ export default function MatchRulesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-        <LinearGradient
-            colors={[theme.colors.primary, '#FFFFFF', theme.colors.background]}
-            className="flex-1"
-        >
-            <View className="flex-1 p-5 mt-5">
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View className="flex-row items-baseline mb-5">
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Ionicons name="arrow-back" size={24} color="black" />
-                        </TouchableOpacity>
-                        <Text className="text-3xl font-bold ml-6">Match rules</Text>
-                    </View>
+    <LinearGradient
+        colors={[theme.colors.primary, "#FFFFFF", theme.colors.background]}
+        className="flex-1"
+    >
+        <View className="flex-1 justify-between">
+            {/* Scrollable Content */}
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ padding: 20 }}
+            >
+                <View className="mt-5">
+                <View className="flex-row items-baseline mb-5">
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                    </TouchableOpacity>
+                    <Text className="text-3xl font-bold ml-6">Match rules</Text>
+                </View>
 
-                    {/* Rules with Switch */}
-                    <View className="px-5">
-                        {rulesArray.map((rule) => (
-                        <View
-                            key={rule.key}
-                            className="flex-row justify-between items-center"
-                        >
-                            <View className="flex-row items-baseline">
-                                <Text className="text-lg font-bold">{rule.label.split(" ")[0]} </Text>
-                                <Text className="text-sm">{rule.label.split(" ")[1]}</Text>
-                            </View>
-                            <Switch
-                                value={rules[rule.key as keyof typeof rules]}
-                                onValueChange={() => toggleRule(rule.key as keyof typeof rules)}
-                                thumbColor={"#fff"}
-                                trackColor={{ false: "#ccc", true: "#22c55e" }}
-                            />
+                {/* Rules with Switch */}
+                <View className="px-2">
+                    {rulesArray.map((rule) => (
+                    <View
+                        key={rule.key}
+                        className="flex-row justify-between items-center"
+                    >
+                        <View className="flex-row items-baseline">
+                            <Text className="text-2xl font-bold">
+                                {rule.label.split(" ")[0]}{" "}
+                            </Text>
+                            <Text className="text-lg">{rule.label.split(" ")[1]}</Text>
                         </View>
-                        ))}
+                        <Switch
+                            value={rules[rule.key as keyof typeof rules]}
+                            onValueChange={() =>
+                                toggleRule(rule.key as keyof typeof rules)
+                            }
+                            thumbColor={"#fff"}
+                            trackColor={{ false: "#ccc", true: "#22c55e" }}
+                        />
                     </View>
+                    ))}
+                </View>
 
-                    {/* Goal size selection */}
-                    <View className="mt-3 flex-row justify-between">
+                {/* Goal size selection */}
+                <View className="mt-3 flex-row justify-between px-2">
                     <View className="flex-row items-baseline">
-                        <Text className="text-lg font-bold">Goal </Text>
-                        <Text className="text-sm">size</Text>
+                    <Text className="text-lg font-bold">Goal </Text>
+                    <Text className="text-sm">size</Text>
                     </View>
                     <View className="flex-row space-x-3">
                     {["Futsal", "Standard"].map((size) => (
                         <TouchableOpacity
-                            key={size}
-                            onPress={() => setGoalSize(size as "Futsal" | "Standard")}
-                            className="px-4 py-2 rounded-full border"
-                            style={{
-                                backgroundColor: goalSize === size ? theme.colors.primary:"white",
-                                borderColor: goalSize === size ? theme.colors.primary : theme.colors.accent}}
+                        key={size}
+                        onPress={() => setGoalSize(size as "Futsal" | "Standard")}
+                        className="px-2 py-1 rounded-full border m-1"
+                        style={{
+                            backgroundColor:
+                            goalSize === size ? theme.colors.primary : "white",
+                            borderColor:
+                            goalSize === size
+                                ? theme.colors.primary
+                                : theme.colors.accent,
+                        }}
                         >
                         <Text
-                            className={`font-medium ${
+                            className={`text-sm font-medium ${
                             goalSize === size ? "text-black" : "text-gray-600"
                             }`}
                         >
@@ -97,49 +112,39 @@ export default function MatchRulesScreen() {
                         </TouchableOpacity>
                     ))}
                     </View>
-                    </View>
-
-                    {/* Match Break Duration */}
-                    <Text className="text-lg font-semibold mt-6">
-                    Match Break duration
-                    </Text>
-                    <Text className="text-gray-500">(Between two halfs)</Text>
-                    <View className="flex-row space-x-4">
-                        <Slider
-                            style={{ width: "100%", height: 40 }}
-                            minimumValue={5}
-                            maximumValue={30}
-                            step={5} // ✅ 5-min intervals
-                            value={breakDuration}
-                            minimumTrackTintColor="#FFD700"
-                            maximumTrackTintColor="#ccc"
-                            thumbTintColor="#FFD700"
-                            onValueChange={(val) => setBreakDuration(val)}
-                        />
-                    </View>
-                    <Text className="text-lg font-bold text-center text-black">
-                        {breakDuration} mins
-                    </Text>
-                </ScrollView>
-
-                {/* Bottom Buttons */}
-                <View className="flex-row justify-between">
-                    <TouchableOpacity className="flex-1 bg-blue-800 py-3 rounded-lg mr-3">
-                    <Text className="text-white text-center font-semibold">
-                        Reset rules
-                    </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => router.push('/scoring/matchRulesSaved')}
-                        className="flex-1 py-3 rounded-lg ml-3"
-                        style={{backgroundColor: theme.colors.primary}}
-                    >
-                    <Text className="text-black text-center font-semibold">Save</Text>
-                    </TouchableOpacity>
                 </View>
+
+                {/* Match Break Duration */}
+                <RangeSelector
+                    title="Match Break Duration"
+                    subtitle="Between two half's"
+                    options={[0, 5, 10, 15, 20]}
+                    selected={matchDuration}
+                    onSelect={setMatchDuration} // ✅ no error now
+                    unit="mins"
+                />
+                </View>
+            </ScrollView>
+
+            {/* Sticky Bottom Buttons */}
+            <View className="flex-row justify-between p-5 bg-white">
+                <TouchableOpacity className="flex-1 bg-blue-800 py-3 rounded-lg mr-3">
+                <Text className="text-white text-center font-semibold">
+                    Reset rules
+                </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                onPress={() => router.push("/scoring/matchRulesSaved")}
+                className="flex-1 py-3 rounded-lg ml-3"
+                style={{ backgroundColor: theme.colors.primary }}
+                >
+                <Text className="text-black text-center font-semibold">Save</Text>
+                </TouchableOpacity>
             </View>
-        </LinearGradient>
-    </SafeAreaView>
+        </View>
+    </LinearGradient>
+</SafeAreaView>
+
   );
 }

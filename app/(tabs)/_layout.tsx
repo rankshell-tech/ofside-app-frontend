@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useTheme } from '@/hooks/useTheme';
 import { Platform } from 'react-native';
+import { AntDesign, Foundation, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -20,11 +21,12 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarInactiveTintColor: theme.colors.accent,
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 14,
           fontFamily: 'Inter-Medium',
         },
+        tabBarIconStyle: { marginBottom: -4 },
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
@@ -35,38 +37,38 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="community"
         options={{
           title: 'Community',
           tabBarIcon: ({ size, color }) => (
-            <Heart size={size} color={color} />
+            <Ionicons name="people" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="bookings"
+        name="index"
         options={{
-          title: isGuest ? 'Sign In' : isAdmin ? 'Admin Panel' : isVenueOwner ? 'Dashboard' : 'Bookings',
+          title: 'Home',
           tabBarIcon: ({ size, color }) => (
-            isAdmin ? <Building size={size} color={color} /> : isVenueOwner ? <Building size={size} color={color} /> : <Calendar size={size} color={color} />
+            <Foundation name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="nearYou"
+        options={{
+          title: 'Near you',
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons name="near-me" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: 'xplore',
           tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
+            <AntDesign name="appstore1" size={size} color={color} />
           ),
         }}
       />

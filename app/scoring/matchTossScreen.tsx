@@ -65,7 +65,7 @@ export default function TossScreen({ navigation }: any) {
                         colors={["#FFEB3B", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3 self-start"
+                        className="px-2 py-1 rounded-t-md mb-3"
                     >
                         <Text className="text-sm font-semibold">Select the toss winner</Text>
                     </LinearGradient>
@@ -82,7 +82,7 @@ export default function TossScreen({ navigation }: any) {
                         colors={["#FFEB3B", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3 self-start"
+                        className="px-2 py-1 rounded-t-md mb-3"
                     >
                         <Text className="text-sm font-semibold">Which team will take the first Kick-Off ?</Text>
                     </LinearGradient>
@@ -99,7 +99,7 @@ export default function TossScreen({ navigation }: any) {
                         colors={["#FFEB3B", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3 self-start"
+                        className="px-2 py-1 rounded-t-md mb-3"
                     >
                         <Text className="text-sm font-semibold">Choose the side of toss winning team</Text>
                     </LinearGradient>
