@@ -1,20 +1,34 @@
-import { Tabs } from 'expo-router';
-import { Chrome as Home, Calendar, User, Building, Heart } from 'lucide-react-native';
+import { Tabs, useRouter, usePathname } from 'expo-router';
+import { useEffect } from 'react';
+import { BackHandler, Platform } from 'react-native';
+import { Ionicons, Foundation, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useTheme } from '@/hooks/useTheme';
-import { Platform } from 'react-native';
-import { AntDesign, Foundation, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
-  const user = useSelector((state: RootState) => state.auth.user);
-  const isGuest = useSelector((state: RootState) => state.auth.isGuest);
+  const router = useRouter();
+  const pathname = usePathname();
   const theme = useTheme();
 
-  const isVenueOwner = user?.role === 'venue_owner';
-  const isAdmin = user?.role === 'admin';
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  console.log('Current user role:', user?.role, 'isVenueOwner:', isVenueOwner, 'isAdmin:', isAdmin);
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const backAction = () => {
+        // If NOT on home, go home instead of exiting
+        if (pathname !== '/') {
+          router.replace('/(tabs)');
+          return true; // prevent default exit
+        }
+        return false; // allow exit if already at home
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      return () => subscription.remove();
+    }
+  }, [pathname]);
 
   return (
     <Tabs
@@ -27,13 +41,6 @@ export default function TabLayout() {
           fontFamily: 'Inter-Medium',
         },
         tabBarIconStyle: { marginBottom: -4 },
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
       }}
     >
       <Tabs.Screen
@@ -64,7 +71,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="xplore"
         options={{
           title: 'xplore',
           tabBarIcon: ({ size, color }) => (

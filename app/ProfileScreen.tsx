@@ -5,6 +5,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Zocial from "@expo/vector-icons/Zocial";
+import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
@@ -20,10 +21,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ProfileScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
 
   const menuItems = [
     { label: "Complete profile", icon: "user" , onPress: () => router.push("/editProfile")},
-    { label: "Your Bookings", icon: "calendar" },
+    { label: "Your Bookings", icon: "calendar", onPress: () => router.push("/booking/booking") },
     { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" },
     { label: "Corporate event booking", icon: "team" },
     { label: "Add/Update your Venue", icon: "pluscircleo" },
@@ -42,29 +44,18 @@ export default function ProfileScreen() {
         {/* Header */}
         <View className="flex-row items-center justify-between px-4 py-3">
           <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons
-              name="chevron-back-circle"
-              size={34}
-              color="black"
-              className="shadow-md"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ backgroundColor: theme.colors.primary }}
-            className="w-8 h-8 rounded-full items-center justify-center shadow-sm"
-          >
-            <FontAwesome name="rupee" size={16} color="black" />
+            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
           </TouchableOpacity>
         </View>
 
         {/* Profile Section */}
         <View className="flex-row items-center px-10">
-          <View className="mr-6">
+          <View className="mr-4">
             <View  className="w-24 h-24 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.accent }}>
               <FontAwesome name="user" size={65} color="white" />
             </View>
           </View>
-          <View className="">
+          <View>
             <Text className="text-3xl font-bold text-gray-900">
               Hi Swarit!
             </Text>
@@ -81,7 +72,7 @@ export default function ProfileScreen() {
                 activeOpacity={0.7}
                 onPress={item.onPress}
               >
-                <Text className="text-base font-semibold">
+                <Text className="text-base font-bold">
                   {item.label}
                 </Text>
               </TouchableOpacity>

@@ -37,15 +37,9 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="login" />
           <Stack.Screen name="onboarding" />
-          <Stack.Screen name="auth" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="admin" />
-          <Stack.Screen name="venue/[id]" />
-          <Stack.Screen name="booking" />
           <Stack.Screen name="search-results" />
-          <Stack.Screen name="scoring" />
-          <Stack.Screen name="scoring/sportsScoring" />
-          <Stack.Screen name="scoring/chooseSportScreen" />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

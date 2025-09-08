@@ -12,7 +12,7 @@ export default function OtpScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
         <LinearGradient
-            colors={['#FFD500', '#FFFFFF']}
+            colors={['#FFF201', '#FFFFFF']}
             className="flex-1"
         >
             {/* Skip Button */}
@@ -69,7 +69,7 @@ export default function OtpScreen() {
             {/* Terms and Conditions */}
             <View className="absolute bottom-1 w-full items-center">
                 <Text className="text-black text-sm">
-                    I agree to the <Text className="underline">Terms and Conditions</Text>
+                    I agree to the <Text className="underline" onPress={()=>router.push('/login/termsAndPrivacy')}>Terms and Conditions</Text>
                 </Text>
             </View>
         </LinearGradient>

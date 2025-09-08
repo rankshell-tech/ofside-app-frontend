@@ -15,7 +15,7 @@ export default function SplashScreen() {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1 items-center justify-center bg-[#FFD500]">
+      <View className="flex-1 items-center justify-center bg-[#FFF201]">
         {/* Logo image */}
         <Image
           source={require('../../assets/images/logo.png')} // replace with your file

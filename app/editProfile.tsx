@@ -3,6 +3,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { JSX, useState } from "react";
 import {
@@ -61,6 +62,7 @@ const FloatingLabelInput = ({
 
 export default function EditProfile() {
   const theme = useTheme();
+  const navigation = useNavigation();
   const [name, setName] = useState("Swarit Jain");
   const [number, setNumber] = useState("+91 83937 23823");
   const [email, setEmail] = useState("Swarit13@gmail.com");
@@ -88,7 +90,7 @@ export default function EditProfile() {
       <LinearGradient colors={["#FFE39C", "#FFFFFF"]} className="px-4">
         <View className="flex-row items-center mt-10">
           <TouchableOpacity>
-            <Ionicons name="arrow-back" size={24} color="black" />
+            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
           </TouchableOpacity>
           <Text className="ml-2 text-lg font-bold">Edit Profile</Text>
         </View>
@@ -96,7 +98,7 @@ export default function EditProfile() {
         {/* Profile Icon */}
         <View className="items-center">
           <View className="w-40 h-40 bg-white rounded-full items-center justify-center border border-gray-400" style={{backgroundColor: theme.colors.accent}}>
-            <FontAwesome name="user" size={90} color={theme.colors.primary} />
+            <FontAwesome name="user" size={90} color="white" />
           </View>
           <TouchableOpacity className="absolute bottom-0 right-[35%] bg-white p-2 rounded-full border border-gray-400">
             <FontAwesome name="pencil" size={14} color="black" />

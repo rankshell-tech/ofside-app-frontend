@@ -64,7 +64,7 @@ const ScoringScreen = () => {
         {/* Header */}
         <View className="flex-row items-center justify-between p-3">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="chevron-back-circle-outline" size={24} color="black" />
+                <Ionicons name="chevron-back-circle-outline" size={22} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setRulesVisible(true)}>
                 <SlidersHorizontal  size={22} color="black" />

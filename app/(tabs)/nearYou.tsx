@@ -1,71 +1,137 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Modal, Linking, Animated, TextInput, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ImageBackground, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store';
-import { ThemedView } from '@/components/ui/ThemedView';
-import { ThemedText } from '@/components/ui/ThemedText';
-import { BookingCard } from '@/components/ui/BookingCard';
 import { useTheme } from '@/hooks/useTheme';
-import { mockVenues, mockBookings } from '@/data/mockData';
-import { setVenues, setSearchQuery, toggleSportFilter } from '@/store/slices/venueSlice';
-import { setBookings } from '@/store/slices/bookingSlice';
-import { SportType } from '@/types';
-import { Menu, X, User, Wallet, Calendar, Gift, Star, MessageCircle, Facebook, Twitter, Instagram, Search, MapPin, ChevronDown } from 'lucide-react-native';
-import { Trophy } from 'lucide-react-native';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { Menu, Search,} from 'lucide-react-native';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Entypo, FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
 
-const { width } = Dimensions.get('window');
-const NUM_COLUMNS = 3;
-const VENUE_MARGIN = 8;
-const VENUE_CARD_SIZE = (width - (NUM_COLUMNS + 1) * VENUE_MARGIN) / NUM_COLUMNS;
+const filterData: Record<
+  string,
+  { type: "multi" | "single"; options: string[] }
+> = {
+  "Sort by": {
+    type: "single",
+    options: [
+      "Relevance",
+      "Popularity",
+      "Price- High to low",
+      "Price- Low to high",
+      "Distance- Nearest once",
+    ],
+  },
+  Sport: {
+    type: "multi",
+    options: [
+      "Box cricket",
+      "Box football",
+      "Badminton",
+      "Cricket (Open)",
+      "Cricket Nets",
+      "Tennis",
+      "Table tennis",
+      "Volleyball",
+      "Swimming",
+      "Bowling",
+    ],
+  },
+  Category: {
+    type: "multi",
+    options: ["Team sport", "Individual sport"],
+  },
+  "Court type": {
+    type: "multi",
+    options: ["Indoor", "Outdoor", "Artificial grass", "Natural turf"],
+  },
+  Pricing: {
+    type: "single",
+    options: [
+      "INR 500-1000",
+      "INR 1000-1500",
+      "INR 1500-2000",
+      "INR 2000-2500",
+      "INR 2500 & above",
+    ],
+  },
+};
 
-export default function HomeScreen() {
+export default function NearYou() {
   const router = useRouter();
-  const dispatch = useDispatch();
   const theme = useTheme();
-  const turfs = [
+  const [isSortingOpen, setIsSortingOpen] = useState(false);
+    const turfs = [
     {
         id: "1",
         name: "Nik box turf",
-        image: "https://picsum.photos/400/200?1",
-        rating: 4.2,
-        location: "Chasiboard",
+        image: "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg",
+        rating: 3.4,
+        location: "Gaziabad",
         offer: "Flat 5% Off",
-        price: "INR 1200 Onwards",
+        price: "INR 999 Onwards",
         tag: "Trending",
+        bestFor: "Best for cricket",
+        distance: "2.2km"
+
     },
     {
         id: "2",
-        name: "Nik box turf",
-        image: "https://picsum.photos/400/200?2",
-        rating: 4.2,
-        location: "Chasiboard",
+        name: "John box turf",
+        image: "https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg",
+        rating: 3.5,
+        location: "Delhi",
         offer: "Flat 5% Off",
-        price: "INR 1200 Onwards",
+        price: "INR 800 Onwards",
         tag: "Trending",
+        bestFor: "Best for football",
+        distance: "8km"
     },
     {
         id: "3",
-        name: "Nik box turf",
-        image: "https://picsum.photos/400/200?3",
-        rating: 4.2,
-        location: "Chasiboard",
+        name: "Chetana turf",
+        image: "https://images.pexels.com/photos/6203527/pexels-photo-6203527.jpeg",
+        rating: 4.8,
+        location: "Noida",
         offer: "Flat 20% Off",
         price: "INR 1200 Onwards",
         tag: "Premium",
+        bestFor: "Best for tennis",
+        distance: "15km"
     },
     ];
+    const sortingOptions = [
+                    "Relevance",
+                    "Popularity",
+                    "Price- High to low",
+                    "Price- Low to high",
+                    "Distance- Nearest once",
+                  ];
+    const [isPricingOpen, setIsPricingOpen] = useState(false);
+    const [price, setPrice] = useState([1000, 2000]);
+    const [isLocationOpen, setIsLocationOpen] = useState(false);
+    const [localSearchQuery, setLocalSearchQuery] = useState('');
+    const [filterVisible, setFilterVisible] = useState(false);
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [activeTab, setActiveTab] = useState("Sport");
+    const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
-  useEffect(() => {
-    // Load mock data
-    dispatch(setVenues(mockVenues));
-    dispatch(setBookings(mockBookings));
-  }, [dispatch]);
+    const toggleOption = (tab: string, option: string, type: "multi" | "single") => {
+      setSelectedFilters((prev) => {
+        const prevOptions = prev[tab] || [];
+        if (type === "multi") {
+          if (prevOptions.includes(option)) {
+            return { ...prev, [tab]: prevOptions.filter((o) => o !== option) };
+          }
+          return { ...prev, [tab]: [...prevOptions, option] };
+        } else {
+          return { ...prev, [tab]: [option] };
+        }
+      });
+    };
+
+    const clearAll = () => setSelectedFilters({});
 
   return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-white">
@@ -77,206 +143,304 @@ export default function HomeScreen() {
             {/* Enhanced Fixed Header */}
             <View style={{ backgroundColor: theme.colors.background }} className="px-4 py-2">
                 <View className="flex-row justify-end items-center space-x-3">
-                    {/* Wallet Button */}
-                    <TouchableOpacity
-                    style={{ backgroundColor: theme.colors.primary }}
-                    className="w-10 h-10 rounded-full items-center justify-center"
-                    >
-                    <ThemedText size="lg" weight="bold" style={{ color: theme.colors.accent }}>
-                        ₹
-                    </ThemedText>
-                    </TouchableOpacity>
-
                     {/* Menu Button */}
                     <TouchableOpacity
-                    className="w-10 h-10 rounded-full items-center justify-center"
-                    onPress={() => router.push("/ProfileScreen")}
+                      className="w-10 h-10 rounded-full items-center justify-center"
+                      onPress={() => router.push("/ProfileScreen")}
                     >
                     <Menu size={24} color={theme.colors.text} />
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="px-3 py-2 flex-row mb-2"
-            >
-                <TouchableOpacity className="px-4 py-2 border rounded-lg flex-row items-center">
+            <View className='flex-row mb-2 justify-center'>
+                <TouchableOpacity  style={{backgroundColor: isSortingOpen? theme.colors.primary:'white'}} onPress={()=> setIsSortingOpen(!isSortingOpen)} className="px-3 py-2 border rounded-lg flex-row items-center mr-1">
+                    <Text className="mr-1 font-bold">Sort by</Text>
                     <Ionicons name="swap-vertical" size={16} color="black" />
-                    <Text className="ml-1">Sort by</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className="px-4 py-2 border rounded-lg">
-                    <Text>Filter by</Text>
+                <TouchableOpacity style={{backgroundColor: filterVisible? theme.colors.primary:'white'}} onPress={() => setFilterVisible(true)} className="px-3 py-2 border rounded-lg flex-row items-center mr-1">
+                    <Text className='mr-1 font-bold'>Filter by</Text>
+                    <Ionicons name="grid" size={16} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity className="px-4 py-2 border rounded-lg">
-                    <Text>Pricing</Text>
+                <TouchableOpacity style={{backgroundColor: isPricingOpen? theme.colors.primary:'white'}} onPress={() => setIsPricingOpen(true)} className="px-3 py-2 border rounded-lg mr-1">
+                    <Text className='font-bold'>Pricing</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className="px-4 py-2 border rounded-lg">
-                    <Text>Location</Text>
+                <TouchableOpacity style={{backgroundColor: isLocationOpen? theme.colors.primary:'white'}} onPress={() => setIsLocationOpen(true)} className="px-3 py-2 border rounded-lg mr-1">
+                    <Text className='font-bold'>Location</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </View>
+            {filterVisible
+            ?(
+              <View className="flex-1 bg-black/50 justify-center items-center">
+                  <View className="flex-row items-center bg-white border rounded-2xl p-2 mb-4 shadow-sm">
+                      <View className="flex-row flex-1">
+                          {/* Left Sidebar */}
+                          <View className="w-[30%] border-r border-gray-300">
+                              <FlatList
+                                  data={Object.keys(filterData)}
+                                  keyExtractor={(item) => item}
+                                  showsVerticalScrollIndicator={false}
+                                  renderItem={({ item }) => (
+                                      <TouchableOpacity
+                                          onPress={() => setActiveTab(item)}
+                                          className="py-3"
+                                      >
+                                      <Text
+                                          className={`${
+                                          activeTab === item ? "font-bold text-black" : "text-gray-500"
+                                          }`}
+                                      >
+                                          {item}
+                                      </Text>
+                                      <View className="border-t border-gray-300 my-1" style={{ width: "80%" }} />
+                                      </TouchableOpacity>
+                                  )}
+                              />
+                          </View>
 
-            {/* Turf Cards */}
-            <FlatList
-                data={turfs}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 80 }}
-                renderItem={({ item }) => (
-                <View className="bg-white rounded-2xl shadow mb-4 overflow-hidden border">
-                    {/* Image */}
-                    <Image source={{ uri: item.image }} className="w-full h-40" />
+                          {/* Vertical Divider */}
+                          <View className="w-px bg-gray-300" />
 
-                    {/* Tag + Bookmark */}
-                    <View className="absolute top-2 left-2 bg-gray-900/70 px-2 py-1 rounded">
-                    <Text className="text-white text-xs">{item.tag}</Text>
+                          {/* Right Content */}
+                          <View className="w-[70%] pl-3">
+                              {filterData[activeTab].type === "multi" ? (
+                              <FlatList
+                                  data={filterData[activeTab].options}
+                                  keyExtractor={(item) => item}
+                                  numColumns={2} // 👈 ensures exactly 2 items per row
+                                  columnWrapperStyle={{ justifyContent: "flex-start", marginBottom: 8 }}
+                                  renderItem={({ item: option }) => {
+                                  const selected = selectedFilters[activeTab]?.includes(option);
+                                  return (
+                                      <TouchableOpacity
+                                          onPress={() => toggleOption(activeTab, option, "multi")}
+                                          className="flex-1 px-1 py-1 rounded-md border mx-1"
+                                          style={{backgroundColor: selected? theme.colors.primary: 'white'}}
+                                      >
+                                      <Text className={`text-xs ${selected ? "text-black font-bold" : "text-black"}`}>
+                                          {option}
+                                      </Text>
+                                      </TouchableOpacity>
+                                  );
+                                  }}
+                              />
+                              ) : (
+                              <View>
+                                  {filterData[activeTab].options.map((option) => {
+                                  const selected = selectedFilters[activeTab]?.includes(option);
+                                  return (
+                                      <TouchableOpacity
+                                          key={option}
+                                          onPress={() => toggleOption(activeTab, option, "single")}
+                                          className="flex-row items-center py-1"
+                                      >
+                                          <View className="flex-1 flex-row justify-between items-center py-1">
+                                              <Text className={`${selected ? "font-bold" : "text-gray-700"}`}>
+                                                  {option}
+                                              </Text>
+                                              {
+                                                  selected ?(
+                                                      <FontAwesome className="w-5 h-5 rounded-full border" name="circle" size={16} color={theme.colors.primary} />
+                                                  ):(
+                                                      <Entypo name="circle" size={16} color='black'/>
+                                                  )
+                                              }
+                                          </View>
+                                      </TouchableOpacity>
+                                  );
+                                  })}
+                              </View>
+                              )}
+
+                          {/* Bottom Buttons */}
+                          <View className="flex-row justify-between mt-4">
+                              <TouchableOpacity onPress={clearAll} className="bg-blue-700 px-4 py-2 rounded-md">
+                                  <Text className="text-white font-bold">Clear all</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                  className="bg-green-600 px-4 py-2 rounded-md"
+                                  onPress={()=> setFilterVisible(false)}
+                                  >
+                                  <Text className="text-white font-bold">Apply</Text>
+                              </TouchableOpacity>
+                          </View>
+                          </View>
+                      </View>
+
+                  </View>
+              </View>
+            )
+            :(
+              <FlatList
+                  data={turfs}
+                  keyExtractor={(item) => item.id}
+                  contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 80 }}
+                  renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => router.push({
+                                                        pathname: '/nearYou/turfDetails',
+                                                        params: { id: item.id },
+                                                      })}
+                    className="flex-row items-center bg-white border border-gray-300 rounded-2xl p-2 mb-4 shadow-sm"
+                  >
+                    <View className="w-[60%]">
+                      <Image source={{ uri: item.image }} className="w-full h-40" />
+                      <View className='flex-row justify-between mt-2 mx-2'>
+                        <Text className="font-bold text-lg">{item.name}</Text>
+                        <Text className="font-bold text-white text-sm rounded-md px-2 py-1" style={{backgroundColor: '#16a34a'}}>{item.rating}</Text>
+                      </View>
+                      <View className="flex-row items-center mx-2">
+                        <Text className="text-gray-500 text-xs mr-2">{item.location}</Text>
+                        <Text className="text-xs text-gray-700 bg-gray-200 px-2 py-0.5 rounded-md">
+                          {item.distance}
+                        </Text>
+                      </View>
                     </View>
-                    <TouchableOpacity className="absolute top-2 right-2 bg-white p-1 rounded">
-                    <Ionicons name="bookmark-outline" size={20} color="black" />
+                    <View className="w-[40%] flex-col justify-between py-2 pr-2">
+                      <View className="flex-1 items-end">
+                        <FontAwesome className='mb-2' name="bookmark-o" size={20} color="black" />
+                        <Text className="text-white text-[10px] bg-blue-600 px-2 py-0.5 rounded-md mb-1">
+                          {item.tag}
+                        </Text>
+                        <Text className="text-white text-[10px] bg-gray-500 px-2 py-0.5 rounded-md mb-1">
+                          {item.bestFor}
+                        </Text>
+                      </View>
+                      <View className='flex-row items-center justify-end mb-3'>
+                        <FontAwesome className='mr-1' name="soccer-ball-o" size={16} color="black" />
+                        <FontAwesome6 className='mr-1' name="basketball" size={16} color="black" />
+                        <FontAwesome6 name="football" size={16} color="black" />
+                      </View>
+                      <View className="flex-1 mx-2">
+                        <LinearGradient
+                            colors={["#008000","#CCF3BA"]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0.7, y: 0 }}
+                            className="px-1 mb-1"
+                        >
+                          <Text className="text-xs text-white font-bold">{item.offer}</Text>
+                        </LinearGradient>
+                        <View className="border-t border-gray-300 my-1" />
+                      </View>
+                      <Text className="text-blue-700 font-bold text-right">
+                        {item.price}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  )}
+              />)
+            }
+            <Modal
+              transparent
+              visible={isSortingOpen}
+              animationType="fade"
+              onRequestClose={() => setIsSortingOpen(false)}
+            >
+              <TouchableOpacity
+                activeOpacity={1}
+                className="flex-1 bg-black/20"
+              >
+                <View className="absolute top-28 left-4 bg-white border border-gray-300 rounded-lg shadow-lg w-48 p-2">
+                  {sortingOptions.map((option, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        console.log("Selected:", option);
+                        setIsSortingOpen(false);
+                      }}
+                      className="py-1"
+                    >
+                      <Text
+                        className={`${
+                          option === "Price- High to low" ? "font-bold" : ""
+                        } text-gray-800`}
+                      >
+                        {option}
+                      </Text>
                     </TouchableOpacity>
-
-                    {/* Info */}
-                    <View className="p-3">
-                    <Text className="font-bold text-lg">{item.name}</Text>
-                    <Text className="text-xs text-gray-500">{item.location}</Text>
-
-                    <View className="flex-row items-center justify-between mt-2">
-                        <Text className="text-green-600 text-xs font-semibold">{item.offer}</Text>
-                        <View className="flex-row items-center">
-                        <Ionicons name="star" size={14} color="green" />
-                        <Text className="ml-1 text-sm">{item.rating}</Text>
-                        </View>
-                    </View>
-
-                    <Text className="text-blue-700 font-bold mt-2">{item.price}</Text>
-                    </View>
+                  ))}
                 </View>
-                )}
-            />
-
+              </TouchableOpacity>
+            </Modal>
+            <Modal
+              visible={isPricingOpen}
+              transparent
+              animationType="fade"
+              onRequestClose={()=>setIsPricingOpen(false)}
+            >
+              <TouchableOpacity
+                activeOpacity={1}
+                className="flex-1 bg-black/20"
+              >
+                <View className="absolute top-28 left-4 right-4 bg-white rounded-2xl shadow-lg p-4">
+                  {/* Range Slider */}
+                   <MultiSlider
+                      values={price}
+                      min={0}
+                      max={10000}
+                      step={100}
+                      sliderLength={280}
+                      onValuesChange={(val) => setPrice(val)}
+                      selectedStyle={{ backgroundColor: theme.colors.primary }}
+                      unselectedStyle={{ backgroundColor: "#000" }}
+                      markerStyle={{ backgroundColor: "black" }}
+                  />
+                  {/* Range Text */}
+                  <Text className="mt-3 text-base font-bold">
+                    INR {price[0].toLocaleString()} -{" "}
+                    {price[1].toLocaleString()}
+                  </Text>
+                  {/* Bottom Buttons */}
+                  <View className="flex-row justify-between mt-4">
+                      <TouchableOpacity onPress={clearAll} className="bg-blue-700 px-4 py-2 rounded-md">
+                          <Text className="text-white font-bold">Clear all</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                          className="bg-green-600 px-4 py-2 rounded-md"
+                          onPress={()=> setIsPricingOpen(false)}
+                          >
+                          <Text className="text-white font-bold">Apply</Text>
+                      </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+            <Modal
+              transparent
+              visible={isLocationOpen}
+              animationType="fade"
+              onRequestClose={() => setIsLocationOpen(false)}
+            >
+              <TouchableOpacity
+                activeOpacity={1}
+                onPressOut={() => setIsLocationOpen(false)} // close if clicked outside
+                className="flex-1 bg-black/20"
+              >
+                <View className="absolute top-28 right-4 bg-white border border-gray-300 rounded-lg shadow-lg w-80 h-60 p-2">
+                  <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                    <TextInput
+                      style={[styles.searchInput, { color: theme.colors.text }]}
+                      value={localSearchQuery}
+                      onChangeText={setLocalSearchQuery}
+                      placeholder="Search any location"
+                      placeholderTextColor={theme.colors.textSecondary}
+                      // onSubmitEditing={handleSearchSubmit}
+                    />
+                    <TouchableOpacity style={styles.searchButton}>
+                      <Search size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Modal>
         </ImageBackground>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  fixedHeader: {
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 24,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    marginBottom: 20,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  logo: {
-    width: 80,
-    height: 32,
-    marginRight: 12,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(255, 225, 0, 0.1)',
-    borderRadius: 20,
-  },
-  locationText: {
-    marginLeft: 4,
-    marginRight: 2,
-  },
-  headerActions: {
-    flexDirection: 'row',
-  },
-  walletButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  menuButton: {
-    padding: 8,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 32,
-  },
-  bannerContainer: {
-    marginHorizontal: 24,
-    marginVertical: 20,
-    height: 180,
-    borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-  },
-  bannerImage: {
-    width: '100%',
-    height: '100%',
-  },
-  bannerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  bannerTitle: {
-    color: 'white',
-    textAlign: 'center',
-    lineHeight: 32,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  bannerSubtitle: {
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 8,
-    opacity: 0.9,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  searchContainer: {
-    marginTop:10,
-    paddingHorizontal: 24,
-    paddingBottom: 20,
-  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
     borderRadius: 30,
     borderWidth: 1,
     elevation: 2,
@@ -284,6 +448,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    marginTop: 10,
   },
   searchInput: {
     flex: 1,
@@ -292,348 +457,5 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     padding: 4,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    marginBottom: 20,
-  },
-  moreButton: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 2,
-  },
-  moreIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sportsGrid: {
-    paddingHorizontal: 14,
-    gap: 8,
-  },
-  sportCard: {
-    width: (width - 48 - 32) / 5, // 5 columns with padding + spacing
-    height: 60,                   // little taller for box look
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    marginBottom: 12,
-    marginHorizontal: 4,
-    overflow: "hidden",
-
-    // Shadow for iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-
-    // Elevation for Android
-    elevation: 3,
-  },
-  sportImage: {
-    width: '100%',
-    height: '100%',
-  },
-  sportOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.25)", // light overlay
-    justifyContent: "flex-end",
-    alignItems: "center",
-    padding: 4,
-  },
-  sportText: {
-    color: "#fff",
-    fontSize: 8,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  venuesList: {
-    paddingLeft: 24,
-  },
-  venueCard: {
-  width: VENUE_CARD_SIZE,
-  height: VENUE_CARD_SIZE, // square
-  marginBottom: VENUE_MARGIN,
-  borderRadius: 12,
-  overflow: "hidden",
-  },
-  venueImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 12,
-  },
-  venueOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "flex-end",
-    padding: 6,
-  },
-  venueName: {
-    color: "#fff",
-  },
-  venueLocation: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  venueLocationText: {
-    color: 'white',
-    marginLeft: 4,
-    fontSize: 11,
-    fontWeight: '500',
-    fontFamily: 'Inter-Medium',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  // NEW: Event Card Styles
-  eventCard: {
-    width: 160,
-    height: 130,
-    marginRight: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-  eventImage: {
-    width: '100%',
-    height: '100%',
-  },
-  eventOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: 12,
-    alignItems: 'center',
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-  },
-  eventName: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  // NEW: Interest Section Styles
-  interestContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    gap: 16,
-  },
-  interestCard: {
-    width: (width - 48 - 48) / 4, // 4 columns with padding and gaps
-    height: (width - 48 - 48) / 4,
-    borderRadius: (width - 48 - 48) / 8, // Circular
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-  interestImage: {
-    width: '100%',
-    height: '100%',
-  },
-  interestOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center',
-    justifyContent:'flex-end',
-    padding: 8,
-  },
-  interestText: {
-    color: 'white',
-    fontSize: 8,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-    lineHeight: 13,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  // Enhanced CTA Section
-  ctaSection: {
-    marginHorizontal: 24,
-    marginVertical: 32,
-    padding: 32,
-    borderRadius: 20,
-    alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  ctaContent: {
-    alignItems: 'center',
-  },
-  ctaTitle: {
-    textAlign: 'center',
-    lineHeight: 36,
-    marginBottom: 4,
-  },
-  ctaButton: {
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 25,
-    marginTop: 24,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-  },
-  // Enhanced Menu Styles
-  menuOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-  },
-  menuContainer: {
-    width: '85%',
-    height: '100%',
-    borderTopLeftRadius: 25,
-    borderBottomLeftRadius: 25,
-    paddingTop: 60,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: -3, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-  },
-  menuHeader: {
-    paddingHorizontal: 24,
-    paddingBottom: 20,
-    marginBottom: 12,
-    borderBottomWidth: 1,
-  },
-  menuHeaderContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  userAvatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 0,
-    right: 24,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  menuItems: {
-    flex: 1,
-    paddingTop: 8,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    marginHorizontal: 12,
-    marginVertical: 3,
-    borderRadius: 16,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
-  },
-  menuItemIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  menuItemContent: {
-    flex: 1,
-  },
-  menuItemText: {
-    color: undefined,
-  },
-  menuItemArrow: {
-    marginLeft: 8,
-  },
-  socialSection: {
-    alignItems: 'center',
-    paddingTop: 24,
-    paddingBottom: 40,
-    paddingHorizontal: 24,
-    borderTopWidth: 1,
-  },
-  socialTitle: {
-    marginBottom: 20,
-  },
-  socialIcons: {
-    flexDirection: 'row',
-    gap: 20,
-    marginBottom: 28,
-  },
-  socialIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  legalLinks: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  versionText: {
-    textAlign: 'center',
   },
 });

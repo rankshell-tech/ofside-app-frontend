@@ -1,9 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TermsPrivacyScreen() {
     const [activeTab, setActiveTab] = useState<"terms" | "privacy">("terms");
+    const navigation = useNavigation();
     const renderTerms = () => (
     <>
       <View className="mb-4">
@@ -78,9 +81,9 @@ export default function TermsPrivacyScreen() {
   );
 
     return (
-        <View className="flex-1 bg-white">
-                <TouchableOpacity className="pt-10 pl-5" onPress={() => {}}>
-                    <Ionicons name="arrow-back" size={24} color="black" />
+        <SafeAreaView className="flex-1 bg-white">
+                <TouchableOpacity className="pt-4 pl-5" onPress={() => {}}>
+                    <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
                 </TouchableOpacity>
             <View className="flex-row items-center pb-2 border-b border-gray-300">
                 <View className="flex-1 items-center">
@@ -127,6 +130,6 @@ export default function TermsPrivacyScreen() {
             <ScrollView className="px-4 mt-4">
                 {activeTab === "terms" ? renderTerms() : renderPrivacy()}
             </ScrollView>
-        </View>
+        </SafeAreaView>
     )
 }

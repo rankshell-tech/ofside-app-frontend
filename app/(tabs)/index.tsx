@@ -141,23 +141,6 @@ export default function HomeScreen() {
     { id: 'tennis', name: 'Tennis', icon: '🎾', image: 'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg' },
   ];
 
-  const menuItems = [
-    { icon: <User size={20} color={theme.colors.textSecondary} />, title: 'My Profile', onPress: () => router.push('/(tabs)/profile') },
-    { icon: <Wallet size={20} color={theme.colors.textSecondary} />, title: 'My Wallet', onPress: () => {} },
-    { icon: <MaterialIcons name="scoreboard" size={24} color={theme.colors.textSecondary} />, title: 'Sports Scoring', onPress: () => router.push('/scoring/sportsScoring') },
-    // { icon: <Calendar size={20} color={theme.colors.textSecondary} />, title: 'My Bookings', onPress: () => router.push('/(tabs)/bookings') },
-    { icon: <Trophy size={20} color={theme.colors.textSecondary} />, title: 'Live Scoring', onPress: () => { closeMenu(); router.push('/scoring'); } },
-    { icon: <Gift size={20} color={theme.colors.textSecondary} />, title: 'Refer and Earn', onPress: () => {} },
-    { icon: <Star size={20} color={theme.colors.textSecondary} />, title: 'Rate App', onPress: () => {} },
-    { icon: <MessageCircle size={20} color={theme.colors.textSecondary} />, title: 'Contact Ofside', onPress: () => router.push('/profile/help') },
-  ];
-
-  const socialIcons = [
-    { icon: <Facebook size={24} color={theme.colors.textSecondary} />, url: 'https://facebook.com' },
-    { icon: <Twitter size={24} color={theme.colors.textSecondary} />, url: 'https://twitter.com' },
-    { icon: <Instagram size={24} color={theme.colors.textSecondary} />, url: 'https://instagram.com' },
-  ];
-
   useEffect(() => {
     // Load mock data
     dispatch(setVenues(mockVenues));
@@ -179,44 +162,16 @@ export default function HomeScreen() {
 
   const handleVenuePress = (venueId: string) => {
     if (mockVenues.find(v => v.id === venueId)) {
-      router.push(`/venue/${venueId}`);
+      // router.push(`/venue/${venueId}`);
     } else {
       // For trending/top rated venues that don't exist in mock data
       router.push('/search-results');
     }
   };
 
-  const handleEventPress = (eventId: string) => {
-    // Navigate to event details or events listing
-    router.push('/search-results?category=events');
-  };
-
-  const handleSocialPress = (url: string) => {
-    Linking.openURL(url);
-  };
-
-  const openMenu = () => {
-    setIsMenuOpen(true);
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeMenu = () => {
-    Animated.timing(slideAnim, {
-      toValue: width * 0.8,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsMenuOpen(false);
-    });
-  };
-
   const renderSportCard = ({ item, index }: { item: typeof sportsWithImages[0], index: number }) => (
     <TouchableOpacity
-      style={[styles.sportCard, { marginRight: (index + 1) % 5 === 0 ? 0 : 8 }]}
+      style={styles.sportCard}
       onPress={() => handleSportPress(item.id)}
       activeOpacity={0.8}
     >
@@ -272,42 +227,43 @@ export default function HomeScreen() {
             <View style={styles.headerLeft}>
               <TouchableOpacity style={styles.locationContainer}>
                 <MaterialCommunityIcons name="map-marker-radius" size={24} color="blue" />
-                <ThemedText size="sm" weight="medium" style={styles.locationText}>
+                <ThemedText size="sm" weight="bold" className='underline' style={styles.locationText}>
                   New Delhi
                 </ThemedText>
               </TouchableOpacity>
             </View>
             <View style={styles.headerActions}>
-              <TouchableOpacity onPress={()=> router.push('/scoring/sportsScoring')}>
-                <FontAwesome6 name="clipboard-list" size={28} color="black" />
+              <TouchableOpacity onPress={()=>router.push('/loading')}>
+                <FontAwesome6 name="clipboard-list" size={28} color={theme.colors.accent} />
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.menuButton}
+                style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}
                 onPress={()=> router.push('/ProfileScreen')}
+                className='w-10 h-10 rounded-full items-center justify-center bg-gray-200 ml-2'
               >
-                <FontAwesome name="user-circle-o" size={30} color="black" />
+                <FontAwesome name="user" size={24} color="white" />
               </TouchableOpacity>
             </View>
           </View>
         </View>
-        {/* Enhanced Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            <TextInput
-              style={[styles.searchInput, { color: theme.colors.text }]}
-              value={localSearchQuery}
-              onChangeText={setLocalSearchQuery}
-              placeholder="Search game, venue, trending sport..."
-              placeholderTextColor={theme.colors.textSecondary}
-              onSubmitEditing={handleSearchSubmit}
-            />
-            <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
-              <Search size={20} color={theme.colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
-        </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Enhanced Search Bar */}
+          <View style={styles.searchContainer}>
+            <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              <TextInput
+                style={[styles.searchInput, { color: theme.colors.text }]}
+                value={localSearchQuery}
+                onChangeText={setLocalSearchQuery}
+                placeholder="Search game, venue, trending sport..."
+                placeholderTextColor={theme.colors.textSecondary}
+                onSubmitEditing={handleSearchSubmit}
+              />
+              <TouchableOpacity onPress={handleSearchSubmit} style={styles.searchButton}>
+                <Search size={20} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          </View>
           {/* Choose your Sport Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -431,31 +387,39 @@ export default function HomeScreen() {
           </View>
 
           {/* NEW: From your Interest Section */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <ThemedText className='underline' size="lg" weight="bold">
+          <View className="my-4">
+            {/* Section Header */}
+            <View className="mb-3 px-3">
+              <ThemedText className="underline" size="lg" weight="bold">
                 From your Interest
               </ThemedText>
             </View>
 
-            <View style={styles.interestContainer}>
-              {interestSports.map((item, index) => (
+            {/* Horizontal Scroll */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 12 }}
+            >
+              {interestSports.map((item) => (
                 <TouchableOpacity
                   key={item.id}
-                  style={styles.interestCard}
-                  onPress={() => handleSportPress(item.id)}
+                  className="w-28 h-28 mr-4 rounded-full overflow-hidden"
                   activeOpacity={0.8}
+                  onPress={() => handleSportPress(item.id)}
                 >
-                  <Image source={{ uri: item.image }} style={styles.interestImage} />
-                  <View style={styles.interestOverlay}>
-                    <ThemedText size="sm" weight="bold" style={styles.interestText}>
+                  <Image source={{ uri: item.image }} className="w-full h-full rounded-full" />
+                  <View className="absolute inset-0 justify-end items-center pb-2">
+                    <Text className="text-white font-bold text-xs ">
                       {item.name}
-                    </ThemedText>
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
           </View>
+
+
 
           {/* Enhanced CTA Section */}
           <View className="flex-1 justify-center px-4 py-10">
@@ -466,13 +430,10 @@ export default function HomeScreen() {
               ecosystem{" "}
               <Text
                 style={{
-                  fontSize: 28,
-                  fontWeight: "bold",
-                  color: theme.colors.primary, // Yellow text
-                  textShadowColor: "#000", // Black outline
                   textShadowOffset: { width: 1, height: 1 },
-                  textShadowRadius: 1,
+                  textShadowRadius: 10,
                 }}
+                className='text-3xl text-blue-600 font-bold shadow-white'
               >
               Ofside
             </Text>
@@ -660,7 +621,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sportCard: {
-    width: (width - 48 - 32) / 5, // 5 columns with padding + spacing
+    width: (width - 36 - 16) / 5, // 5 columns with padding + spacing
     height: 60,                   // little taller for box look
     borderRadius: 12,
     backgroundColor: "#fff",
@@ -772,7 +733,7 @@ const styles = StyleSheet.create({
   // NEW: Interest Section Styles
   interestContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 24,
+    paddingHorizontal: 18,
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: 16,
