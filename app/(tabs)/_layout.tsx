@@ -13,23 +13,6 @@ export default function TabLayout() {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      const backAction = () => {
-        // If NOT on home, go home instead of exiting
-        if (pathname !== '/') {
-          router.replace('/(tabs)');
-          return true; // prevent default exit
-        }
-        return false; // allow exit if already at home
-      };
-
-      const subscription = BackHandler.addEventListener('hardwareBackPress', backAction);
-
-      return () => subscription.remove();
-    }
-  }, [pathname]);
-
   return (
     <Tabs
       screenOptions={{

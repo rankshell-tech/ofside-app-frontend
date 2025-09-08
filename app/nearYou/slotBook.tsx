@@ -12,7 +12,7 @@ export default function SlotBookingScreen() {
     const navigation = useNavigation();
   const [selectedSport, setSelectedSport] = useState("2");
   const times = ["9:00","9:30","10:00","10:30","11:00","11:30","12:00"];
-  const [fromTime, setFromTime] = useState("09:00");
+  const [fromTime, setFromTime] = useState("9:00");
   const [fromPeriod, setFromPeriod] = useState<"AM" | "PM">("AM");
 
   const [toTime, setToTime] = useState("10:00");
