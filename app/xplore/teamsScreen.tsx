@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
 
 interface Player {
   id: string;
@@ -30,6 +30,7 @@ export default function TeamsScreen() {
   const [searchPlayer, setSearchPlayer] = useState("");
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]); // store player IDs
   const [selectAll, setSelectAll] = useState(false);
+  const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
 
   const filteredPlayers = players.filter((p) =>
     p.name.toLowerCase().includes(searchPlayer.toLowerCase())
@@ -72,9 +73,7 @@ export default function TeamsScreen() {
       >
         <View className="flex-row items-center mx-4 mt-5">
           {/* Back Button */}
-          <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
-            <ArrowLeft size={24} color="black" />
-          </TouchableOpacity>
+          <Ionicons className="mr-3" onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
 
           {/* Tabs */}
           <View className="flex-row flex-1 border border-gray-300 rounded-xl overflow-hidden">
@@ -211,7 +210,7 @@ export default function TeamsScreen() {
 
             <View>
               <TouchableOpacity
-                onPress={() => router.push("/scoring/addPlayer")}
+                onPress={() => router.push("/xplore/addPlayer")}
                 className="px-2 py-1 rounded mb-2"
                 style={{ backgroundColor: theme.colors.primary }}
               >
@@ -281,7 +280,10 @@ export default function TeamsScreen() {
 
           {/* Next Button */}
           <TouchableOpacity
-            onPress={() => router.push("/scoring/matchSetupScreen")}
+            onPress={() => router.push({
+                      pathname: "/xplore/matchSetupScreen",
+                      params: { sport, format },
+                    })}
             className="py-3 rounded-md mt-3"
             style={{ backgroundColor: theme.colors.primary }}
           >

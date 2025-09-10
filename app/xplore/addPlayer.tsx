@@ -70,7 +70,7 @@ export default function AddPlayerScreen() {
         <View className="flex-1 px-6 pt-10">
           {/* Back button */}
           <TouchableOpacity onPress={()=> navigation.goBack()} className="mb-6">
-            <Ionicons name="arrow-back-circle-outline" size={28} color="black" />
+            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
           </TouchableOpacity>
 
           {/* Profile image */}
@@ -107,7 +107,7 @@ export default function AddPlayerScreen() {
 
           {/* Add Player button at bottom-right */}
           <View className="flex-1 justify-end items-end mb-8">
-            <TouchableOpacity onPress={() => router.push('/scoring/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
+            <TouchableOpacity onPress={() => router.push('/xplore/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
               <Text className="text-black font-bold text-base">Add player</Text>
             </TouchableOpacity>
           </View>

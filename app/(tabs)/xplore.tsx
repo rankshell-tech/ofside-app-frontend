@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronDown, ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Picker } from "@react-native-picker/picker";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -55,9 +55,7 @@ export default function App() {
       >
         {/* Profile Section */}
         <View className="flex-row items-center mx-5 my-5">
-          <TouchableOpacity onPress={()=> navigation.goBack()}>
-            <ArrowLeft size={20} color="black" />
-          </TouchableOpacity>
+          <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
           <View
             className="w-14 h-14 rounded-full items-center justify-center mx-4 shadow"
             style={{ backgroundColor: theme.colors.primary }}
@@ -65,7 +63,7 @@ export default function App() {
             <FontAwesome name="user" size={40} color={theme.colors.accent} />
           </View>
           <View className="flex-1">
-            <Text className="text-xl font-bold">{isGuest ? 'Hi Guest User!' :  `Hi ${user?.name}!` || 'Hi Guest User!'}</Text>
+            <Text className="text-xl font-bold">Hi Swarit!</Text>
             <View className="flex-row mt-2 items-center">
               <View className="border border-black rounded px-2 py-1 mr-2" >
                 <Text className="text-xs">Hard hitter</Text>

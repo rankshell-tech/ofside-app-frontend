@@ -3,11 +3,14 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground, SafeAreaView
 import { ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/hooks/useTheme";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function TossScreen({ navigation }: any) {
-  const [tossWinner, setTossWinner] = useState<string | null>(null);
-  const [kickOff, setKickOff] = useState<string | null>(null);
-  const [side, setSide] = useState<string | null>(null);
+    const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
+  const [tossWinner, setTossWinner] = useState<string | null>("B");
+  const [kickOff, setKickOff] = useState<string | null>("B");
+  const [side, setSide] = useState<string | null>("L");
     const theme = useTheme();
 
   const renderOption = (
@@ -48,11 +51,9 @@ export default function TossScreen({ navigation }: any) {
             <View className="flex-1 mt-10 mb-5">
             {/* Header */}
             <View className="flex-row justify-between items-center p-4">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                {/* <ArrowLeft size={24} color="black" /> */}
-                </TouchableOpacity>
+                <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
                 <TouchableOpacity>
-                <Text className="text-gray-600 font-medium">Skip</Text>
+                  <Text className="text-gray-600 font-medium underline">Skip</Text>
                 </TouchableOpacity>
             </View>
 
@@ -114,8 +115,10 @@ export default function TossScreen({ navigation }: any) {
             {/* Kick off Button */}
             <View className="px-4 mb-5">
                 <TouchableOpacity
+                    onPress={()=> router.push({ pathname: "/xplore/scoringScreen",
+                                                        params: { sport, format }})}
                     className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>
-                <Text className="font-bold text-black text-lg">Kick off</Text>
+                <Text className="font-bold text-black text-lg">{sport === 'Football' ? "Kick off" : "Start match"}</Text>
                 </TouchableOpacity>
             </View>
             </View>

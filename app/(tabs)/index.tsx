@@ -233,12 +233,12 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
             <View style={styles.headerActions}>
-              <TouchableOpacity onPress={()=>router.push('/loading')}>
+              <TouchableOpacity onPress={()=> router.push('/settings/ruleBook')}>
                 <FontAwesome6 name="clipboard-list" size={28} color={theme.colors.accent} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}
-                onPress={()=> router.push('/ProfileScreen')}
+                onPress={()=> router.push('/settings/ProfileScreen')}
                 className='w-10 h-10 rounded-full items-center justify-center bg-gray-200 ml-2'
               >
                 <FontAwesome name="user" size={24} color="white" />

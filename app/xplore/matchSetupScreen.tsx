@@ -11,10 +11,13 @@ import { router } from "expo-router";
 import {  SlidersHorizontal } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import RangeSelector from "./rangeSelector"
+import { useLocalSearchParams } from "expo-router";
 
 const MatchSetupScreen = () => {
     const theme = useTheme();
     const navigation = useNavigation();
+    const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
+
     const [matchType, setMatchType] = useState("Friendly");
     const [pitchType, setPitchType] = useState("Artificial Turf");
     const [city, setCity] = useState("Delhi");
@@ -22,10 +25,21 @@ const MatchSetupScreen = () => {
     const [date, setDate] =  useState(new Date(2025, 4, 13));
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [rulesVisible, setRulesVisible] = useState(false);
+    const [numberofSet, setNumberOfSet] = useState("3 Sets");
+    const [pointsPerSet, setPointsPerSet] = useState("15 points");
+    const [numberOfQuarter, setNumberOfQuarter] = useState("4 Quarters");
+    const [surfaceType, setSurfaceType] = useState("Clay");
+    const [numberofMatch, setNumberOfMatch] = useState("2 Matches");
 
     const matchTypes = ["Friendly", "Friendly Cup", "Exhibition", "Practice"];
     const pitchTypes = ["All Grass", "Artificial Turf", "Indoor", "Synthetic"];
+    const numberofSets = sport === 'Tennis'? ["1 Set", "3 Sets", "6 Sets"] : ["1 Set", "3 Sets", "5 Sets"];
+    const pointsPerSets = sport === 'Volleyball'? ["15 points", "21 points", "25 points"] :  ["11 points", "15 points", "21 points"];
+    const numberOfQuarters = ["1 Quarter", "2 Quarters", "3 Quarters", "4 Quarters"];
+    const surfaceTypes = ["Synthetic", "Clay", "Grass", "Indoor"];
+    const numberOfMatches = ["1 Match", "2 Matches"];
     const [matchDuration, setMatchDuration] = useState(10);
+    const [quarterDuration, setQuarterDuration] = useState(6);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-GB", {
@@ -53,7 +67,7 @@ const MatchSetupScreen = () => {
     <View className="mt-6">
       {/* Label */}
       <View className="absolute -top-2 left-4 bg-white px-1 z-10">
-        <Text className="text-xs font-semibold">{label}
+        <Text className="text-xs text-gray-500 font-semibold">{label}
         </Text>
       </View>
 
@@ -63,7 +77,7 @@ const MatchSetupScreen = () => {
           onPress={onPress}
           className="border border-black rounded-2xl px-4 py-4 flex-row justify-between items-center"
         >
-          <Text>{value}</Text>
+          <Text className="font-bold">{value}</Text>
           {icon}
         </TouchableOpacity>
       ) : (
@@ -71,7 +85,7 @@ const MatchSetupScreen = () => {
           <TextInput
             value={value}
             onChangeText={onChangeText}
-            className="text-left"
+            className="text-left font-bold"
           />
         </View>
       )}
@@ -87,15 +101,8 @@ const MatchSetupScreen = () => {
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
             {/* Header */}
             <View className="flex-row items-center justify-between mt-4 px-2">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                className="absolute top-4 right-4"
-                onPress={() => setRulesVisible(true)}
-                >
-                <SlidersHorizontal size={24} color="black" />
-                </TouchableOpacity>
+                <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+                <SlidersHorizontal onPress={() => setRulesVisible(true)} size={24} color="black" />
             </View>
 
             {/* VS Section */}
@@ -123,7 +130,12 @@ const MatchSetupScreen = () => {
                     style={{ width: 120, height: 120 }}
                     resizeMode="contain"
                     />
-                    <Text className="text-gray-600">{date.toLocaleDateString()}</Text>
+                    <Text className="text-gray-600">
+                        {date.toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "long",
+                        })}, {date.getFullYear()}
+                    </Text>
                 </View>
 
                 {/* Team B */}
@@ -146,99 +158,285 @@ const MatchSetupScreen = () => {
             {/* Match Type */}
             <View className="px-4 mt-2">
                 <Text className="font-bold text-lg">Select Match Type</Text>
-                <View className="flex-row flex-wrap mt-3">
-                {matchTypes.map((type) => (
-                    <TouchableOpacity
-                    key={type}
-                    className="px-2 py-1 rounded-full mr-2 mb-2 border"
-                    style={{
-                        backgroundColor:
-                        matchType === type ? theme.colors.primary : "white",
-                        borderColor:
-                        matchType === type ? theme.colors.primary : theme.colors.accent,
-                    }}
-                    onPress={() => setMatchType(type)}
-                    >
-                    <Text
-                        className={`text-sm ${
-                        matchType === type
-                            ? "font-bold text-black"
-                            : "text-gray-600"
-                        }`}
-                    >
-                        {type}
-                    </Text>
-                    </TouchableOpacity>
-                ))}
-                </View>
+                    <View className="flex-row flex-wrap mt-3">
+                        {matchTypes.map((type) => (
+                        <TouchableOpacity
+                            key={type}
+                            className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                            style={{
+                            backgroundColor: matchType === type ? theme.colors.primary : "white",
+                            borderColor: matchType === type ? theme.colors.primary : theme.colors.accent,
+                            }}
+                            onPress={() => setMatchType(type)}
+                        >
+                            <Text className={matchType === type ? "font-bold text-black" : "text-gray-600"}>
+                            {type}
+                            </Text>
+                        </TouchableOpacity>
+                        ))}
+                    </View>
             </View>
 
-            {/* Pitch Type */}
-            <View className="px-4 mt-2">
-                <Text className="font-bold text-lg">Pitch type</Text>
-                <View className="flex-row flex-wrap mt-3">
-                {pitchTypes.map((type) => (
+            {/* Conditional Sections */}
+            {(sport === "Badminton" || sport === "Pickleball" || sport === "Volleyball") && (
+            <>
+                {/* Number of Sets */}
+                <View className="px-4 mt-2">
+                <Text className="font-bold text-lg">Number of Sets</Text>
+                <View className="flex-row mt-3">
+                    {numberofSets.map((set) => (
                     <TouchableOpacity
-                    key={type}
-                    className="px-2 py-1 rounded-full mr-2 mb-2 border"
-                    style={{
-                        backgroundColor:
-                        pitchType === type ? theme.colors.primary : "white",
-                        borderColor:
-                        pitchType === type ? theme.colors.primary : theme.colors.accent,
-                    }}
-                    onPress={() => setPitchType(type)}
-                    >
-                    <Text
-                        className={`text-sm ${
-                        pitchType === type
-                            ? "font-bold text-black"
-                            : "text-gray-600"
-                        }`}
-                    >
-                        {type}
-                    </Text>
+                        key={set}
+                        onPress={() => setNumberOfSet(set)}
+                        className="px-4 py-2 border rounded-full mr-2"
+                        style={{
+                                backgroundColor:
+                                numberofSet === set ? theme.colors.primary : "white",
+                                borderColor:
+                                numberofSet === set ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        >
+                        <Text className={`text-sm ${
+                            numberofSet === set
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}>{set}</Text>
                     </TouchableOpacity>
-                ))}
+                    ))}
                 </View>
-            </View>
+                </View>
 
-            {/* Match Duration Slider */}
-            <RangeSelector
-                title="Match duration"
-                subtitle="Total minutes including both half's"
-                options={[0, 5, 10, 15, 20, 25, 30, 35, 40]}
-                selected={matchDuration}
-                onSelect={setMatchDuration} // ✅ no error now
-                unit="Mins"
-            />
+                {/* Points per Set */}
+                <View className="px-4 mt-2">
+                <Text className="font-bold text-lg">Points per set</Text>
+                <View className="flex-row mt-3">
+                    {pointsPerSets.map((point) => (
+                    <TouchableOpacity
+                        key={point}
+                        onPress={() => setPointsPerSet(point)}
+                        className="px-4 py-2 border rounded-full mr-2"
+                        style={{
+                                backgroundColor:
+                                pointsPerSet === point ? theme.colors.primary : "white",
+                                borderColor:
+                                pointsPerSet === point ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        >
+                        <Text className={`text-sm ${
+                            pointsPerSet === point
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}>{point}</Text>
+                    </TouchableOpacity>
+                    ))}
+                </View>
+                </View>
+            </>
+            )}
+
+            {(sport === "Football") && (
+            <>
+               {/* Pitch Type */}
+                <View className="px-4 mt-2">
+                    <Text className="font-bold text-lg">Pitch type</Text>
+                    <View className="flex-row flex-wrap mt-3">
+                    {pitchTypes.map((type) => (
+                        <TouchableOpacity
+                            key={type}
+                            className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                            style={{
+                                backgroundColor:
+                                pitchType === type ? theme.colors.primary : "white",
+                                borderColor:
+                                pitchType === type ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        onPress={() => setPitchType(type)}
+                        >
+                        <Text
+                            className={`text-sm ${
+                            pitchType === type
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}
+                        >
+                            {type}
+                        </Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                </View>
+
+                {/* Match Duration Slider */}
+                <RangeSelector
+                    title="Match duration"
+                    subtitle="Total minutes including both half's"
+                    options={[0, 5, 10, 15, 20, 25, 30, 35, 40]}
+                    selected={matchDuration}
+                    onSelect={setMatchDuration} // ✅ no error now
+                    unit="Mins"
+                />
+            </>
+            )}
+
+            {sport === "Basketball" && (
+            <>
+                <View className="px-4 mt-2">
+                    <Text className="font-bold text-lg">Choose Number of Quarters</Text>
+                    <View className="flex-row flex-wrap mt-3">
+                    {numberOfQuarters.map((type) => (
+                        <TouchableOpacity
+                            key={type}
+                            className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                            style={{
+                                backgroundColor:
+                                numberOfQuarter === type ? theme.colors.primary : "white",
+                                borderColor:
+                                numberOfQuarter === type ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        onPress={() => setNumberOfQuarter(type)}
+                        >
+                        <Text
+                            className={`text-sm ${
+                            numberOfQuarter === type
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}
+                        >
+                            {type}
+                        </Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                </View>
+
+                {/* Match Duration Slider */}
+                <RangeSelector
+                    title="Each Quarter Duration"
+                    options={[0, 1,2,3,4,5,6,7,8,9,10,11,12]}
+                    selected={quarterDuration}
+                    onSelect={setQuarterDuration} // ✅ no error now
+                    unit="Mins"
+                />
+            </>
+            )}
+
+             {(sport === "Tennis") && (
+            <>
+                {/* Surface Type */}
+                <View className="px-4 mt-2">
+                    <Text className="font-bold text-lg">Select Surface Type</Text>
+                    <View className="flex-row flex-wrap mt-3">
+                    {surfaceTypes.map((type) => (
+                        <TouchableOpacity
+                            key={type}
+                            className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                            style={{
+                                backgroundColor:
+                                surfaceType === type ? theme.colors.primary : "white",
+                                borderColor:
+                                surfaceType === type ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        onPress={() => setSurfaceType(type)}
+                        >
+                        <Text
+                            className={`text-sm ${
+                            surfaceType === type
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}
+                        >
+                            {type}
+                        </Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                </View>
+                {/* Number of Sets */}
+                <View className="px-4 mt-2">
+                    <Text className="font-bold text-lg">Number of Sets</Text>
+                <View className="flex-row mt-3">
+                    {numberofSets.map((set) => (
+                    <TouchableOpacity
+                        key={set}
+                        onPress={() => setNumberOfSet(set)}
+                        className="px-4 py-2 border rounded-full mr-2"
+                        style={{
+                                backgroundColor:
+                                numberofSet === set ? theme.colors.primary : "white",
+                                borderColor:
+                                numberofSet === set ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        >
+                        <Text className={`text-sm ${
+                            numberofSet === set
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}>{set}</Text>
+                    </TouchableOpacity>
+                    ))}
+                </View>
+                </View>
+
+                {/* Points per Set */}
+                <View className="px-4 mt-2">
+                <Text className="font-bold text-lg">Number of matches to decide winner</Text>
+                <View className="flex-row mt-3">
+                    {numberOfMatches.map((match) => (
+                    <TouchableOpacity
+                        key={match}
+                        onPress={() => setNumberOfMatch(match)}
+                        className="px-4 py-2 border rounded-full mr-2"
+                        style={{
+                                backgroundColor:
+                                numberofMatch === match ? theme.colors.primary : "white",
+                                borderColor:
+                                numberofMatch === match ? theme.colors.primary : theme.colors.accent,
+                            }}
+                        >
+                        <Text className={`text-sm ${
+                            numberofMatch === match
+                                ? "font-bold text-black"
+                                : "text-gray-600"
+                            }`}>{match}</Text>
+                    </TouchableOpacity>
+                    ))}
+                </View>
+                </View>
+            </>
+            )}
 
             {/* Form */}
             <View className="px-4 mt-4 space-y-4">
                 <FloatingLabelInput
-                label="City/Town"
-                value={city}
-                onChangeText={setCity}
+                    label="City/Town"
+                    value={city}
+                    onChangeText={setCity}
                 />
                 <FloatingLabelInput
-                label="Ground Name"
-                value={ground}
-                onChangeText={setGround}
+                    label="Ground Name"
+                    value={ground}
+                    onChangeText={setGround}
                 />
-                <FloatingLabelInput
-                label="Date of birth"
-                value={formatDate(date)}
-                isPicker
-                onPress={() => setShowDatePicker(true)}
-                icon={<Ionicons name="calendar" size={18} color="black" />}
-                />
+                {(sport !== "Badminton" &&  sport !== "Pickleball" && sport !== 'Tennis' && sport !== 'Volleyball') &&
+                    <FloatingLabelInput
+                        label="Date & Time"
+                        value={formatDate(date)}
+                        isPicker
+                        onPress={() => setShowDatePicker(true)}
+                        icon={<Ionicons name="calendar" size={18} color="black" />}
+                    />
+                }
             </View>
             </ScrollView>
 
             {/* ✅ Fixed Bottom Button */}
             <View className="absolute bottom-4 left-4 right-4">
             <TouchableOpacity
-                onPress={() => router.push("/scoring/scoringScreen")}
+                onPress={() =>sport === "Basketball"
+                    ? router.push({ pathname: "/xplore/scoringScreen",
+                                    params: { sport, format }})
+                    : router.push({ pathname: "/xplore/matchTossScreen",
+                                    params: { sport, format }})}
                 className="rounded-lg py-3 items-center"
                 style={{ backgroundColor: theme.colors.primary }}
             >
@@ -277,9 +475,12 @@ const MatchSetupScreen = () => {
 
             {/* Rules List */}
             <TouchableOpacity
+                disabled={(sport === "Badminton" || sport === 'Pickleball' )}
                 onPress={() => {
                 setRulesVisible(false);
-                router.push("/scoring/matchRulesScreen");
+                router.push({
+                        pathname: "/xplore/matchRulesScreen",
+                        params: { sport, format }})
                 }}
                 className="py-3 border-b border-gray-200"
             >

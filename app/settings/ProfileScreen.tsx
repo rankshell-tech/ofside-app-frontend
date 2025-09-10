@@ -1,4 +1,3 @@
-// app/ProfileScreen.tsx
 import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -24,7 +23,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
 
   const menuItems = [
-    { label: "Complete profile", icon: "user" , onPress: () => router.push("/editProfile")},
+    { label: "Complete profile", icon: "user" , onPress: () => router.push("/settings/editProfile")},
     { label: "Your Bookings", icon: "calendar", onPress: () => router.push("/booking/booking") },
     { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" },
     { label: "Corporate event booking", icon: "team" },
@@ -37,7 +36,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ImageBackground
-        source={require("../assets/images/background.png")}
+        source={require("../../assets/images/background.png")}
         resizeMode="cover"
         className="flex-1"
       >

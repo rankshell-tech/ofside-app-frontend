@@ -1,158 +1,63 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { ThemedView } from '@/components/ui/ThemedView';
-import { ThemedText } from '@/components/ui/ThemedText';
-import { useTheme } from '@/hooks/useTheme';
-import { Users, MessageCircle, Trophy, Calendar } from 'lucide-react-native';
+import { useTheme } from "@/hooks/useTheme";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useState } from "react";
+import {
+    Animated,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function CommunityScreen() {
+export default function EditProfile() {
   const theme = useTheme();
+  const navigation = useNavigation();
+  const [progress] = useState(new Animated.Value(0));
 
-  const communityFeatures = [
-    {
-      icon: <Users size={24} color={theme.colors.primary} />,
-      title: 'Find Players',
-      description: 'Connect with other players in your area',
-      action: 'Browse Players',
-    },
-    {
-      icon: <MessageCircle size={24} color={theme.colors.primary} />,
-      title: 'Join Groups',
-      description: 'Join sport-specific groups and communities',
-      action: 'Explore Groups',
-    },
-    {
-      icon: <Trophy size={24} color={theme.colors.primary} />,
-      title: 'Tournaments',
-      description: 'Participate in local tournaments and competitions',
-      action: 'View Tournaments',
-    },
-    {
-      icon: <Calendar size={24} color={theme.colors.primary} />,
-      title: 'Events',
-      description: 'Discover upcoming sports events and meetups',
-      action: 'Find Events',
-    },
-  ];
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: 4000, // 4s fake loading
+      useNativeDriver: false,
+    }).start();
+  }, []);
+
+  const widthInterpolated = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <ThemedText size="2xl" weight="bold">
-            Community
-          </ThemedText>
-          <ThemedText variant="secondary" size="base">
-            Connect with players and join the sports community
-          </ThemedText>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Header */}
+      <LinearGradient colors={["#FFE39C", "#FFFFFF"]} className="px-4">
+        <View className="flex-col justify-center items-center mt-72 mb-20">
+            {/* Progress Bar */}
+            <View className="w-60 h-5 border-2 border-yellow-500 rounded-full overflow-hidden mt-12" style={{ backgroundColor: theme.colors.primary }}>
+                <Animated.View
+                style={{
+                    width: widthInterpolated,
+                    height: "100%",
+                    backgroundColor: "black",
+                }}
+                />
+            </View>
+
+            {/* Loading text */}
+            <Text className="mt-8 text-center text-base font-bold text-gray-800">
+                Please wait while we are cooking{" "}
+                <Text className="text-blue-700 font-bold">
+                community engagement ecosystem
+                </Text>{" "}
+                for you!
+            </Text>
         </View>
 
-        <View style={styles.featuresContainer}>
-          {communityFeatures.map((feature, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.featureCard, { backgroundColor: theme.colors.background }]}
-              activeOpacity={0.7}
-            >
-              <View style={styles.featureIcon}>
-                {feature.icon}
-              </View>
-              <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: theme.colors.text }]}>
-                  {feature.title}
-                </Text>
-                <Text style={[styles.featureDescription, { color: theme.colors.textSecondary }]}>
-                  {feature.description}
-                </Text>
-              </View>
-              <View style={[styles.actionBadge, { backgroundColor: theme.colors.surface }]}>
-                <Text style={[styles.actionText, { color: theme.colors.primary }]}>
-                  {feature.action}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={[styles.comingSoonCard, { backgroundColor: theme.colors.surface }]}>
-          <ThemedText size="lg" weight="bold" style={styles.comingSoonTitle}>
-            Coming Soon!
-          </ThemedText>
-          <ThemedText variant="secondary" size="base" style={styles.comingSoonText}>
-            Community features are being developed. Stay tuned for player matching, group chats, and tournament organization tools.
-          </ThemedText>
-        </View>
-      </ScrollView>
-    </ThemedView>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 32,
-  },
-  featuresContainer: {
-    paddingHorizontal: 24,
-    marginBottom: 32,
-  },
-  featureCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  featureIcon: {
-    marginRight: 16,
-  },
-  featureContent: {
-    flex: 1,
-  },
-  featureTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Inter-Bold',
-    marginBottom: 4,
-  },
-  featureDescription: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    lineHeight: 18,
-  },
-  actionBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  actionText: {
-    fontSize: 12,
-    fontWeight: '500',
-    fontFamily: 'Inter-Medium',
-  },
-  comingSoonCard: {
-    marginHorizontal: 24,
-    padding: 24,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  comingSoonTitle: {
-    marginBottom: 12,
-  },
-  comingSoonText: {
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-});

@@ -146,7 +146,7 @@ export default function NearYou() {
                     {/* Menu Button */}
                     <TouchableOpacity
                       className="w-10 h-10 rounded-full items-center justify-center"
-                      onPress={() => router.push("/ProfileScreen")}
+                      onPress={() => router.push("/settings/ProfileScreen")}
                     >
                     <Menu size={24} color={theme.colors.text} />
                     </TouchableOpacity>

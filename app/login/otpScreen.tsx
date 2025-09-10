@@ -29,7 +29,7 @@ export default function OtpScreen() {
             </View>
 
                 {/* OTP Input */}
-            <View className="flex-row justify-center mt-12 space-x-4">
+            <View className="flex-row justify-center mt-14 space-x-4">
                 {otp.map((digit, index) => (
                     <TextInput
                     key={index}
@@ -52,19 +52,6 @@ export default function OtpScreen() {
             <TouchableOpacity onPress={()=> router.replace("/(tabs)")} className="my-8 py-3 rounded-md">
                 <Text className="text-2xl font-black text-center">Continue</Text>
             </TouchableOpacity>
-
-            {/* Social Icons */}
-            <View className="flex-row justify-center mt-8 space-x-6">
-                <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white">
-                    <Zocial name="email" size={36} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white">
-                    <GoogleIcon size={36} />
-                </TouchableOpacity>
-                <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center bg-white">
-                    <AntDesign name="apple1" size={36} color="black" />
-                </TouchableOpacity>
-            </View>
 
             {/* Terms and Conditions */}
             <View className="absolute bottom-1 w-full items-center">

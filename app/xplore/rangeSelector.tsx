@@ -33,8 +33,8 @@ function OptionSelector<T extends string | number>({
         }}
       >
         <Text
-          className={`text-lg font-bold ${
-            isSelected ? "text-black" : "text-gray-500"
+          className={`font-bold ${
+            isSelected ? "text-black text-xl" : "text-gray-500 text-md"
           }`}
         >
           {item}
@@ -65,7 +65,7 @@ function OptionSelector<T extends string | number>({
           decelerationRate="fast"
         />
         {unit && (
-          <Text className="ml-2 text-lg font-bold text-gray-600">{unit}</Text>
+          <Text className="ml-2 text-md font-bold text-gray-600">{unit}</Text>
         )}
       </View>
     </View>

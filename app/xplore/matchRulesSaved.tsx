@@ -3,14 +3,14 @@ import { View, Text, ImageBackground } from "react-native";
 import { Feather,  } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
 
 const PlayerAddedScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
     useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/scoring/matchTossScreen")
+      navigation.goBack();
+      navigation.goBack();
     }, 2000); // 2 seconds
 
     return () => clearTimeout(timer);

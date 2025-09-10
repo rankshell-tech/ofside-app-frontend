@@ -1,13 +1,21 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
+import { router } from "expo-router";
 
 const WinnerScreen = () => {
     const theme = useTheme();
+    useEffect(() => {
+        const timer = setTimeout(() => {
+         router.dismissAll();
+        }, 2000); // 2 seconds
+
+        return () => clearTimeout(timer);
+      });
   return (
     <SafeAreaView className="flex-1">
       {/* Background Gradient */}
