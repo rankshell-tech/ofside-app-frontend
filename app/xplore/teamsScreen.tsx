@@ -71,30 +71,30 @@ export default function TeamsScreen() {
         resizeMode="contain"
         className="flex-1 bg-white"
       >
-        <View className="flex-row items-center mx-4 mt-5">
+        <View className="flex-row items-center mx-4 my-5">
           {/* Back Button */}
           <Ionicons className="mr-3" onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        </View>
 
           {/* Tabs */}
-          <View className="flex-row flex-1 border border-gray-300 rounded-xl overflow-hidden">
-          {["My Teams", "Opponents", "Add Players"].map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab as typeof activeTab)}
-              className={`flex-1 py-2 items-center ${
-                activeTab === tab ? "bg-black" : ""
+        <View className="flex-row border border-gray-300 rounded-xl overflow-hidden mx-5">
+        {["My Teams", "Opponents", "Add Players"].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            onPress={() => setActiveTab(tab as typeof activeTab)}
+            className={`flex-1 py-2 items-center ${
+              activeTab === tab ? "bg-black" : ""
+            }`}
+          >
+            <Text
+              className={`${
+                activeTab === tab ? "text-white font-bold" : "text-black"
               }`}
             >
-              <Text
-                className={`${
-                  activeTab === tab ? "text-white font-bold" : "text-black"
-                }`}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          </View>
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
         </View>
 
         {/* Content */}
@@ -258,7 +258,7 @@ export default function TeamsScreen() {
                   <TouchableOpacity
                     onPress={() => togglePlayer(item.id)}
                     className={`rounded-2xl border p-2 m-1 w-[48%] items-center shadow-sm ${
-                      isSelected ? "border-yellow-400 bg-yellow-100" : "border-gray-300 bg-white"
+                      isSelected ? "bg-[#55ba75]" : "bg-yellow-200"
                     }`}
                   >
                     {/* Avatar */}

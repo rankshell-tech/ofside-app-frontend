@@ -20,7 +20,7 @@ const WinnerScreen = () => {
     <SafeAreaView className="flex-1">
       {/* Background Gradient */}
       <LinearGradient
-        colors={["#FFD700", "#FFEB99"]}
+        colors={["#FFF201", "#FFEB99"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         className="flex-1 justify-center items-center"

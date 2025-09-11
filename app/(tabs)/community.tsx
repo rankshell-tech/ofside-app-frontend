@@ -28,22 +28,22 @@ export default function EditProfile() {
 
   const widthInterpolated = progress.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0%", "100%"],
+    outputRange: ["0%", "80%"],
   });
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <LinearGradient colors={["#FFE39C", "#FFFFFF"]} className="px-4">
+      <LinearGradient colors={["#FFF201", "#FFFFFF"]} className="px-4">
         <View className="flex-col justify-center items-center mt-72 mb-20">
             {/* Progress Bar */}
-            <View className="w-60 h-5 border-2 border-yellow-500 rounded-full overflow-hidden mt-12" style={{ backgroundColor: theme.colors.primary }}>
+            <View className="w-60 h-5 border-2 rounded-full overflow-hidden mt-12" style={{ backgroundColor: theme.colors.primary }}>
                 <Animated.View
-                style={{
-                    width: widthInterpolated,
-                    height: "100%",
-                    backgroundColor: "black",
-                }}
+                  style={{
+                      width: widthInterpolated,
+                      height: "100%",
+                      backgroundColor: "black",
+                  }}
                 />
             </View>
 

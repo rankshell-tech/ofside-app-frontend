@@ -172,10 +172,10 @@ export default function MatchRulesScreen() {
                             className="flex-row justify-between items-center"
                         >
                             <View className="flex-row items-baseline">
-                                <Text className="text-2xl font-bold">
+                                <Text className="text-xl font-extrabold">
                                     {rule.label.split(" ")[0]}{" "}
                                 </Text>
-                                <Text className="text-lg">{rule.label.split(" ")[1]}</Text>
+                                <Text className="text-sm">{rule.label.split(" ")[1]}</Text>
                             </View>
                             <Switch
                                 value={rules[rule.key as keyof typeof rules]}
@@ -223,14 +223,17 @@ export default function MatchRulesScreen() {
                     </View>
 
                     {/* Match Break Duration */}
-                    <RangeSelector
-                        title="Match Break Duration"
-                        subtitle="Between two half's"
-                        options={[0, 5, 10, 15, 20]}
-                        selected={matchDuration}
-                        onSelect={setMatchDuration} // ✅ no error now
-                        unit="mins"
-                    />
+                    <View className="px-2 mt-3">
+                        <RangeSelector
+                            title="Match Break Duration"
+                            subtitle="Between two half's"
+                            options={[0, 5, 10, 15, 20]}
+                            selected={matchDuration}
+                            onSelect={setMatchDuration} // ✅ no error now
+                            unit="mins"
+                        />
+                    </View>
+
                     </>
                 )}
                 {sport === "Tennis" && (

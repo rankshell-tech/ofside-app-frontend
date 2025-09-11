@@ -39,12 +39,12 @@ export default function SelectTeamsScreen() {
                             params: { sport, format },})}
             >
             <View
-              className="w-16 h-16 rounded-full items-center justify-center"
+              className="w-20 h-20 rounded-full items-center justify-center"
               style={{ backgroundColor: theme.colors.primary }}
             >
-              <Entypo name="plus" size={36} color="black" />
+              <Entypo name="plus" size={70} color="black" />
             </View>
-            <Text className="ml-4 text-2xl font-bold text-black">
+            <Text className="ml-4 text-4xl font-bold text-black">
               Select {label} A
             </Text>
           </TouchableOpacity>
@@ -63,12 +63,12 @@ export default function SelectTeamsScreen() {
                             params: { sport, format },})}
           >
             <View
-              className="w-16 h-16 rounded-full items-center justify-center"
+              className="w-20 h-20 rounded-full items-center justify-center"
               style={{ backgroundColor: theme.colors.primary }}
             >
-              <Entypo name="plus" size={36} color="black" />
+              <Entypo name="plus" size={70} color="black" />
             </View>
-            <Text className="ml-4 text-2xl font-bold text-black">
+            <Text className="ml-4 text-4xl font-bold text-black">
               Select {label} B
             </Text>
           </TouchableOpacity>

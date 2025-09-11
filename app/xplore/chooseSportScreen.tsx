@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { router, useNavigation, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ChooseSportScreen() {
   const navigation = useNavigation();
   const [selectedSport, setSelectedSport] = useState("Football");
   const [selectedFormat, setSelectedFormat] = useState("Team");
+  const { isTournament } = useLocalSearchParams<{ isTournament?: string }>();
+  const tournamentMode = isTournament === "true";
 
   const sports = ["Football", "Badminton", "Volleyball", "Basketball", "Tennis", "Pickleball"];
   const sportFormats: Record<string, string[]> = {
@@ -41,7 +43,7 @@ export default function ChooseSportScreen() {
 
           {/* Sports Section */}
           <View className="flex-1">
-            <Text className="text-2xl font-extrabold text-gray-900 mb-5">
+            <Text className="text-2xl font-extrabold text-gray-900 mb-1">
               Choose the Sport
             </Text>
             <Text className="text-sm text-gray-500 mb-6">
@@ -59,7 +61,7 @@ export default function ChooseSportScreen() {
                 >
                   {isSelected ? (
                     <LinearGradient
-                      colors={["#FFE600", "#EDEDED"]}
+                      colors={["#FFF201", "#EDEDED"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="flex-1 items-center justify-center rounded-xl"
@@ -93,7 +95,7 @@ export default function ChooseSportScreen() {
                 >
                   {isSelected ? (
                     <LinearGradient
-                      colors={["#FFE600", "#EDEDED"]}
+                      colors={["#FFF201", "#EDEDED"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="flex-1 items-center justify-center rounded-xl"
@@ -117,14 +119,16 @@ export default function ChooseSportScreen() {
         <View className="absolute bottom-4 left-4 right-4">
           <TouchableOpacity
              onPress={() =>
-                router.push({
+              tournamentMode
+              ? router.push("/tournament/editTournament")
+              : router.push({
                   pathname: "/xplore/selectTeamsScreen",
                   params: { sport: selectedSport, format: selectedFormat },
                 })
               }
             className="h-12 rounded-xl overflow-hidden mt-48">
             <LinearGradient
-              colors={["#FFE600", "#FFE600"]}
+              colors={["#FFF201", "#FFF201"]}
               className="flex-1 items-center justify-center rounded-xl"
             >
               <Text className="font-extrabold text-base text-black">

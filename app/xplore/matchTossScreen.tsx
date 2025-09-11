@@ -25,16 +25,16 @@ export default function TossScreen({ navigation }: any) {
       >
         {selected ? (
           <LinearGradient
-            colors={["#FFEB3B", "#FFFFFF"]}
+            colors={["#FFF201", "#FFFFFF"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             className="p-4 items-center justify-center"
           >
-            <Text className="text-lg font-bold">{label}</Text>
+            <Text className="text-2xl font-bold">{label}</Text>
           </LinearGradient>
         ) : (
           <View className="p-4 items-center justify-center border border-gray-300 rounded-xl bg-white">
-            <Text className="text-lg font-bold">{label}</Text>
+            <Text className="text-2xl">{label}</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -63,12 +63,12 @@ export default function TossScreen({ navigation }: any) {
                 <View className="rounded-xl p-4 mb-6" style={{backgroundColor:theme.colors.grey}}>
                     {/* Toss Winner */}
                     <LinearGradient
-                        colors={["#FFEB3B", "#FFFFFF"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3"
+                      colors={["#FFF201", "transparent"]} // 👈 fade to transparent
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0.8, y: 0 }}
+                      className="px-1 py-1 rounded-t-md mb-3"
                     >
-                        <Text className="text-sm font-semibold">Select the toss winner</Text>
+                      <Text className="text-[10px] font-bold">Select the toss winner</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Team A", tossWinner === "A", () => setTossWinner("A"))}
@@ -80,12 +80,12 @@ export default function TossScreen({ navigation }: any) {
                 <View className="rounded-xl p-4 mb-6" style={{backgroundColor:theme.colors.grey}}>
                     {/* Toss Winner */}
                     <LinearGradient
-                        colors={["#FFEB3B", "#FFFFFF"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3"
+                      colors={["#FFF201", "transparent"]} // 👈 fade to transparent
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      className="px-1 py-1 rounded-t-md mb-3"
                     >
-                        <Text className="text-sm font-semibold">Which team will take the first Kick-Off ?</Text>
+                        <Text className="text-[10px] font-bold">Which team will take the first Kick-Off ?</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Team A", kickOff === "A", () => setKickOff("A"))}
@@ -97,12 +97,12 @@ export default function TossScreen({ navigation }: any) {
                 <View className="rounded-xl p-4 mb-6" style={{backgroundColor:theme.colors.grey}}>
                     {/* Toss Winner */}
                     <LinearGradient
-                        colors={["#FFEB3B", "#FFFFFF"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        className="px-2 py-1 rounded-t-md mb-3"
+                      colors={["#FFF201", "transparent"]} // 👈 fade to transparent
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      className="px-1 py-1 rounded-t-md mb-3"
                     >
-                        <Text className="text-sm font-semibold">Choose the side of toss winning team</Text>
+                        <Text className="text-[10px] font-bold">Choose the side of toss winning team</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Left", side === "L", () => setSide("L"))}

@@ -106,19 +106,18 @@ const MatchSetupScreen = () => {
             </View>
 
             {/* VS Section */}
-            <View className="items-center">
-                <View className="flex-row items-center space-x-6">
+            <View className="flex-row justify-between items-center mx-5">
                 {/* Team A */}
                 <View className="items-center">
                     <View
-                    style={{ backgroundColor: theme.colors.accent }}
-                    className="w-20 h-20 rounded-full items-center justify-center shadow"
+                        style={{ backgroundColor: theme.colors.accent }}
+                        className="w-24 h-24 rounded-full items-center justify-center shadow"
                     >
-                    <FontAwesome
-                        name="user"
-                        size={40}
-                        color={theme.colors.primary}
-                    />
+                        <FontAwesome
+                            name="user"
+                            size={40}
+                            color={theme.colors.primary}
+                        />
                     </View>
                     <Text className="mt-2 font-bold">TEAM A</Text>
                 </View>
@@ -127,10 +126,10 @@ const MatchSetupScreen = () => {
                 <View className="items-center">
                     <Image
                     source={require("../../assets/images/vsIconGray.png")}
-                    style={{ width: 120, height: 120 }}
+                    style={{ width: 150, height: 150 }}
                     resizeMode="contain"
                     />
-                    <Text className="text-gray-600">
+                    <Text className="text-gray-600 text-[12px]">
                         {date.toLocaleDateString("en-GB", {
                             day: "numeric",
                             month: "long",
@@ -142,7 +141,7 @@ const MatchSetupScreen = () => {
                 <View className="items-center">
                     <View
                     style={{ backgroundColor: theme.colors.accent }}
-                    className="w-20 h-20 rounded-full items-center justify-center shadow"
+                    className="w-24 h-24 rounded-full items-center justify-center shadow"
                     >
                     <FontAwesome
                         name="user"
@@ -151,7 +150,6 @@ const MatchSetupScreen = () => {
                     />
                     </View>
                     <Text className="mt-2 font-bold">TEAM B</Text>
-                </View>
                 </View>
             </View>
 
@@ -267,14 +265,16 @@ const MatchSetupScreen = () => {
                 </View>
 
                 {/* Match Duration Slider */}
-                <RangeSelector
-                    title="Match duration"
-                    subtitle="Total minutes including both half's"
-                    options={[0, 5, 10, 15, 20, 25, 30, 35, 40]}
-                    selected={matchDuration}
-                    onSelect={setMatchDuration} // ✅ no error now
-                    unit="Mins"
-                />
+                <View className="px-4 mt-2">
+                    <RangeSelector
+                        title="Match duration"
+                        subtitle="Total minutes including both half's"
+                        options={[0, 5, 10, 15, 20, 25, 30, 35, 40]}
+                        selected={matchDuration}
+                        onSelect={setMatchDuration} // ✅ no error now
+                        unit="Mins"
+                    />
+                </View>
             </>
             )}
 

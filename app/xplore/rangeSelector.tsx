@@ -25,7 +25,7 @@ function OptionSelector<T extends string | number>({
     return (
       <TouchableOpacity
         onPress={() => onSelect(item)}
-        className="px-2 py-1 rounded-md mx-2"
+        className="px-2 py-1 rounded-md mx-1"
         style={{
           borderWidth: isSelected ? 1 : 0,
           borderColor: "black",
@@ -34,7 +34,7 @@ function OptionSelector<T extends string | number>({
       >
         <Text
           className={`font-bold ${
-            isSelected ? "text-black text-xl" : "text-gray-500 text-md"
+            isSelected ? "text-black text-xl px-5" : "text-gray-500 text-md"
           }`}
         >
           {item}
@@ -45,7 +45,7 @@ function OptionSelector<T extends string | number>({
 
  const theme = useTheme();
   return (
-    <View className="px-5 mt-6">
+    <View className="">
       {/* Title + Subtitle */}
       <View className="flex-row items-baseline mb-3">
         <Text className="text-lg font-bold">{title} </Text>
@@ -53,7 +53,7 @@ function OptionSelector<T extends string | number>({
       </View>
 
       {/* Options + Unit fixed */}
-      <View className="flex-row items-center">
+      <View className="flex-row items-center mx-10">
         <FlatList
           data={options}
           horizontal

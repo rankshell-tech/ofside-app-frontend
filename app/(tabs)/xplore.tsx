@@ -2,9 +2,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronDown, ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Picker } from "@react-native-picker/picker";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useSelector } from 'react-redux';
@@ -25,10 +23,10 @@ export default function App() {
 
   const MenuButton = ({title, comingSoon, onPress} : MenuButtonProps) => (
     <LinearGradient
-      colors={["#FFE600", "#EAEAEA"]}
+      colors={["#FFF201", "#EAEAEA"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      className="flex-1 mx-1"
+      className="flex-1 mx-3 rounded-full"
     >
       <TouchableOpacity className="p-6 items-center justify-center" onPress={onPress}>
         <Text className="text-lg font-bold text-black">{title}</Text>
@@ -42,9 +40,6 @@ export default function App() {
       </TouchableOpacity>
     </LinearGradient>
   );
-  const handleRoute = () => {
-    router.push(`/xplore/chooseSportScreen`)
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -72,25 +67,25 @@ export default function App() {
           </View>
         </View>
         <ScrollView>
-          <View className="p-2">
+          <View className="p-4">
             {/* Buttons */}
-            <View className="flex-row mt-4 w-full h-32">
-              <MenuButton title="Start a match" onPress={()=>handleRoute()} />
-              <MenuButton title="Create Tournament" />
+            <View className="flex-row mt-4 w-full h-28">
+              <MenuButton title="Start a match" onPress={()=>router.push(`/xplore/chooseSportScreen`)} />
+              <MenuButton title="Create Tournament" onPress={()=> router.push('/tournament/createTournament')} />
             </View>
-            <View className="flex-row mt-4 w-full h-32">
+            <View className="flex-row mt-4 w-full h-28">
               <MenuButton title="My Game" />
               <MenuButton title="My Performance" />
             </View>
-            <View className="flex-row mt-4 w-full h-32">
+            <View className="flex-row mt-4 w-full h-28">
               <MenuButton title="My Team" />
               <MenuButton title="Team Performance" />
             </View>
 
-            <View className="mt-4">
+            <View className="my-4">
               <MenuButton title="Strength & Weekness" comingSoon />
             </View>
-            <View className="mt-4">
+            <View className="my-4">
               <MenuButton title="Leaderboard" comingSoon />
             </View>
         </View>
