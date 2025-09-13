@@ -45,7 +45,7 @@ const FloatingLabelInput = ({
         onPress={onPress}
         className="border border-black rounded-2xl px-4 py-4 flex-row justify-between items-center"
       >
-        <Text>{value}</Text>
+        <Text className="flex-1 text-center">{value}</Text>
         {icon}
       </TouchableOpacity>
     ) : (
@@ -53,7 +53,7 @@ const FloatingLabelInput = ({
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          className="text-left"
+          className="text-center"
         />
       </View>
     )}

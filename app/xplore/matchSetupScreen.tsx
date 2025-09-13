@@ -10,7 +10,7 @@ import Modal from "react-native-modal";
 import { router } from "expo-router";
 import {  SlidersHorizontal } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
-import RangeSelector from "./rangeSelector"
+import RangeSelector from "../../components/rangeSelector"
 import { useLocalSearchParams } from "expo-router";
 
 const MatchSetupScreen = () => {

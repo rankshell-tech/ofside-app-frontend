@@ -10,7 +10,7 @@ import { RootState } from '@/store';
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 
-export default function App() {
+export default function CreateTornamnent() {
   const theme = useTheme();
   const navigation = useNavigation();
   const { user, isGuest } = useSelector((state: RootState) => state.auth);

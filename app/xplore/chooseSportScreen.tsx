@@ -120,7 +120,10 @@ export default function ChooseSportScreen() {
           <TouchableOpacity
              onPress={() =>
               tournamentMode
-              ? router.push("/tournament/editTournament")
+              ? router.push({
+                  pathname: "/tournament/editTournament",
+                  params: { sport: selectedSport, format: selectedFormat },
+                })
               : router.push({
                   pathname: "/xplore/selectTeamsScreen",
                   params: { sport: selectedSport, format: selectedFormat },

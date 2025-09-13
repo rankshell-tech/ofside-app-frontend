@@ -5,6 +5,7 @@ import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import Iconify from '@/components/Iconify';
 
 
 export default function HomeScreen() {
@@ -40,15 +41,18 @@ export default function HomeScreen() {
                 },
             ],
             sportsAvailable: [
-                {name:"Cricket" ,icon: "baseball-bat-ball"}
+                {name:"Cricket" ,icon: "emojione-monotone:cricket-game"},
+                {name:"Badminton" ,icon: "twemoji:badminton"},
+                {name:"Pickleball" ,icon: "material-symbols-light:pickleball-rounded"}
+
             ],
             amenties: [
-                {name:"Washroom" ,icon: "restroom"},
-                {name:"Parking" ,icon: "square-parking"},
-                {name:"Flood lights" ,icon: "lightbulb"},
-                {name:"Premium turf" ,icon: "leaf"},
-                {name:"Equipments" ,icon: "dumbbell"},
-                {name:"Wifi" ,icon: "wifi"},
+                {name:"Washroom" ,icon: "medical-icon:i-restrooms"},
+                {name:"Parking" ,icon: "fluent:vehicle-car-parking-16-filled"},
+                {name:"Flood lights" ,icon: "cbi:ring-floodlight"},
+                {name:"Premium turf" ,icon: "geo:turf-extent"},
+                {name:"Equipments" ,icon: "icon-park-outline:dumbbell"},
+                {name:"Wifi" ,icon: "streamline-plump:wifi-solid"},
             ]
 
         },
@@ -81,16 +85,16 @@ export default function HomeScreen() {
                 },
             ],
             sportsAvailable: [
-                {name:"Volley Ball" ,icon:"volleyball"},
-                { name:"Football" ,icon:"basketball"}
+                {name:"Volley Ball" ,icon:"mingcute:volleyball-fill"},
+                { name:"Football" ,icon:"uil:football"}
             ],
             amenties: [
-                {name:"Washroom" ,icon: "restroom"},
-                {name:"Parking" ,icon: "square-parking"},
-                {name:"Flood lights" ,icon: "lightbulb"},
-                {name:"Premium turf" ,icon: "leaf"},
-                {name:"Equipments" ,icon: "dumbbell"},
-                {name:"Wifi" ,icon: "wifi"},
+                {name:"Washroom" ,icon: "medical-icon:i-restrooms"},
+                {name:"Parking" ,icon: "fluent:vehicle-car-parking-16-filled"},
+                {name:"Flood lights" ,icon: "cbi:ring-floodlight"},
+                {name:"Premium turf" ,icon: "geo:turf-extent"},
+                {name:"Equipments" ,icon: "icon-park-outline:dumbbell"},
+                {name:"Wifi" ,icon: "streamline-plump:wifi-solid"},
             ]
         },
         {
@@ -122,17 +126,17 @@ export default function HomeScreen() {
                 },
             ],
             sportsAvailable: [
-                {name:"Cricket" ,icon:"baseball-bat-ball"},
-                {name:"Football" ,icon:"basketball"},
-                { name:"Tennis" ,icon:"table-tennis-paddle-ball"}
+                {name:"Cricket" ,icon:"emojione-monotone:cricket-game"},
+                {name:"Football" ,icon:"uil:football"},
+                { name:"Tennis" ,icon:"fa6-solid:table-tennis-paddle-ball"}
             ],
             amenties: [
-                {name:"Washroom" ,icon: "restroom"},
-                {name:"Parking" ,icon: "square-parking"},
-                {name:"Flood lights" ,icon: "lightbulb"},
-                {name:"Premium turf" ,icon: "leaf"},
-                {name:"Equipments" ,icon: "dumbbell"},
-                {name:"Wifi" ,icon: "wifi"},
+                {name:"Washroom" ,icon: "medical-icon:i-restrooms"},
+                {name:"Parking" ,icon: "fluent:vehicle-car-parking-16-filled"},
+                {name:"Flood lights" ,icon: "cbi:ring-floodlight"},
+                {name:"Premium turf" ,icon: "geo:turf-extent"},
+                {name:"Equipments" ,icon: "icon-park-outline:dumbbell"},
+                {name:"Wifi" ,icon: "streamline-plump:wifi-solid"},
             ]
         },
         ];
@@ -168,7 +172,7 @@ export default function HomeScreen() {
                     <View className="flex-row mb-4">
                     {turf.sportsAvailable.map((sport, index) => (
                         <View key={index} className="items-center mx-4">
-                            <FontAwesome6 name={sport.icon} size={45} color="black" />
+                            <Iconify icon={sport.icon} size={50} color="black" type="svg" />
                             <Text className="text-xs mt-1">{sport.name}</Text>
                         </View>
                     ))}
@@ -178,15 +182,16 @@ export default function HomeScreen() {
                     {/* Amenities */}
                     <Text className="font-bold mb-2">Amenities</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">
-                    {turf.amenties.map((amenity, index) => (
-                        <View
-                            key={index}
-                            className="items-center w-24 h-20 p-2 border rounded-lg mx-1"
-                        >
-                            <FontAwesome6 className='mr-1' name={amenity.icon} size={24} color="black" />
-                            <Text className="text-xs text-center mt-1">{amenity.name}</Text>
-                        </View>
-                    ))}
+                        {turf.amenties.map((amenity, index) => (
+                            <View
+                                key={index}
+                                className="justify-between items-center w-24 h-20 p-2 border rounded-lg mx-1"
+                            >
+                                <Iconify icon={amenity.icon} size={40} color="black" type="svg" />
+                                {/* <FontAwesome6 className='mr-1' name={amenity.icon} size={24} color="black" /> */}
+                                <Text className="text-xs text-center">{amenity.name}</Text>
+                            </View>
+                        ))}
                     </ScrollView>
                     <View className="border-t my-1" style={{ width: "70%" }} />
 

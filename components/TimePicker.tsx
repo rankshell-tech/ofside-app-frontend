@@ -14,10 +14,11 @@ const PICKER_HEIGHT = 120;
 
 type TimePickerProps = {
   label: string;
-  value: string;                 // e.g., "10:00"
-  period: "AM" | "PM";
-  onChange: (val: string, period: "AM" | "PM") => void;
+  value: string; // e.g., "10:00"
+  period: string; // Can now be "AM" | "PM" | month
+  onChange: (val: string, period: string) => void;
   times: string[];
+  periodOptions?: string[]; // AM/PM or Months
 };
 
 export default function TimePicker({
@@ -26,6 +27,7 @@ export default function TimePicker({
   period,
   onChange,
   times,
+  periodOptions = ["AM", "PM"], // default if not passed
 }: TimePickerProps) {
   const scroller = useRef<ScrollView>(null);
   const periodScroller = useRef<ScrollView>(null);
@@ -34,8 +36,7 @@ export default function TimePicker({
   const theme = useTheme();
 
   const initialIndex = Math.max(0, times.indexOf(value));
-  const periodOptions: ("AM" | "PM")[] = ["AM", "PM"];
-  const initialPeriodIndex = periodOptions.indexOf(period);
+  const initialPeriodIndex = Math.max(0, periodOptions.indexOf(period));
 
   // Scroll to initial value
   useEffect(() => {
@@ -61,7 +62,8 @@ export default function TimePicker({
   const handlePeriodEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     const idx = Math.round(y / ITEM_HEIGHT);
-    const picked = periodOptions[Math.min(Math.max(idx, 0), periodOptions.length - 1)];
+    const picked =
+      periodOptions[Math.min(Math.max(idx, 0), periodOptions.length - 1)];
     if (picked && picked !== period) onChange(value, picked);
   };
 
@@ -99,7 +101,13 @@ export default function TimePicker({
               >
                 <Text
                   style={{
-                    fontSize: selected ? 20 : 16,
+                    fontSize: selected
+                      ? periodOptions.length > 2
+                        ? 16 // ✅ months smaller
+                        : 20 // ✅ AM/PM bigger
+                      : periodOptions.length > 2
+                      ? 14
+                      : 16,
                     fontWeight: selected ? "bold" : "normal",
                     color: selected ? "#000" : "#6b7280",
                     backgroundColor: selected ? "#e5e7eb" : "transparent",
@@ -116,7 +124,7 @@ export default function TimePicker({
           })}
         </ScrollView>
 
-        {/* Period Picker */}
+        {/* Period Picker (AM/PM or Months) */}
         <ScrollView
           ref={periodScroller}
           showsVerticalScrollIndicator={false}
@@ -147,13 +155,19 @@ export default function TimePicker({
               >
                 <Text
                   style={{
-                    fontSize: selected ? 20 : 16,
+                    fontSize: selected
+                      ? periodOptions.length > 2
+                        ? 16 // ✅ months smaller
+                        : 20 // ✅ AM/PM bigger
+                      : periodOptions.length > 2
+                      ? 14
+                      : 16,
                     fontWeight: selected ? "bold" : "normal",
                     color: selected ? "#000" : "#6b7280",
                     backgroundColor: selected ? theme.colors.primary : "transparent",
                     borderWidth: selected ? 1 : 0,
                     borderRadius: 8,
-                    paddingHorizontal: 12,
+                    paddingHorizontal: periodOptions.length > 2 ? 8 : 12,
                     paddingVertical: 4,
                   }}
                 >

@@ -13,10 +13,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function EditProfile() {
+export default function Community() {
   const theme = useTheme();
   const navigation = useNavigation();
   const [progress] = useState(new Animated.Value(0));
+  const [displayProgress, setDisplayProgress] = useState(0);
 
   useEffect(() => {
     Animated.timing(progress, {
@@ -24,6 +25,10 @@ export default function EditProfile() {
       duration: 4000, // 4s fake loading
       useNativeDriver: false,
     }).start();
+    const listener = progress.addListener(({ value }) => {
+      setDisplayProgress(Math.round(value * 80));
+    });
+    return () => progress.removeListener(listener);
   }, []);
 
   const widthInterpolated = progress.interpolate({
@@ -46,6 +51,9 @@ export default function EditProfile() {
                   }}
                 />
             </View>
+            <Text className="mt-2 text-sm font-bold text-gray-700">
+              {displayProgress}%
+            </Text>
 
             {/* Loading text */}
             <Text className="mt-8 text-center text-base font-bold text-gray-800">

@@ -6,6 +6,7 @@ import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import TimePicker from "@/components/TimePicker";
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
+import Iconify from '@/components/Iconify';
 
 
 export default function SlotBookingScreen() {
@@ -18,9 +19,12 @@ export default function SlotBookingScreen() {
   const [toTime, setToTime] = useState("10:00");
   const [toPeriod, setToPeriod] = useState<"AM" | "PM">("AM");
   const sports = [
-                {id:1, name:"Cricket" ,icon:"baseball-bat-ball"},
-                {id:2, name:"Football" ,icon:"basketball"},
-                {id:3, name:"Tennis" ,icon:"table-tennis-paddle-ball"}
+              {id:1, name:"Cricket" ,icon: "emojione-monotone:cricket-game"},
+              {id:2, name:"Badminton" ,icon: "twemoji:badminton"},
+              {id:3, name:"Pickleball" ,icon: "material-symbols-light:pickleball-rounded"},
+              {id:4, name:"Volley Ball" ,icon:"mingcute:volleyball-fill"},
+              {id:5, name:"Football" ,icon:"uil:football"},
+              {id:6, name:"Tennis" ,icon:"fa6-solid:table-tennis-paddle-ball"}
             ]
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -59,23 +63,26 @@ export default function SlotBookingScreen() {
         <Text className="font-bold mt-5 mb-2">Select any sport</Text>
         <View className="border-t my-1" style={{ width: "70%" }} />
 
-        <View className="flex-row justify-between my-4">
-          {sports.map((sport,index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedSport((sport.id).toString())}
-              className={`w-[30%] h-28 border rounded-md justify-center items-center ${
-                selectedSport === (sport.id).toString() ? "border-black border-2" : "border-gray-300"
-              }`}
-            >
-              {/* Replace with images */}
-              <View key={index} className="items-center mx-4">
-                <FontAwesome6 name={sport.icon} size={45} color="black" />
-                <Text className="text-xs mt-1">{sport.name}</Text>
-            </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="my-4">
+            {sports.map((sport,index) => (
+              <View
+                key={index}
+                className={`flex-1 justify-center items-center h-24 border rounded-lg mx-1
+                  ${selectedSport === (sport.id).toString() ? "border-black border-2" : "border-gray-300"}`}
+              >
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setSelectedSport((sport.id).toString())}
+                >
+                  {/* Replace with images */}
+                  <View key={index} className="items-center mx-4">
+                    <Iconify icon={sport.icon} size={50} color="black" type="svg" />
+                    <Text className="text-xs mt-1">{sport.name}</Text>
+                </View>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
 
         {/* Date Selection */}
         <Text className="font-bold mb-2">Date selection</Text>
@@ -133,8 +140,9 @@ export default function SlotBookingScreen() {
             times={times}
             onChange={(val, p) => {
               setFromTime(val);
-              setFromPeriod(p);
+              setFromPeriod(p as "AM" | "PM"); // 👈 force cast
             }}
+            periodOptions={["AM", "PM"]}
           />
           {/* To Time Picker */}
           <TimePicker
@@ -144,8 +152,9 @@ export default function SlotBookingScreen() {
             times={times}
             onChange={(val, p) => {
               setToTime(val);
-              setToPeriod(p);
+              setToPeriod(p as "AM" | "PM"); // 👈 force cast
             }}
+            periodOptions={["AM", "PM"]}
           />
         </View>
       </ScrollView>

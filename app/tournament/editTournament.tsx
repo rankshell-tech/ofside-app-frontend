@@ -1,4 +1,3 @@
-// app/(tabs)/EditProfile.tsx
 import TimePicker from "@/components/TimePicker";
 import { useTheme } from "@/hooks/useTheme";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -18,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
 
 // Floating Label Input component
 const FloatingLabelInput = ({
@@ -47,11 +47,11 @@ const FloatingLabelInput = ({
         onPress={onPress}
         className="border border-black rounded-2xl px-4 py-4 flex-row justify-between items-center"
       >
-        <Text>{value}</Text>
+        <Text className="flex-1 text-center">{value}</Text>
         {icon}
       </TouchableOpacity>
     ) : (
-      <View className="border border-black rounded-2xl px-4 py-1">
+      <View className="border border-black rounded-2xl px-4 py-1 items-center">
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -62,7 +62,7 @@ const FloatingLabelInput = ({
   </View>
 );
 
-export default function EditProfile() {
+export default function EditTournament() {
   const theme = useTheme();
   const navigation = useNavigation();
   const [name, setName] = useState("Swarit Jain");
@@ -70,15 +70,18 @@ export default function EditProfile() {
   const [tournamentName, setTournamentName] = useState("Syx Tournament");
   const [venue, setVenue] = useState("Delhi");
   const [isLocationVisible, setLocationVisible] = useState(false);
-  const [fromDate, setFromDate] = useState({
-    day: "10",
-    month: "September"
-  });
+  const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
 
-  const [toDate, setToDate] = useState({
-    day: "15",
-    month: "September"
-  });
+  const months = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+  const days = Array.from({ length: 31 }, (_, i) => `${i + 1}`);
+  const [fromDate, setFromDate] = useState("10");
+  const [fromMonth, setFromMonth] = useState("January");
+
+  const [toDate, setToDate] = useState("10");
+  const [toMonth, setToMonth] = useState("January");
 
   const locations = [
     "Connaught Place",
@@ -98,6 +101,26 @@ export default function EditProfile() {
     "Shahdara",
   ];
 
+  const categories = [
+    "Open",
+    "Corporate",
+    "Community",
+    "School",
+    "Other",
+    "Series",
+    "College",
+    "University",
+  ];
+
+  const formats = [
+    "Knockout",
+    "League",
+    "Combination",
+  ];
+  const [selectedCategory, setSelectedCategory] = useState("School");
+  const [selectedFormat, setSelectedFormat] = useState("Knockout");
+  const [teams, setTeams] = useState("8");
+
   return (
     <SafeAreaView className="flex-1 bg-white">
         <ImageBackground
@@ -108,9 +131,10 @@ export default function EditProfile() {
         {/* Header */}
         <View className="flex-row items-center justify-between mt-4 px-2">
             <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-            <SlidersHorizontal size={24} color="black" />
+            <SlidersHorizontal onPress={() => router.push('/tournament/advanceTornamentSettings')} size={24} color="black" />
         </View>
 
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="px-6">
         {/* Profile Icon */}
         <View className="items-center">
           <View className="w-40 h-40 bg-white rounded-full items-center justify-center border border-gray-400" style={{backgroundColor: theme.colors.accent}}>
@@ -125,7 +149,6 @@ export default function EditProfile() {
         </View>
 
       {/* Form */}
-      <ScrollView className="px-6">
         <FloatingLabelInput
           label="Tornament name"
           value={tournamentName}
@@ -149,11 +172,80 @@ export default function EditProfile() {
             icon={<AntDesign name="downcircleo" size={18} color="black" />}
         />
         <View className="flex-row justify-between my-5">
-            {/* <DatePicker label="From" value={fromDate} onChange={setFromDate} /> */}
-            {/* <DatePicker label="To" value={toDate} onChange={setToDate} /> */}
+          <TimePicker
+              label="From"
+              value={fromDate}
+              period={fromMonth}
+              onChange={(val, per) => {setFromDate(val); setFromMonth(per)}}
+              times={days}
+              periodOptions={months}
+            />
+            <TimePicker
+              label="To"
+              value={toDate}
+              period={toMonth}
+              onChange={(val, per) => {setToDate(val); setToMonth(per)}}
+              times={days}
+              periodOptions={months}
+            />
+        </View>
+        {/* Tournament Category */}
+        <Text className="text-xl font-bold my-5">Tournament Category</Text>
+        <View className="flex-row flex-wrap gap-2 mb-6">
+          {categories.map((cat) => {
+            const selected = cat === selectedCategory;
+            return (
+              <TouchableOpacity
+                key={cat}
+                onPress={() => setSelectedCategory(cat)}
+                className={`px-3 py-1 rounded-full border ${
+                  selected
+                    ? "bg-[#fff201]"
+                    : "bg-white"
+                }`}
+              >
+                <Text className={`text-[10px] ${selected ? "font-bold" : ""}`}>{cat}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
+        {/* Tournament Format */}
+        <Text className="text-xl font-bold my-5">Tournament Format</Text>
+        <View className="flex-row flex-wrap gap-2 mb-6">
+          {formats.map((f) => {
+            const selected = f === selectedFormat;
+            return (
+              <TouchableOpacity
+                key={f}
+                onPress={() => setSelectedFormat(f)}
+                className={`px-3 py-1 rounded-full border ${
+                  selected
+                    ? "bg-[#fff201]"
+                    : "bg-white"
+                }`}
+              >
+                <View className="flex-row items-center">
+                  <Text className={`text-[10px] ${selected ? "font-bold" : ""}`}>
+                    {f}
+                  </Text>
+                  {f === "Combination" && (
+                    <Text className="text-[7px] ml-1">(mix of knockout and league)</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
+        {/* Number of Teams */}
+
+        <FloatingLabelInput
+            label="Number of teams/players will play in tournament"
+            value={teams}
+            isPicker
+            icon={<AntDesign name="downcircleo" size={18} color="black" />}
+        />
       </ScrollView>
         {/* Modal for Locations */}
         <Modal
@@ -190,11 +282,13 @@ export default function EditProfile() {
             </View>
         </Modal>
 
-        {/* Update Button */}
+        {/* Next Button */}
         <View className="absolute bottom-4 left-4 right-4">
-            <TouchableOpacity className="h-12">
+            <TouchableOpacity onPress={() => router.push({
+                                        pathname: "/tournament/teamSelection",
+                                        params: { sport, format },})}
+                              className="h-12">
             <View
-
                 className="flex-1 items-center justify-center rounded-xl bg-[#FFF201]"
             >
                 <Text className="font-extrabold text-base text-black">

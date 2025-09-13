@@ -18,6 +18,7 @@ import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Iconify from '@/components/Iconify';
 
 const { width } = Dimensions.get('window');
 const NUM_COLUMNS = 3;
@@ -234,7 +235,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.headerActions}>
               <TouchableOpacity onPress={()=> router.push('/settings/ruleBook')}>
-                <FontAwesome6 name="clipboard-list" size={28} color={theme.colors.accent} />
+                <Iconify icon="fluent:clipboard-task-list-20-regular" size={35} color={theme.colors.accent} type="svg" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}

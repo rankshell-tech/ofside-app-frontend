@@ -6,9 +6,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
-import RangeSelector from "../../components/rangeSelector"
+import RangeSelector from "@/components/rangeSelector"
 
-export default function MatchRulesScreen() {
+export default function ManageTornamentRules() {
     const theme = useTheme();
     const navigation = useNavigation();
     const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
@@ -70,6 +70,17 @@ export default function MatchRulesScreen() {
     { key: "expulsion", label: "Expulsion", subtitle: "(Player out for set)" },
     { key: "disqualification", label: "Disqualification", subtitle: "(Player out for match)" },
     ];
+    const numberofSets = sport === 'Tennis'? ["1 Set", "3 Sets", "6 Sets"] : ["1 Set", "3 Sets", "5 Sets"];
+    const pointsPerSets = sport === 'Volleyball'? ["15 points", "21 points", "25 points"] :  ["11 points", "15 points", "21 points"];
+    const [numberofSet, setNumberOfSet] = useState("3 Sets");
+    const [pointsPerSet, setPointsPerSet] = useState("15 points");
+    const [numberOfQuarter, setNumberOfQuarter] = useState("4 Quarters");
+    const numberOfQuarters = ["1 Quarter", "2 Quarters", "3 Quarters", "4 Quarters"];
+    const [quarterDuration, setQuarterDuration] = useState(4);
+    const surfaceTypes = ["Synthetic", "Clay", "Grass", "Indoor"];
+    const [surfaceType, setSurfaceType] = useState("Clay");
+    const numberOfMatches = ["1 Match", "2 Matches"];
+    const [numberofMatch, setNumberOfMatch] = useState("2 Matches");
 
     const toggleVolleyballRule = (key: keyof typeof volleyballRules) => {
     setVolleyballRules({ ...volleyballRules, [key]: !volleyballRules[key] });
@@ -105,6 +116,43 @@ export default function MatchRulesScreen() {
                 </View>
                 {sport === "Basketball" && (
                     <>
+                    <View className="px-2 mt-2">
+                        <Text className="font-bold text-lg">Choose Number of Quarters</Text>
+                        <View className="flex-row flex-wrap mt-3">
+                        {numberOfQuarters.map((type) => (
+                            <TouchableOpacity
+                                key={type}
+                                className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                                style={{
+                                    backgroundColor:
+                                    numberOfQuarter === type ? theme.colors.primary : "white",
+                                    borderColor:
+                                    numberOfQuarter === type ? theme.colors.primary : theme.colors.accent,
+                                }}
+                            onPress={() => setNumberOfQuarter(type)}
+                            >
+                            <Text
+                                className={`text-[10px] ${
+                                numberOfQuarter === type
+                                    ? "font-bold text-black"
+                                    : "text-gray-600"
+                                }`}
+                            >
+                                {type}
+                            </Text>
+                            </TouchableOpacity>
+                        ))}
+                        </View>
+                    </View>
+
+                    {/* Match Duration Slider */}
+                    <RangeSelector
+                        title="Each Quarter Duration"
+                        options={[0, 1,2,3,4,5,6,7,8,9,10,11,12]}
+                        selected={quarterDuration}
+                        onSelect={setQuarterDuration} // ✅ no error now
+                        unit="Mins"
+                    />
                     {/* Rules with Switch */}
                     <View className="px-2">
                         {basketballRulesArray.map((rule) => (
@@ -236,10 +284,171 @@ export default function MatchRulesScreen() {
 
                     </>
                 )}
+                {(sport === "Pickleball" || sport === "Volleyball" || sport === "Badminton") && (
+                    <>
+                         {/* Number of Sets */}
+                        <View className="px-4 my-2">
+                            <Text className="font-bold text-lg">Number of Sets</Text>
+                            <View className="flex-row mt-3">
+                                {numberofSets.map((set) => (
+                                <TouchableOpacity
+                                    key={set}
+                                    onPress={() => setNumberOfSet(set)}
+                                    className="px-4 py-2 border rounded-full mr-2"
+                                    style={{
+                                            backgroundColor:
+                                            numberofSet === set ? theme.colors.primary : "white",
+                                        }}
+                                    >
+                                    <Text className={`text-sm ${
+                                        numberofSet === set
+                                            ? "font-bold text-black"
+                                            : "text-gray-600"
+                                        }`}>{set}</Text>
+                                </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+
+                        {/* Points per Set */}
+                        <View className="px-4 my-2">
+                            <Text className="font-bold text-lg">Points per set</Text>
+                            <View className="flex-row mt-3">
+                                {pointsPerSets.map((point) => (
+                                <TouchableOpacity
+                                    key={point}
+                                    onPress={() => setPointsPerSet(point)}
+                                    className="px-4 py-2 border rounded-full mr-2"
+                                    style={{
+                                            backgroundColor:
+                                            pointsPerSet === point ? theme.colors.primary : "white",
+                                        }}
+                                    >
+                                    <Text className={`text-sm ${
+                                        pointsPerSet === point
+                                            ? "font-bold text-black"
+                                            : "text-gray-600"
+                                        }`}>{point}</Text>
+                                </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+                        {sport === "Volleyball" && (
+                            <View className="px-4 my-2">
+                                {volleyballRulesArray.map((rule) => (
+                                <View
+                                    key={rule.key}
+                                    className="flex-row justify-between items-center mb-4"
+                                >
+                                    <View>
+                                        <View className="flex-row items-center">
+                                            <Text className="text-lg font-bold">{rule.label.split(" ")[0]} </Text>
+                                            <Text className="text-base">
+                                                {rule.label.split(" ").slice(1).join(" ")}
+                                            </Text>
+                                        </View>
+                                        {rule.subtitle && (
+                                            <Text className="text-xs text-gray-600">{rule.subtitle}</Text>
+                                        )}
+                                    </View>
+                                    <Switch
+                                        value={volleyballRules[rule.key as keyof typeof volleyballRules]}
+                                        onValueChange={() =>
+                                            toggleVolleyballRule(rule.key as keyof typeof volleyballRules)
+                                        }
+                                        thumbColor="#fff"
+                                        trackColor={{ false: "#ccc", true: "#22c55e" }}
+                                    />
+                                </View>
+                                ))}
+                            </View>
+                        )}
+                    </>
+                )}
                 {sport === "Tennis" && (
                     <>
+                        {/* Surface Type */}
+                        <View className="px-2 mt-2">
+                            <Text className="font-bold text-lg">Select Surface Type</Text>
+                            <View className="flex-row flex-wrap mt-3">
+                            {surfaceTypes.map((type) => (
+                                <TouchableOpacity
+                                    key={type}
+                                    className="px-2 py-1 rounded-full mr-2 mb-2 border"
+                                    style={{
+                                        backgroundColor:
+                                        surfaceType === type ? theme.colors.primary : "white",
+                                        borderColor:
+                                        surfaceType === type ? theme.colors.primary : theme.colors.accent,
+                                    }}
+                                onPress={() => setSurfaceType(type)}
+                                >
+                                <Text
+                                    className={`text-sm ${
+                                    surfaceType === type
+                                        ? "font-bold text-black"
+                                        : "text-gray-600"
+                                    }`}
+                                >
+                                    {type}
+                                </Text>
+                                </TouchableOpacity>
+                            ))}
+                            </View>
+                        </View>
+                        {/* Number of Sets */}
+                        <View className="px-2 mt-2">
+                            <Text className="font-bold text-lg">Number of Sets</Text>
+                        <View className="flex-row mt-3">
+                            {numberofSets.map((set) => (
+                            <TouchableOpacity
+                                key={set}
+                                onPress={() => setNumberOfSet(set)}
+                                className="px-4 py-2 border rounded-full mr-2"
+                                style={{
+                                        backgroundColor:
+                                        numberofSet === set ? theme.colors.primary : "white",
+                                        borderColor:
+                                        numberofSet === set ? theme.colors.primary : theme.colors.accent,
+                                    }}
+                                >
+                                <Text className={`text-sm ${
+                                    numberofSet === set
+                                        ? "font-bold text-black"
+                                        : "text-gray-600"
+                                    }`}>{set}</Text>
+                            </TouchableOpacity>
+                            ))}
+                        </View>
+                        </View>
+
+                        {/* Points per Set */}
+                        <View className="px-2 mt-2">
+                        <Text className="font-bold text-lg">Number of matches to decide winner</Text>
+                        <View className="flex-row mt-3">
+                            {numberOfMatches.map((match) => (
+                            <TouchableOpacity
+                                key={match}
+                                onPress={() => setNumberOfMatch(match)}
+                                className="px-4 py-2 border rounded-full mr-2"
+                                style={{
+                                        backgroundColor:
+                                        numberofMatch === match ? theme.colors.primary : "white",
+                                        borderColor:
+                                        numberofMatch === match ? theme.colors.primary : theme.colors.accent,
+                                    }}
+                                >
+                                <Text className={`text-sm ${
+                                    numberofMatch === match
+                                        ? "font-bold text-black"
+                                        : "text-gray-600"
+                                    }`}>{match}</Text>
+                            </TouchableOpacity>
+                            ))}
+                        </View>
+                        </View>
                         {/* Advantage Rule */}
-                        <View className="flex-row justify-between items-start mb-4">
+                        <View className="flex-row justify-between items-start px-2 my-4">
                             <View className="w-[70%]">
                                 <Text className="text-lg font-bold">Advantage rule</Text>
                                 <Text className="text-[8px]">
@@ -256,7 +465,7 @@ export default function MatchRulesScreen() {
                         </View>
 
                         {/* Final Set Tie-break */}
-                        <View className="flex-row justify-between items-start mb-4">
+                        <View className="flex-row justify-between items-start px-2 mu-4">
                             <View className="w-[70%]">
                                 <Text className="text-lg font-bold">Final Set Tie-break</Text>
                                 <Text className="text-[8px] mt-1">
@@ -273,7 +482,7 @@ export default function MatchRulesScreen() {
                         </View>
 
                         {/* Match Tie-break */}
-                        <View className="flex-row justify-between items-start mb-4">
+                        <View className="flex-row justify-between items-start px-2 mb-4">
                         <View className="w-[70%]">
                             <Text className="text-lg font-bold">Match Tie-break</Text>
                             <Text className="text-[8px] mt-1">
@@ -290,7 +499,7 @@ export default function MatchRulesScreen() {
                         </View>
 
                         {/* Super Tie-break Points */}
-                        <View className="flex-row justify-between items-center mb-4">
+                        <View className="flex-row justify-between items-center px-2 mb-4">
                             <Text className="text-lg font-bold mr-5">Super Tie-break Points</Text>
                             <View className="flex-row">
                                 {[7, 10].map((points) => (
@@ -319,36 +528,6 @@ export default function MatchRulesScreen() {
                             </View>
                         </View>
                     </>
-                )}
-                {sport === "Volleyball" && (
-                    <View className="px-2">
-                        {volleyballRulesArray.map((rule) => (
-                        <View
-                            key={rule.key}
-                            className="flex-row justify-between items-center mb-4"
-                        >
-                            <View>
-                                <View className="flex-row items-center">
-                                    <Text className="text-lg font-bold">{rule.label.split(" ")[0]} </Text>
-                                    <Text className="text-base">
-                                        {rule.label.split(" ").slice(1).join(" ")}
-                                    </Text>
-                                </View>
-                                {rule.subtitle && (
-                                    <Text className="text-xs text-gray-600">{rule.subtitle}</Text>
-                                )}
-                            </View>
-                            <Switch
-                                value={volleyballRules[rule.key as keyof typeof volleyballRules]}
-                                onValueChange={() =>
-                                    toggleVolleyballRule(rule.key as keyof typeof volleyballRules)
-                                }
-                                thumbColor="#fff"
-                                trackColor={{ false: "#ccc", true: "#22c55e" }}
-                            />
-                        </View>
-                        ))}
-                    </View>
                 )}
 
 

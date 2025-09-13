@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ImageBackground, Modal } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import { useTheme } from '@/hooks/useTheme';
 import { Menu, Search,} from 'lucide-react-native';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Entypo, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import Iconify from "@/components/Iconify";
 
 const filterData: Record<
   string,
@@ -59,7 +60,6 @@ const filterData: Record<
 };
 
 export default function NearYou() {
-  const router = useRouter();
   const theme = useTheme();
   const [isSortingOpen, setIsSortingOpen] = useState(false);
     const turfs = [
@@ -148,7 +148,7 @@ export default function NearYou() {
                       className="w-10 h-10 rounded-full items-center justify-center"
                       onPress={() => router.push("/settings/ProfileScreen")}
                     >
-                    <Menu size={24} color={theme.colors.text} />
+                      <Iconify icon="fluent-mdl2:collapse-menu" size={30} color="black" type="svg" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -305,9 +305,9 @@ export default function NearYou() {
                         </Text>
                       </View>
                       <View className='flex-row items-center justify-end mb-3'>
-                        <FontAwesome className='mr-1' name="soccer-ball-o" size={16} color="black" />
-                        <FontAwesome6 className='mr-1' name="basketball" size={16} color="black" />
-                        <FontAwesome6 name="football" size={16} color="black" />
+                        <Iconify icon="emojione-monotone:cricket-game" size={20} type="svg" />
+                        <Iconify icon="uil:football" size={20} type="svg" />
+                        <Iconify icon="twemoji:badminton" size={20} type="svg" />
                       </View>
                       <View className="flex-1 mx-2">
                         <LinearGradient

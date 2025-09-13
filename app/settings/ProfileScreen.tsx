@@ -1,3 +1,4 @@
+import Iconify from "@/components/Iconify";
 import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -88,10 +89,10 @@ export default function ProfileScreen() {
             <Zocial name="email" size={26} color="black" />
           </TouchableOpacity>
           <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
-            <AntDesign name="instagram" size={26} color="red" />
+            <Iconify icon="skill-icons:instagram" size={35} type="svg" />
           </TouchableOpacity>
           <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center">
-            <Entypo name="facebook" size={26} color="blue" />
+            <Iconify icon="flowbite:facebook-solid" size={35} color="blue" type="svg" />
           </TouchableOpacity>
         </View>
 
