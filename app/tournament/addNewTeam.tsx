@@ -1,7 +1,7 @@
 // app/(tabs)/EditProfile.tsx
 import TimePicker from "@/components/TimePicker";
 import { useTheme } from "@/hooks/useTheme";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { SlidersHorizontal } from "lucide-react-native";
 import React, { JSX, useState } from "react";
@@ -102,8 +102,8 @@ export default function AddNewTeam() {
                 className="flex-1"
               >
         {/* Header */}
-        <View className="flex-row items-center justify-between mt-4 px-2">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
         {/* Title */}
         <Text className="text-xl ml-2 font-bold my-5">Add new team to the Tournament</Text>

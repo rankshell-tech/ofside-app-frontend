@@ -168,8 +168,10 @@ export default function MatchesScreen() {
             className="flex-1"
         >
         {/* Header */}
-        <View className="flex-row items-center justify-between my-4 px-2">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="flex-row items-center justify-between mt-4 mx-2 mb-5">
+            <View className="w-8 h-8 bg-white rounded-full border-4" >
+                <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+            </View>
             <View className="flex-row">
                 <FontAwesome className="mr-2" name="share-square-o" size={24} color="black" />
                 <SlidersHorizontal onPress={() => router.push({

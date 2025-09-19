@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import TimePicker from "@/components/TimePicker";
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
@@ -54,11 +54,10 @@ export default function SlotBookingScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-        <View className="flex-row justify-between items-center px-4 py-3">
-          <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-        </View>
+      <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+        <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+      </View>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-
         {/* Select Sport */}
         <Text className="font-bold mt-5 mb-2">Select any sport</Text>
         <View className="border-t my-1" style={{ width: "70%" }} />

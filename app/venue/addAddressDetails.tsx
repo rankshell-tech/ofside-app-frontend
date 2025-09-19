@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Marker, MapPressEvent } from "react-native-maps";
 import * as Location from "expo-location";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 export default function VenueAddress() {
@@ -65,18 +65,17 @@ export default function VenueAddress() {
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
         end={{ x: 1, y: 0.8 }}
-        className="p-5"
       >
-        <View className="flex-row items-center justify-between">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={26} color="black" />
+        <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
-        <Text className="text-xl font-bold mt-5">Add your venue’s location</Text>
-        <Text className="text-[10px] text-gray-700">
+        <Text className="text-xl font-bold mt-5 px-5">Add your venue’s location</Text>
+        <Text className="text-[10px] text-gray-700 px-5">
           Pin your venue location to the map below
         </Text>
 
         {/* Interactive Map */}
-        <View className="mt-3">
+        <View className="mt-3 px-5">
             <MapView
                 style={{ width: "100%", height: 180, borderRadius: 15 }}
                 region={region}
@@ -97,8 +96,7 @@ export default function VenueAddress() {
 
         {/* Address Form */}
         <ScrollView
-            className="mt-4"
-            contentContainerStyle={{ paddingBottom: 120 }}
+            contentContainerStyle={{ paddingBottom: 120, padding:20 }}
             showsVerticalScrollIndicator={false}
         >
             <Text className="text-lg font-bold mb-3">Venue address details</Text>
@@ -109,7 +107,7 @@ export default function VenueAddress() {
                 value={form.shopNo}
                 onChangeText={(t) => setForm({ ...form, shopNo: t })}
                 placeholder="Shop no. / building no.*"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
             />
             <TextInput
                 value={form.floor}
@@ -125,7 +123,7 @@ export default function VenueAddress() {
                 value={form.area}
                 onChangeText={(t) => setForm({ ...form, area: t })}
                 placeholder="Area / Sector / Locality*"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
             />
             <TextInput
                 value={form.city}
@@ -141,7 +139,7 @@ export default function VenueAddress() {
                 value={form.landmark}
                 onChangeText={(t) => setForm({ ...form, landmark: t })}
                 placeholder="Any landmark area (optional)"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
             />
             <TextInput
                 value={form.pincode}
@@ -152,8 +150,8 @@ export default function VenueAddress() {
             />
             </View>
 
-            <Text className="text-xs text-gray-600 mb-5">
-            Please note Users will see this address on Ofside
+            <Text className="text-xs text-gray-600 my-5">
+              Please note Users will see this address on Ofside
             </Text>
         </ScrollView>
       </LinearGradient>

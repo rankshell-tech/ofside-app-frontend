@@ -9,7 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 const sportsOptions = [
@@ -49,19 +49,17 @@ export default function AvailableSports() {
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
         end={{ x: 1, y: 0.4 }}
-        className="p-5"
       >
-        <View className="flex-row items-center justify-between">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={26} color="black" />
+        <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
-        <Text className="text-2xl font-bold">Available sports at your venue</Text>
-        <Text className="text-[12px] text-gray-600 mt-1">
+        <Text className="text-2xl font-bold px-5">Available sports at your venue</Text>
+        <Text className="text-[12px] text-gray-600 mt-1 px-5">
           Users will see these details on Ofside
         </Text>
 
       <ScrollView
-        className="px-5 mt-4"
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 120, padding:20 }}
       >
         {selectedSports.map((sport, index) => (
           <View key={index} className="mb-5">

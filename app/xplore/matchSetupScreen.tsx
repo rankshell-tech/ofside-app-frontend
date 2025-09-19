@@ -1,7 +1,7 @@
 // screens/MatchSetupScreen.tsx
 import React, { JSX, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView,Image } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from '@/hooks/useTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -100,8 +100,10 @@ const MatchSetupScreen = () => {
         >
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
             {/* Header */}
-            <View className="flex-row items-center justify-between mt-4 px-2">
-                <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+            <View className="flex-row items-center justify-between mt-2 mx-2">
+                <View className="w-8 h-8 rounded-full border-4">
+                    <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+                </View>
                 <SlidersHorizontal onPress={() => setRulesVisible(true)} size={24} color="black" />
             </View>
 

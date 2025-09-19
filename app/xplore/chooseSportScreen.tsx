@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useNavigation, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 
 export default function ChooseSportScreen() {
   const navigation = useNavigation();
@@ -36,11 +36,10 @@ export default function ChooseSportScreen() {
         resizeMode="contain"
         className="flex-1"
       >
-        <View className="flex-row items-baseline mx-5 my-5">
-          <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
         <ScrollView className="px-4 mt-10 mb-20">
-
           {/* Sports Section */}
           <View className="flex-1">
             <Text className="text-2xl font-extrabold text-gray-900 mb-1">
@@ -56,7 +55,7 @@ export default function ChooseSportScreen() {
               return (
                 <TouchableOpacity
                   key={sport}
-                  className="w-[30%] h-16 mb-4 rounded-xl overflow-hidden"
+                  className="w-[30%] h-16 mb-4 rounded-xl border overflow-hidden"
                   onPress={() => handleSportSelect(sport)}
                 >
                   {isSelected ? (
@@ -64,14 +63,14 @@ export default function ChooseSportScreen() {
                       colors={["#FFF201", "#EDEDED"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      className="flex-1 items-center justify-center rounded-xl"
+                      className="flex-1 items-center justify-center"
                     >
                       <Text className="font-extrabold text-base text-black">
                         {sport}
                       </Text>
                     </LinearGradient>
                   ) : (
-                    <View className="flex-1 items-center justify-center rounded-xl border border-gray-400 bg-gray-100">
+                    <View className="flex-1 items-center justify-center bg-gray-100">
                       <Text className="text-base text-black">{sport}</Text>
                     </View>
                   )}
@@ -90,7 +89,7 @@ export default function ChooseSportScreen() {
               return (
                 <TouchableOpacity
                   key={format}
-                  className="w-[30%] h-16 mb-4 mx-2 rounded-xl overflow-hidden"
+                  className="w-[30%] h-16 mb-4 mx-2 rounded-xl overflow-hidden border"
                   onPress={() => setSelectedFormat(format)}
                 >
                   {isSelected ? (
@@ -105,7 +104,7 @@ export default function ChooseSportScreen() {
                       </Text>
                     </LinearGradient>
                   ) : (
-                    <View className="flex-1 items-center justify-center rounded-xl border border-gray-400 bg-gray-100">
+                    <View className="flex-1 items-center justify-center rounded-xl bg-gray-100">
                       <Text className="text-base text-black">{format}</Text>
                     </View>
                   )}

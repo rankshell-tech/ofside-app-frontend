@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 
@@ -26,15 +26,11 @@ export default function Declaration() {
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
         end={{ x: 1, y: 0.8 }}
-        className="p-1"
       >
-        <View className="flex-row items-center justify-between my-5">
-          <Ionicons
-            onPress={() => navigation.goBack()}
-            name="chevron-back-circle-outline"
-            size={26}
-            color="black"
-          />
+        <View className="flex-row items-center justify-between my-2">
+          <View className="w-8 h-8 rounded-full border-4 mx-2" >
+            <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+          </View>
           <Image
             source={require('../../assets/images/logo.png')}
             style={{ width: 250, height: 50, resizeMode: 'contain' }}
@@ -50,7 +46,9 @@ export default function Declaration() {
       <View className="border-t w-full"/>
 
       {/* Content */}
-      <ScrollView className="px-4 my-5">
+      <ScrollView
+          contentContainerStyle={{ paddingBottom: 100, padding:20 }} // 👈 leaves space for button
+          showsVerticalScrollIndicator={false}>
         <Text className="mb-3 text-justify">
             I hereby certify that I am an authorized representative of ss, and that all information provided in the Ofside onboarding form is true, complete, and accurate to the best of my knowledge. I understand that Ofside (powered by Rankshell – India’s ultimate sports ecosystem) will rely on these details to list and promote my venue.
         </Text>

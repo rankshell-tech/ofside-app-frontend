@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, ScrollView, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -200,13 +200,9 @@ export default function RulesOverview() {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={40} // adjust if header overlaps
         >
-        <Ionicons
-          className="mt-2 ml-2"
-          onPress={() => navigation.goBack()}
-          name="chevron-back-circle-outline"
-          size={22}
-          color="black"
-        />
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+        </View>
 
         {/* Top Tabs */}
         <View className="flex-row justify-between py-3">

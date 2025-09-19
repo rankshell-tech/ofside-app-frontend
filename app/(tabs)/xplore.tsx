@@ -26,7 +26,7 @@ export default function App() {
       colors={["#FFF201", "#EAEAEA"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      className="flex-1 mx-3 rounded-full"
+      className="flex-1 mx-3 rounded-lg overflow-hidden border"
     >
       <TouchableOpacity className="p-6 items-center justify-center" onPress={onPress}>
         <Text className="text-lg font-bold text-black">{title}</Text>
@@ -49,13 +49,12 @@ export default function App() {
         className="flex-1"
       >
         {/* Profile Section */}
-        <View className="flex-row items-center mx-5 my-5">
-          <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="flex-row items-center mx-2 my-5">
           <View
-            className="w-14 h-14 rounded-full items-center justify-center mx-4 shadow"
+            className="w-20 h-20 rounded-full items-center justify-center mx-4 shadow"
             style={{ backgroundColor: theme.colors.primary }}
           >
-            <FontAwesome name="user" size={40} color={theme.colors.accent} />
+            <FontAwesome name="user" size={60} color={theme.colors.accent} />
           </View>
           <View className="flex-1">
             <Text className="text-xl font-bold">Hi Swarit!</Text>
@@ -67,7 +66,6 @@ export default function App() {
           </View>
         </View>
         <ScrollView>
-          <View className="p-4">
             {/* Buttons */}
             <View className="flex-row mt-4 w-full h-28">
               <MenuButton title="Start a match" onPress={()=>router.push(`/xplore/chooseSportScreen`)} />
@@ -88,7 +86,7 @@ export default function App() {
             <View className="my-4">
               <MenuButton title="Leaderboard" comingSoon />
             </View>
-        </View>
+
         </ScrollView>
       </ImageBackground>
     </SafeAreaView>

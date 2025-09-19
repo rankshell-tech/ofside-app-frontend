@@ -151,14 +151,14 @@ export default function HomeScreen() {
   const handleSearchSubmit = () => {
     if (localSearchQuery.trim()) {
       dispatch(setSearchQuery(localSearchQuery.trim()));
-      router.push(`/search-results?query=${encodeURIComponent(localSearchQuery.trim())}`);
+      // router.push(`/search-results?query=${encodeURIComponent(localSearchQuery.trim())}`);
     }
   };
 
   const handleSportPress = (sportId: string) => {
     // Navigate to search results with sport filter
     dispatch(toggleSportFilter(sportId as SportType));
-    router.push(`/search-results?sport=${sportId}`);
+    // router.push(`/search-results?sport=${sportId}`);
   };
 
   const handleVenuePress = (venueId: string) => {
@@ -166,7 +166,7 @@ export default function HomeScreen() {
       // router.push(`/venue/${venueId}`);
     } else {
       // For trending/top rated venues that don't exist in mock data
-      router.push('/search-results');
+      // router.push('/search-results');
     }
   };
 
@@ -271,7 +271,7 @@ export default function HomeScreen() {
               <ThemedText className='underline' size="lg" weight="bold">
                 Choose your Sport
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/search-results')}>
+              <TouchableOpacity>
                 <View style={styles.moreButton}>
                   <ThemedText size="sm" weight='bold'>
                     more
@@ -301,7 +301,7 @@ export default function HomeScreen() {
               <ThemedText className='underline' size="lg" weight="bold">
                 Trending in the city
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/search-results?trending=true')}>
+              <TouchableOpacity>
                   <View style={styles.moreButton}>
                     <ThemedText size="sm" weight='bold'>
                       more
@@ -332,7 +332,7 @@ export default function HomeScreen() {
               <ThemedText className='underline' size="lg" weight="bold">
                 Top rated Venues
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/search-results?sort=rating')}>
+              <TouchableOpacity>
                 <View style={styles.moreButton}>
                     <ThemedText size="sm" weight='bold'>
                       more
@@ -363,7 +363,7 @@ export default function HomeScreen() {
               <ThemedText className='underline' size="lg" weight="bold">
                 Sporting Events
               </ThemedText>
-              <TouchableOpacity onPress={() => router.push('/search-results?category=events')}>
+              <TouchableOpacity>
                 <View style={styles.moreButton}>
                   <ThemedText size="sm" weight='bold'>
                     more

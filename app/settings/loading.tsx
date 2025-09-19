@@ -1,5 +1,5 @@
 import { useTheme } from "@/hooks/useTheme";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
@@ -35,10 +35,8 @@ export default function EditProfile() {
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <LinearGradient colors={["#FFE39C", "#FFFFFF"]} className="px-4">
-        <View className="flex-row items-center mt-10">
-          <TouchableOpacity>
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-          </TouchableOpacity>
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
         <View className="flex-col items-center mt-52 mb-20">
             {/* Progress Bar */}

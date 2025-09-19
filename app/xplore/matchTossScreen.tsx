@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground, SafeAreaView
 import { ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/hooks/useTheme";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 
 export default function TossScreen({ navigation }: any) {
@@ -50,8 +50,10 @@ export default function TossScreen({ navigation }: any) {
         >
             <View className="flex-1 mt-10 mb-5">
             {/* Header */}
-            <View className="flex-row justify-between items-center p-4">
-                <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+            <View className="flex-row justify-between items-center mt-2 mx-2">
+                <View className="w-8 h-8 bg-white rounded-full border-4" >
+                  <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+                </View>
                 <TouchableOpacity>
                   <Text className="text-gray-600 font-medium underline">Skip</Text>
                 </TouchableOpacity>

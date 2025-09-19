@@ -35,12 +35,13 @@ export default function PaymentModeScreen() {
                 colors={["#FFF201", "#FFFFFF"]}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 1, y: 0.8 }}
-                className="p-1"
               >
         {/* Header */}
-        <View className="flex-row items-center px-4 py-3">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-            <Text className="font-bold text-xl ml-2">Payment mode</Text>
+        <View className="flex-row items-center">
+            <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+              <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+            </View>
+            <Text className="font-bold text-xl mt-2 ml-2">Payment mode</Text>
         </View>
         <ScrollView>
             {/* Suggested */}

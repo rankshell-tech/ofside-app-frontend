@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -30,7 +30,7 @@ export default function CreateTornamnent() {
         className="flex-1 mx-1 rounded-xl"
     >
         <TouchableOpacity
-            className="flex-1 p-6 items-center justify-center"
+            className="flex-1 p-6 items-center justify-center border rounded-lg"
             onPress={onPress}
         >
             {/* Title at center */}
@@ -76,8 +76,8 @@ export default function CreateTornamnent() {
         className="flex-1"
       >
         {/* Profile Section */}
-        <View className="flex-row items-center mx-5 my-5">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
         <View className="px-5 py-10">
             <Text className="text-2xl font-extrabold text-gray-900 mb-1">Start a new Match</Text>

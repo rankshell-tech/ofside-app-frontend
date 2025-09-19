@@ -21,13 +21,9 @@ export default function SelectTeamsScreen() {
         resizeMode="contain"
         className="flex-1 bg-white"
       >
-        {/* Back button */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          className="absolute top-4 left-4 p-2"
-        >
-          <Ionicons name="chevron-back-circle-outline" size={22} color="black" />
-        </TouchableOpacity>
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+        </View>
 
         {/* Center content */}
         <View className="flex-1 items-center justify-center">

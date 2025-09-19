@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Plus, Share2 } from "lucide-react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, MaterialIcons, Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { router,useLocalSearchParams } from "expo-router";
 
@@ -15,8 +15,10 @@ export default function InviteTeamsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white p-4">
         {/* Header */}
-        <View className="flex-row justify-between items-center mb-5">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="flex-row justify-between items-center mb-5 mx-2 mt-2">
+          <View className="w-8 h-8 bg-white rounded-full border-4" >
+            <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+          </View>
             <TouchableOpacity>
                 <Text className="font-bold">Skip</Text>
             </TouchableOpacity>

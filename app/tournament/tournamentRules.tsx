@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { View, Text, Switch, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from '@/hooks/useTheme';
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import RangeSelector from "@/components/rangeSelector"
@@ -103,17 +103,19 @@ export default function ManageTornamentRules() {
         colors={[theme.colors.primary, "#FFFFFF", theme.colors.background]}
         className="flex-1"
     >
+
+        <View className="flex-row items-baseline mx-2 mt-2">
+            <View className="w-8 h-8 rounded-full border-4" >
+                <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+            </View>
+            <Text className="text-3xl font-bold ml-6">Match rules</Text>
+        </View>
         <View className="flex-1 justify-between">
             {/* Scrollable Content */}
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ padding: 20 }}
             >
-                <View className="mt-5">
-                <View className="flex-row items-baseline mb-5">
-                    <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-                    <Text className="text-3xl font-bold ml-6">Match rules</Text>
-                </View>
                 {sport === "Basketball" && (
                     <>
                     <View className="px-2 mt-2">
@@ -529,9 +531,6 @@ export default function ManageTornamentRules() {
                         </View>
                     </>
                 )}
-
-
-                </View>
             </ScrollView>
 
             {/* Sticky Bottom Buttons */}

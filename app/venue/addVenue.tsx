@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -71,17 +71,16 @@ export default function VenueOnboarding() {
             colors={["#FFF201", "#FFFFFF"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 0.4 }}
-            className="p-5"
         >
 
-            <View className="flex-row items-center justify-between">
-                <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={26} color="black" />
+            <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+              <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
             </View>
-            <Text className="py-2 text-3xl font-bold">Ofside Venue onboarding</Text>
+            <Text className="py-2 text-3xl font-bold px-5">Ofside Venue onboarding</Text>
 
             {/* Form */}
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 100 }} // 👈 leaves space for button
+                contentContainerStyle={{ paddingBottom: 100, padding:20 }} // 👈 leaves space for button
                 showsVerticalScrollIndicator={false}
             >
                 <InputField

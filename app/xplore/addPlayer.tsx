@@ -1,7 +1,7 @@
 // AddPlayerScreen.tsx
 import React, { JSX, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ImageBackground, } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -67,12 +67,11 @@ export default function AddPlayerScreen() {
         resizeMode="contain"
         className="flex-1 bg-white"
       >
-        <View className="flex-1 px-6 pt-10">
-          {/* Back button */}
-          <TouchableOpacity onPress={()=> navigation.goBack()} className="mb-6">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-          </TouchableOpacity>
+          <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+            <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+          </View>
 
+        <View className="flex-1 px-5">
           {/* Profile image */}
           <View className="items-center mb-8">
             <View style={{ backgroundColor: theme.colors.primary }} className="w-40 h-40 rounded-full items-center justify-center mr-4 shadow">
@@ -107,7 +106,7 @@ export default function AddPlayerScreen() {
 
           {/* Add Player button at bottom-right */}
           <View className="flex-1 justify-end items-end mb-8">
-            <TouchableOpacity onPress={() => router.push('/xplore/playerAddedScreen')} className="px-6 py-3 rounded-md" style={{ backgroundColor: theme.colors.primary }} >
+            <TouchableOpacity onPress={() => router.push('/xplore/playerAddedScreen')} className="px-6 py-3 rounded-md border" style={{ backgroundColor: theme.colors.primary }} >
               <Text className="text-black font-bold text-base">Add player</Text>
             </TouchableOpacity>
           </View>

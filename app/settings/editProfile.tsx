@@ -1,6 +1,6 @@
 // app/(tabs)/EditProfile.tsx
 import { useTheme } from "@/hooks/useTheme";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
@@ -87,12 +87,12 @@ export default function EditProfile() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <LinearGradient colors={["#FFE39C", "#FFFFFF"]} className="px-4">
-        <View className="flex-row items-center mt-10">
-          <TouchableOpacity>
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-          </TouchableOpacity>
-          <Text className="ml-2 text-lg font-bold">Edit Profile</Text>
+      <LinearGradient colors={["#FFF201", "#FFFFFF"]}>
+        <View className="flex-row items-center">
+          <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+            <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+          </View>
+          <Text className="ml-2 text-lg font-bold mt-2">Edit Profile</Text>
         </View>
 
         {/* Profile Icon */}

@@ -31,9 +31,11 @@ export default function PaymentModeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
         {/* Header */}
-        <View className="flex-row items-center px-4 py-3">
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-            <Text className="font-bold text-xl ml-2">Payment mode</Text>
+        <View className="flex-row items-center">
+            <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+              <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+            </View>
+            <Text className="font-bold text-xl ml-2 mt-2">Payment mode</Text>
         </View>
         <ScrollView className="flex-1 bg-white">
             {/* Suggested */}

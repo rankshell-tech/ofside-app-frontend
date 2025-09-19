@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Image,FlatList, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
@@ -71,9 +71,8 @@ export default function TeamsScreen() {
         resizeMode="contain"
         className="flex-1 bg-white"
       >
-        <View className="flex-row items-center mx-4 my-5">
-          {/* Back Button */}
-          <Ionicons className="mr-3" onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 my-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
 
           {/* Tabs */}

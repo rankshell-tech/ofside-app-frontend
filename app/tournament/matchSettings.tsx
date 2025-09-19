@@ -44,10 +44,8 @@ export default function MatchSettings() {
         className="flex-1"
       >
         {/* Header */}
-        <View className="flex-row items-center justify-between px-4 py-10">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-          </TouchableOpacity>
+        <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
 
         {/* Menu List */}

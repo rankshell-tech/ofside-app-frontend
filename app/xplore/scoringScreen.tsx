@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Pressable,StyleSheet, ImageBackground } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ChevronDown, SlidersHorizontal } from "lucide-react-native";
-import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import { Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Modal from "react-native-modal";
@@ -112,8 +112,10 @@ const ScoringScreen = () => {
         >
             <View>
                 {/* Header */}
-                <View className="flex-row items-center justify-between p-3 mt-2">
-                    <Ionicons onPress={() => navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
+                <View className="flex-row items-center justify-between mx-3 mt-2 mb-5">
+                    <View className="w-8 h-8 bg-white rounded-full border-4" >
+                        <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+                    </View>
                     <TouchableOpacity onPress={() => setRulesVisible(true)}>
                         <SlidersHorizontal  size={22} color="black" />
                     </TouchableOpacity>
