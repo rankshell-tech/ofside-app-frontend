@@ -11,14 +11,14 @@ export default {
     android: {
       config: {
         googleMaps: {
-          apiKey: 'YOUR_ANDROID_GOOGLE_MAPS_API_KEY',
+          apiKey: 'AIzaSyBNcYcteWd_FceId1YrifNhtPoPAZ87RzE',
         },
       },
     },
     ios: {
       supportsTablet: true,
       config: {
-        googleMapsApiKey: 'YOUR_IOS_GOOGLE_MAPS_API_KEY',
+        googleMapsApiKey: 'AIzaSyBNcYcteWd_FceId1YrifNhtPoPAZ87RzE',
       },
       infoPlist: {
         NSCameraUsageDescription:
