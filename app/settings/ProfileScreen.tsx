@@ -28,7 +28,7 @@ export default function ProfileScreen() {
     { label: "Your Bookings", icon: "calendar", onPress: () => router.push("/booking/booking") },
     { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" },
     { label: "Corporate event booking", icon: "team" },
-    { label: "Add/Update your Venue", icon: "pluscircleo" },
+    { label: "Add/Update your Venue", icon: "pluscircleo", onPress: () => router.push("/venue/addVenue") },
     { label: "Invite & Earn", icon: "gift" },
     { label: "Help & Support", icon: "customerservice" },
     { label: "About Ofside", icon: "infocirlceo" },
@@ -43,9 +43,7 @@ export default function ProfileScreen() {
       >
         {/* Header */}
         <View className="flex-row items-center justify-between px-4 py-3">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
-          </TouchableOpacity>
+          <Ionicons onPress={()=> navigation.goBack()} name="chevron-back-circle-outline" size={22} color="black" />
         </View>
 
         {/* Profile Section */}
