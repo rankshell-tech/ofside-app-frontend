@@ -71,12 +71,14 @@ export default function InviteTeamsScreen() {
       </View>
 
       {/* Next button */}
+      <View className="absolute bottom-12 left-4 right-4">
       <TouchableOpacity onPress={() => router.push({
                                             pathname: "/tournament/selectMatchFixtures",
                                             params: { sport, format },})}
                         className="bg-[#FFF201] py-3 rounded-lg items-center mt-6">
         <Text className="font-bold text-lg">Next</Text>
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

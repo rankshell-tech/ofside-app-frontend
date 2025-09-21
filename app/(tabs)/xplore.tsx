@@ -1,6 +1,6 @@
 // App.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -31,10 +31,12 @@ export default function App() {
       <TouchableOpacity className="flex-1 p-5 items-center justify-center" onPress={onPress}>
         <Text className="text-xl font-extrabold text-black">{title}</Text>
         {comingSoon && (
-          <View className="absolute right-4 top-8 px-2 py-0.5 rounded">
-            <Text className="text-[8px] font-bold -rotate-45 text-red-500 uppercase">
-              Coming Soon
-            </Text>
+          <View className="absolute right-8 top-0 px-2 py-0.5 rounded">
+            <Image
+              source={require("../../assets/images/comingSoon.png")}
+              style={{ width: 30, height: 30 }}
+              resizeMode="contain"
+            />
           </View>
         )}
       </TouchableOpacity>
@@ -79,10 +81,10 @@ export default function App() {
               <MenuButton title="My Team & Performance" />
             </View>
             <View className="mt-5">
-              <MenuButton title="Strength & Weekness" comingSoon />
+              <MenuButton title="ABCD - Your AI Coach" comingSoon />
             </View>
             <View className="my-4">
-              <MenuButton title="Leaderboard" comingSoon />
+              <MenuButton title="Game Leaderboard" comingSoon />
             </View>
 
         </ScrollView>

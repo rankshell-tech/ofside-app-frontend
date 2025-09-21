@@ -296,34 +296,139 @@ export default function MatchesScreen() {
             </View>
         )}
 
-        { tabType === "Stats" && (
-        <View className="flex-1 flex-wrap flex-row justify-between mt-4">
-            <View className="w-[80%] flex-row justify-between items-center mb-10 mx-10">
-                <OutlinedText text="23" fillColor="#FFF201" strokeColor="black" fontSize={40}/>
-                <Text className="text-2xl font-bold border rounded-md bg-gray-100 p-5">Goals Scored</Text>
-            </View>
+        {tabType === "Stats" && (
+          <View className="py-6">
 
-            <View className="w-[80%] flex-row justify-between items-center mb-10 mx-10">
-                <Text className="text-2xl font-bold border rounded-md bg-gray-100 p-5">Goals Saved</Text>
-                <OutlinedText text="23" fillColor="#FFF201" strokeColor="black" fontSize={40}/>
-            </View>
+            {/* Row 1 */}
+            {(() => {
+              const stats = [
+                { label: "Goals Scored", value: 18 },
+                { label: "Assists", value: 6 },
+                { label: "Shots on Goal", value: 24 },
+              ];
+              const maxValue = Math.max(...stats.map((s) => s.value));
+              const minValue = Math.min(...stats.map((s) => s.value));
+              return (
+                <View className="flex-row justify-between mb-4">
+                  {stats.map((s, i) => (
+                    <View key={i} className="flex-1 mx-1">
+                      <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-2 text-[12px]">
+                        {s.label}
+                      </Text>
+                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                        <Text
+                          className={`text-4xl font-bold italic ${
+                            s.value === maxValue ? "text-green-600" : "text-black"},`}
+                        >
+                          {s.value}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              );
+            })()}
 
-            <View className="w-[80%] flex-row justify-between items-center mb-10 mx-10">
-                <OutlinedText text="18" fillColor="#FFF201" strokeColor="black" fontSize={40}/>
-                <Text className="text-2xl font-bold border rounded-md bg-gray-100 p-5">Free kicks</Text>
-            </View>
+            {/* Row 2 */}
+            {(() => {
+              const stats = [
+                { label: "Matches Played", value: 34 },
+                { label: "Man of the Match Awards", value: 2 },
+              ];
+              const maxValue = Math.max(...stats.map((s) => s.value));
+              return (
+                <View className="flex-row justify-between mb-4">
+                  {stats.map((s, i) => (
+                    <View key={i} className="flex-1 mx-1">
+                      <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
+                        {s.label}
+                      </Text>
+                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                        <Text
+                          className={`text-4xl font-bold italic ${
+                            s.value === maxValue ? "text-green-600" : "text-black"
+                          }`}
+                        >
+                          {s.value}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              );
+            })()}
 
-            <View className="w-[80%] flex-row justify-between items-center mb-10 mx-10">
-                <Text className="text-2xl font-bold border rounded-md bg-gray-100 p-5">Corner Kicks</Text>
-                <OutlinedText text="23" fillColor="#FFF201" strokeColor="black" fontSize={40}/>
-            </View>
+            {/* Row 3 */}
+            {(() => {
+              const stats = [
+                { label: "Matches Lose", value: 20 },
+                { label: "Matches Won", value: 14 },
+                { label: "Mins Played", value: 222 },
+              ];
+              const maxValue = Math.max(...stats.map((s) => s.value));
+              const minValue = Math.min(...stats.map((s) => s.value));
+              return (
+                <View className="flex-row justify-between mb-4">
+                  {stats.map((s, i) => (
+                    <View key={i} className="flex-1 mx-1">
+                      <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
+                        {s.label}
+                      </Text>
+                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                        <Text
+                          className={`text-4xl italic font-bold ${
+                            s.value === maxValue ? "text-green-600" : "text-black"
+                          },
+                            ${s.value === minValue ? "text-red-600":""
+                          }
+                          `}
+                        >
+                          {s.value}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              );
+            })()}
 
-            <View className="w-[80%] flex-row justify-between items-center mb-10 mx-10">
-                <OutlinedText text="23" fillColor="#FFF201" strokeColor="black" fontSize={40}/>
-                <Text className="text-2xl font-bold border rounded-md bg-gray-100 p-5">Fouls commited</Text>
-            </View>
-        </View>
+            {/* Row 4 */}
+            {(() => {
+              const stats = [
+                { label: "Matches Lose", value: 20 },
+                { label: "Matches Won", value: 14 },
+                { label: "Mins Played", value: 222 },
+              ];
+              const maxValue = Math.max(...stats.map((s) => s.value));
+              const minValue = Math.min(...stats.map((s) => s.value));
+              return (
+                <View className="flex-row justify-between mb-4">
+                  {stats.map((s, i) => (
+                    <View key={i} className="flex-1 mx-1">
+                      <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
+                        {s.label}
+                      </Text>
+                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                        <Text
+                          className={`text-4xl italic font-bold ${
+                            s.value === maxValue ? "text-green-600" : "text-black"
+                          },
+                            ${s.value === minValue ? "text-red-600":""
+                          }
+                          `}
+                        >
+                          {s.value}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              );
+            })()}
+
+          </View>
         )}
+
       </ImageBackground>
     </SafeAreaView>
   );

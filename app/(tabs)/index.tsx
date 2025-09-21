@@ -235,7 +235,11 @@ export default function HomeScreen() {
             </View>
             <View style={styles.headerActions}>
               <TouchableOpacity onPress={()=> router.push('/settings/ruleBook')}>
-                <Iconify icon="fluent:clipboard-task-list-20-regular" size={35} color={theme.colors.accent} type="svg" />
+                <Image
+                    source={require("../../assets/images/clipboard.png")}
+                    style={{ width: 30, height: 30 }}
+                    resizeMode="contain"
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}

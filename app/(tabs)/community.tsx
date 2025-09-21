@@ -51,7 +51,7 @@ export default function Community() {
                   }}
                 />
             </View>
-            <Text className="mt-2 text-sm font-bold text-gray-700">
+            <Text className="mt-2 text-2xl italic">
               {displayProgress}%
             </Text>
 

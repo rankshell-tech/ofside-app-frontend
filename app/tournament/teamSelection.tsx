@@ -123,13 +123,21 @@ export default function SelectTeamsScreen() {
           />
         </View>
 
-      {/* Next button */}
-      <TouchableOpacity onPress={() => router.push({
-                                      pathname: "/tournament/teamSelectionViaScanner",
-                                      params: { sport, format },})}
-                        className="bg-[#fff201] py-3 rounded-lg items-center mt-4">
-        <Text className="font-bold text-lg">Next</Text>
-      </TouchableOpacity>
+      {/* Next Button */}
+      <View className="absolute bottom-12 left-4 right-4">
+          <TouchableOpacity onPress={() => router.push({
+                                                pathname: "/tournament/teamSelectionViaScanner",
+                                                params: { sport, format },})}
+                            className="h-12">
+          <View
+              className="flex-1 items-center justify-center rounded-xl bg-[#FFF201]"
+          >
+              <Text className="font-extrabold text-base text-black">
+              Next
+              </Text>
+          </View>
+          </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
