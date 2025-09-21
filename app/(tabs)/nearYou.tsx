@@ -9,6 +9,7 @@ import { Entypo, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import Iconify from "@/components/Iconify";
+import Swiper from "react-native-swiper";
 
 const filterData: Record<
   string,
@@ -66,39 +67,66 @@ export default function NearYou() {
     {
         id: "1",
         name: "Nik box turf",
-        image: "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg",
+        images: [
+                  "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg",
+                  "https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg",
+                  "https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg"
+                ],
         rating: 3.4,
         location: "Gaziabad",
         offer: "Flat 5% Off",
         price: "INR 999 Onwards",
         tag: "Trending",
         bestFor: "Best for cricket",
-        distance: "2.2km"
+        distance: "2.2km",
+        sportsAvailable: [
+            {name:"Cricket" ,icon: "emojione-monotone:cricket-game"},
+            {name:"Badminton" ,icon: "twemoji:badminton"},
+            {name:"Pickleball" ,icon: "material-symbols-light:pickleball-rounded"}
+
+        ],
 
     },
     {
         id: "2",
         name: "John box turf",
-        image: "https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg",
+        images: [
+                  "https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg",
+                  "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg",
+                  "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg"
+                ],
         rating: 3.5,
         location: "Delhi",
         offer: "Flat 5% Off",
         price: "INR 800 Onwards",
         tag: "Trending",
         bestFor: "Best for football",
-        distance: "8km"
+        distance: "8km",
+        sportsAvailable: [
+            {name:"Volley Ball" ,icon:"mingcute:volleyball-fill"},
+            { name:"Football" ,icon:"uil:football"}
+        ],
     },
     {
         id: "3",
         name: "Chetana turf",
-        image: "https://images.pexels.com/photos/6203527/pexels-photo-6203527.jpeg",
+        images: [
+                  "https://images.pexels.com/photos/6203527/pexels-photo-6203527.jpeg",
+                  "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg",
+                  "https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg"
+                ],
         rating: 4.8,
         location: "Noida",
         offer: "Flat 20% Off",
         price: "INR 1200 Onwards",
         tag: "Premium",
         bestFor: "Best for tennis",
-        distance: "15km"
+        distance: "15km",
+        sportsAvailable: [
+            {name:"Cricket" ,icon:"emojione-monotone:cricket-game"},
+            {name:"Football" ,icon:"uil:football"},
+            { name:"Tennis" ,icon:"fa6-solid:table-tennis-paddle-ball"}
+        ],
     },
     ];
     const sortingOptions = [
@@ -271,63 +299,95 @@ export default function NearYou() {
             )
             :(
               <FlatList
-                  data={turfs}
-                  keyExtractor={(item) => item.id}
-                  contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 80 }}
-                  renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => router.push({
-                                                        pathname: '/nearYou/turfDetails',
-                                                        params: { id: item.id },
-                                                      })}
-                    className="flex-row items-center bg-white border border-gray-300 rounded-2xl p-2 mb-4 shadow-sm"
-                  >
+                data={turfs}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 80 }}
+                renderItem={({ item }) => (
+                  <View className="flex-row items-center bg-white border border-gray-300 rounded-2xl p-2 mb-4 shadow-sm">
+                    {/* LEFT SIDE */}
                     <View className="w-[60%]">
-                      <Image source={{ uri: item.image }} className="w-full h-40" />
-                      <View className='flex-row justify-between mt-2 mx-2'>
-                        <Text className="font-bold text-lg">{item.name}</Text>
-                        <Text className="font-bold text-white text-sm rounded-md px-2 py-1" style={{backgroundColor: '#16a34a'}}>{item.rating}</Text>
-                      </View>
-                      <View className="flex-row items-center mx-2">
-                        <Text className="text-gray-500 text-xs mr-2">{item.location}</Text>
-                        <Text className="text-xs text-gray-700 bg-gray-200 px-2 py-0.5 rounded-md">
-                          {item.distance}
-                        </Text>
+                      <Swiper
+                        showsPagination={true}
+                        dotColor="#ccc"
+                        activeDotColor="#16a34a"
+                        style={{ height: 120 }}
+                      >
+                        {item.images.map((uri: string, index: number) => (
+                          <Image
+                            key={index}
+                            source={{ uri }}
+                            className="w-full h-44 rounded-md"
+                            resizeMode="cover"
+                          />
+                        ))}
+                      </Swiper>
+                      <View>
+                          <Text className="font-bold text-lg">{item.name}</Text>
+                          <View className='flex-row justify-between items-center'>
+                            <View className="flex-row items-center">
+                              <Text className="text-gray-500 text-xs mr-2">{item.location}</Text>
+                              <Text className="text-xs text-gray-700 bg-gray-200 px-2 py-0.5 rounded-md">
+                                {item.distance}
+                              </Text>
+                            </View>
+                            <Text
+                              className="font-bold text-white text-sm rounded-full px-3"
+                              style={{ backgroundColor: "#16a34a" }}
+                            >
+                              {item.rating}
+                            </Text>
+                          </View>
                       </View>
                     </View>
-                    <View className="w-[40%] flex-col justify-between py-2 pr-2">
+
+                    {/* RIGHT SIDE */}
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.push({
+                          pathname: "/nearYou/turfDetails",
+                          params: { id: item.id },
+                        })}
+                      className="w-[40%] flex-col justify-between py-2 pr-2">
                       <View className="flex-1 items-end">
-                        <FontAwesome className='mb-2' name="bookmark-o" size={20} color="black" />
                         <Text className="text-white text-[10px] bg-blue-600 px-2 py-0.5 rounded-md mb-1">
                           {item.tag}
                         </Text>
                         <Text className="text-white text-[10px] bg-gray-500 px-2 py-0.5 rounded-md mb-1">
                           {item.bestFor}
                         </Text>
+                        <FontAwesome
+                          className="mb-2"
+                          name="bookmark-o"
+                          size={20}
+                          color="black"
+                        />
                       </View>
-                      <View className='flex-row items-center justify-end mb-3'>
-                        <Iconify icon="emojione-monotone:cricket-game" size={20} type="svg" />
-                        <Iconify icon="uil:football" size={20} type="svg" />
-                        <Iconify icon="twemoji:badminton" size={20} type="svg" />
+                      <View className="flex-row items-center justify-end mb-3">
+                        {item.sportsAvailable.map((sport) => (
+                          <View className='mr-1'>
+                            <Iconify icon={sport.icon} size={24} color="black" type="svg" />
+                          </View>
+                        ))}
                       </View>
+
                       <View className="flex-1 mx-2">
                         <LinearGradient
-                            colors={["#008000","#CCF3BA"]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0.7, y: 0 }}
-                            className="px-1 mb-1"
+                          colors={["#008000", "#CCF3BA"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0.7, y: 0 }}
+                          className="px-1 mb-1"
                         >
                           <Text className="text-xs text-white font-bold">{item.offer}</Text>
                         </LinearGradient>
                         <View className="border-t border-gray-300 my-1" />
                       </View>
-                      <Text className="text-blue-700 font-bold text-right">
-                        {item.price}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  )}
-              />)
-            }
+
+                      <Text className="text-blue-700 font-bold text-right">{item.price}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            )}
             <Modal
               transparent
               visible={isSortingOpen}

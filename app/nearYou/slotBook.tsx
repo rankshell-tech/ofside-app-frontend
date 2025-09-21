@@ -29,7 +29,7 @@ export default function SlotBookingScreen() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today.getDate());
+  const [selectedDate, setSelectedDate] = useState(5);
   const flatListRef = useRef<FlatList<number>>(null);
   const [monthIndex, setMonthIndex] = useState(today.getMonth());
 
@@ -85,7 +85,7 @@ export default function SlotBookingScreen() {
 
         {/* Date Selection */}
         <Text className="font-bold mb-2">Date selection</Text>
-        <View className="border-t my-4" style={{ width: "70%" }} />
+        <View className="border-t my-1" style={{ width: "70%" }} />
         <View className="flex-row justify-center items-center my-4">
           {/* Left Arrow */}
           <TouchableOpacity disabled={monthIndex === 0} onPress={goPrevMonth} className="px-4">
@@ -110,13 +110,13 @@ export default function SlotBookingScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleSelect(item)}
-                className={`px-3 py-2 rounded-md mx-1 ${
-                  selectedDate === item ? "bg-black" : "bg-transparent"
+                className={`rounded-md mx-1 ${
+                  selectedDate === item ? "bg-black px-3 py-1" : "bg-transparent px-3 py-3 "
                 }`}
               >
                 <Text
                   className={`${
-                    selectedDate === item ? "text-white font-bold text-2xl" : "text-black"
+                    selectedDate === item ? "text-white font-bold text-3xl" : "text-md"
                   }`}
                 >
                   {item}
@@ -128,7 +128,7 @@ export default function SlotBookingScreen() {
 
         {/* Slot Selection */}
         <Text className="font-bold mt-4 mb-2">Slot selection</Text>
-        <View className="border-t my-4" style={{ width: "70%" }} />
+        <View className="border-t my-1" style={{ width: "70%" }} />
 
          <View className="flex-row justify-between my-5">
           {/* From Time Picker */}

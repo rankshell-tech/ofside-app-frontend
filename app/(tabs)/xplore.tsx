@@ -26,10 +26,10 @@ export default function App() {
       colors={["#FFF201", "#EAEAEA"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      className="flex-1 mx-3 rounded-lg overflow-hidden border"
+      className="flex-1 mx-3 rounded-xl overflow-hidden border"
     >
-      <TouchableOpacity className="p-6 items-center justify-center" onPress={onPress}>
-        <Text className="text-lg font-bold text-black">{title}</Text>
+      <TouchableOpacity className="flex-1 p-5 items-center justify-center" onPress={onPress}>
+        <Text className="text-xl font-extrabold text-black">{title}</Text>
         {comingSoon && (
           <View className="absolute right-4 top-8 px-2 py-0.5 rounded">
             <Text className="text-[8px] font-bold -rotate-45 text-red-500 uppercase">
@@ -67,20 +67,18 @@ export default function App() {
         </View>
         <ScrollView>
             {/* Buttons */}
-            <View className="flex-row mt-4 w-full h-28">
+            <View className="flex-row mt-5 w-full h-28">
               <MenuButton title="Start a match" onPress={()=>router.push(`/xplore/chooseSportScreen`)} />
               <MenuButton title="Create Tournament" onPress={()=> router.push('/tournament/createTournament')} />
             </View>
-            <View className="flex-row mt-4 w-full h-28">
+            <View className="flex-row mt-5 w-full h-28">
               <MenuButton title="My Game" />
               <MenuButton title="My Performance" />
             </View>
-            <View className="flex-row mt-4 w-full h-28">
-              <MenuButton title="My Team" />
-              <MenuButton title="Team Performance" />
+            <View className="flex-row mt-5 w-full h-28">
+              <MenuButton title="My Team & Performance" />
             </View>
-
-            <View className="my-4">
+            <View className="mt-5">
               <MenuButton title="Strength & Weekness" comingSoon />
             </View>
             <View className="my-4">

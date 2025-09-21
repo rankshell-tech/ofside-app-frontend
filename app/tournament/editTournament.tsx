@@ -200,13 +200,13 @@ export default function EditTournament() {
               <TouchableOpacity
                 key={cat}
                 onPress={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-full border ${
+                className={`px-3 py-2 rounded-full border ${
                   selected
                     ? "bg-[#fff201]"
                     : "bg-white"
                 }`}
               >
-                <Text className={`text-[10px] ${selected ? "font-bold" : ""}`}>{cat}</Text>
+                <Text className={`text-[12px] ${selected ? "font-bold" : ""}`}>{cat}</Text>
               </TouchableOpacity>
             );
           })}
@@ -221,18 +221,18 @@ export default function EditTournament() {
               <TouchableOpacity
                 key={f}
                 onPress={() => setSelectedFormat(f)}
-                className={`px-3 py-1 rounded-full border ${
+                className={`px-3 py-2 rounded-full border ${
                   selected
                     ? "bg-[#fff201]"
                     : "bg-white"
                 }`}
               >
                 <View className="flex-row items-center">
-                  <Text className={`text-[10px] ${selected ? "font-bold" : ""}`}>
+                  <Text className={`text-[12px] ${selected ? "font-bold" : ""}`}>
                     {f}
                   </Text>
                   {f === "Combination" && (
-                    <Text className="text-[7px] ml-1">(mix of knockout and league)</Text>
+                    <Text className="text-[8px] ml-1">(mix of knockout and league)</Text>
                   )}
                 </View>
               </TouchableOpacity>

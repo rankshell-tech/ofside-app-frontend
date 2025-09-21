@@ -110,7 +110,6 @@ const ScoringScreen = () => {
             resizeMode="contain"
             className="flex-1 bg-white"
         >
-            <View>
                 {/* Header */}
                 <View className="flex-row items-center justify-between mx-3 mt-2 mb-5">
                     <View className="w-8 h-8 bg-white rounded-full border-4" >
@@ -146,12 +145,11 @@ const ScoringScreen = () => {
 
                 <View className="flex-row justify-end items-center mb-2">
                     <TouchableOpacity className="mr-2">
-                        <FontAwesome name="share-square-o" size={18} color="black" />
+                        <FontAwesome name="share-square-o" size={20} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity className="flex-row items-center border bg-red-500 border-red-500 rounded-md px-1 mr-3">
-                        <Text className="text-white">Live</Text>
-
-                            <Octicons className="ml-2" name="dot-fill" size={14} color="white" />
+                    <TouchableOpacity className="flex-row items-center border bg-red-500 border-red-500 rounded-full px-2 mr-3">
+                        <Text className="text-white font-bold">Live</Text>
+                            <Octicons className="ml-2" name="dot-fill" size={18} color="white" />
                     </TouchableOpacity>
                 </View>
 
@@ -168,7 +166,7 @@ const ScoringScreen = () => {
                     </View>
                     <View className="items-center">
                         <Text className="text-xs text-white">9:52</Text>
-                        <Text className="text-2xl text-white font-bold">2 : 2</Text>
+                        <Text className="text-4xl text-white font-bold">2 : 2</Text>
                         <Text className="text-[8px] text-white">Delhi NCR ground</Text>
                         <Text className="text-[8px] text-white">Friendly Match</Text>
                     </View>
@@ -189,135 +187,115 @@ const ScoringScreen = () => {
                         <MaterialCommunityIcons name="undo-variant" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
+            <ScrollView
+                contentContainerStyle={{ paddingBottom: 100 }} // add extra space at bottom
+                showsVerticalScrollIndicator={false}
+                >
 
                 { tabType === "Scoring" && (
-                    <ScrollView
-                        contentContainerStyle={{ padding: 12,}} // extra space at bottom
-                        showsVerticalScrollIndicator={false}
-                    >
+                   <View className="px-2">
+                    {(sport === "Football") &&(
+                    <>
+                            {/* Actions */}
+                            <View className="flex-row flex-wrap justify-between mb-5">
+                                <View className="w-[48%]">
+                                    <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-red-600 font-semibold text-lg">Self Goal</Text>
+                                    </TouchableOpacity>
 
-                        {(sport === "Football") &&(
-                        <>
-                                {/* Actions */}
-                                <View className="flex-row flex-wrap justify-between mb-5">
-                                    <View className="w-[48%]">
-                                        <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-red-600 font-semibold">Self Goal</Text>
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-green-600 font-semibold">Goal Saved</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    {/* Right column (1 big Goal button spanning both rows) */}
-                                    <View className="w-[48%] mb-4">
-                                        <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-green-600 font-bold text-3xl">Goal</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    {actions.map((action, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            className="w-[48%] h-16 border rounded-lg mb-3 items-center justify-center bg-gray-50"
-                                        >
-                                            <Text className={`text-center font-bold ${action.color}`}>{action.label}</Text>
-                                        </TouchableOpacity>
-                                        ))}
+                                    <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-green-600 font-semibold text-lg">Goal Saved</Text>
+                                    </TouchableOpacity>
                                 </View>
 
-                                {/* Select Action Button */}
-                                <TouchableOpacity className="py-3 mx-5 mb-5 rounded-lg items-center" style={{backgroundColor: theme.colors.primary}}>
-                                    <Text className="font-semibold text-black">Select action</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+                                {/* Right column (1 big Goal button spanning both rows) */}
+                                <View className="w-[48%] mb-4">
+                                    <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-green-600 font-bold text-4xl">Goal</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                        {(sport === "Basketball") &&(
-                            <>
-                                {/* Actions */}
-                                <View className="flex-row flex-wrap justify-between mb-5">
-                                    <View className="w-[48%]">
-                                        <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-red-600 font-semibold">Flagrant Foul</Text>
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-red-600 font-semibold">Technical Foul</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    {/* Right column (1 big Goal button spanning both rows) */}
-                                    <View className="w-[48%] mb-4">
-                                        <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                        <Text className="text-green-600 font-bold text-3xl">3 Pointer</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    {basketballActions.map((action, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            className="w-[48%] h-16 border rounded-lg mb-3 items-center justify-center bg-gray-50"
-                                        >
-                                            <Text className={`text-center font-bold ${action.color}`}>{action.label}</Text>
-                                        </TouchableOpacity>
+                                {actions.map((action, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        className="w-[48%] h-16 border rounded-lg mb-3 items-center justify-center bg-gray-50"
+                                    >
+                                        <Text className={`text-center font-bold text-lg ${action.color}`}>{action.label}</Text>
+                                    </TouchableOpacity>
                                     ))}
-                                    <View className="w-[48%]">
-                                        <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                            <Text className="text-red-600 font-bold text-xl">Player disqualified</Text>
-                                        </TouchableOpacity>
-                                    </View>
+                            </View>
 
-                                    {/* Right column (1 big Goal button spanning both rows) */}
-                                    <View className="w-[48%] mb-4">
-                                        <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                            <Text className="font-semibold">Player substitute</Text>
-                                        </TouchableOpacity>
+                            {/* Select Action Button */}
+                            <TouchableOpacity className="py-3 mx-5 mb-5 rounded-lg items-center" style={{backgroundColor: theme.colors.primary}}>
+                                <Text className="font-semibold text-black">Select action</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
 
-                                        <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
-                                            <Text className="font-semibold">Drinks break/ Resume</Text>
-                                        </TouchableOpacity>
-                                    </View>
+                    {(sport === "Basketball") &&(
+                        <>
+                            {/* Actions */}
+                            <View className="flex-row flex-wrap justify-between mb-5">
+                                <View className="w-[48%]">
+                                    <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-red-600 font-semibold text-lg">Flagrant Foul</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-red-600 font-semibold text-lg">Technical Foul</Text>
+                                    </TouchableOpacity>
                                 </View>
 
-                                {/* Select Action Button */}
-                                <TouchableOpacity onPress={()=> router.push('/xplore/winnerScreen')} className="py-3 mx-5 mb-5 rounded-lg items-center" style={{backgroundColor: theme.colors.primary}}>
-                                    <Text className="font-semibold text-black">Select action</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+                                {/* Right column (1 big Goal button spanning both rows) */}
+                                <View className="w-[48%] mb-4">
+                                    <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <Text className="text-green-600 font-bold text-4xl">3 Pointer</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                        {(sport === "Badminton" || sport === "Pickleball" || sport === 'Tennis' || sport === 'Volleyball') && (
-                            <>
-                                <View className="flex-row justify-between items-center ">
-                                        <LinearGradient
-                                            colors={["#FFF201", "#FFFFFF"]}
-                                            start={{ x: 0, y: 0 }}
-                                            end={{ x: 1, y: 0 }}
-                                            className="items-center justify-center w-48 h-36 mr-2 rounded-2xl"
-                                        >
-                                            <TouchableOpacity onPress={() => setVisible(true)}>
-                                                {sport === 'Tennis'
-                                                ?
-                                                <>
-                                                    <Text className="font-extrabold text-2xl text-black">
-                                                    + Point
-                                                    </Text>
-                                                </>
-                                                :
-                                                <>
-                                                    <Text className="font-extrabold text-base text-black">
-                                                    Stallions
-                                                    </Text>
-                                                    <Text className="font-extrabold text-4xl text-black">
-                                                    +1
-                                                    </Text>
-                                                </>
-                                                }
-                                            </TouchableOpacity>
-                                        </LinearGradient>
-                                    <View className="items-center justify-center w-48 h-36 border rounded-xl bg-gray-200">
+                                {basketballActions.map((action, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        className="w-[48%] h-16 border rounded-lg mb-3 items-center justify-center bg-gray-50"
+                                    >
+                                        <Text className={`text-center font-bold text-lg ${action.color}`}>{action.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <View className="w-[48%]">
+                                    <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                        <Text className="text-red-600 font-bold text-lg">Player disqualified</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* Right column (1 big Goal button spanning both rows) */}
+                                <View className="w-[48%] mb-4">
+                                    <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                        <Text className="font-semibold text-lg">Player substitute</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                        <Text className="font-semibold text-lg">Drinks break/ Resume</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            {/* Select Action Button */}
+                            <TouchableOpacity className="py-3 mx-5 mb-5 rounded-lg items-center" style={{backgroundColor: theme.colors.primary}}>
+                                <Text className="font-semibold text-black">Select action</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+
+                    {(sport === "Badminton" || sport === "Pickleball" || sport === 'Tennis' || sport === 'Volleyball') && (
+                        <>
+                            <View className="flex-row justify-between items-center ">
+                                    <LinearGradient
+                                        colors={["#FFF201", "#FFFFFF"]}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        className="items-center justify-center w-48 h-36 mr-2 rounded-2xl"
+                                    >
+                                        <TouchableOpacity onPress={() => setVisible(true)}>
                                             {sport === 'Tennis'
                                             ?
                                             <>
@@ -328,46 +306,63 @@ const ScoringScreen = () => {
                                             :
                                             <>
                                                 <Text className="font-extrabold text-base text-black">
-                                                S.M.C.C
+                                                Stallions
                                                 </Text>
                                                 <Text className="font-extrabold text-4xl text-black">
                                                 +1
                                                 </Text>
                                             </>
                                             }
-                                    </View>
-                                </View>
-                                <View className="flex-row justify-between items-center">
-                                    <Text className="text-xl font-bold mt-6 px-4">
-                                        Recent <Text className="font-bold text-3xl">Feed</Text>
-                                    </Text>
-                                    <Text className="text-[8px] underline mr-2 font-bold">View more</Text>
-                                </View>
-                                <View className="mt-3 px-4">
-                                    {feeds.map((feed, index) => (
-                                    <View key={index} className="border-b border-gray-200 py-3">
-                                        <View className="flex-row justify-between items-start">
-                                        <Text className="text-sm font-semibold text-gray-700">
-                                            {feed.time}
-                                        </Text>
-                                        <TouchableOpacity>
-                                            <Feather name="edit" size={14} color="gray" />
                                         </TouchableOpacity>
-                                        </View>
-                                        <Text className="text-sm text-gray-800 mt-1">{feed.text}</Text>
-                                    </View>
-                                    ))}
+                                    </LinearGradient>
+                                <View className="items-center justify-center w-48 h-36 border rounded-xl bg-gray-200">
+                                        {sport === 'Tennis'
+                                        ?
+                                        <>
+                                            <Text className="font-extrabold text-2xl text-black">
+                                            + Point
+                                            </Text>
+                                        </>
+                                        :
+                                        <>
+                                            <Text className="font-extrabold text-base text-black">
+                                            S.M.C.C
+                                            </Text>
+                                            <Text className="font-extrabold text-4xl text-black">
+                                            +1
+                                            </Text>
+                                        </>
+                                        }
                                 </View>
+                            </View>
+                            <View className="flex-row justify-between items-center">
+                                <Text className="text-xl font-bold mt-6 px-4">
+                                    Recent <Text className="font-bold text-3xl">Feed</Text>
+                                </Text>
+                                <Text className="text-[8px] underline mr-2 font-bold">View more</Text>
+                            </View>
+                            <View className="mt-3 px-4">
+                                {feeds.map((feed, index) => (
+                                <View key={index} className="border-b border-gray-200 py-3">
+                                    <View className="flex-row justify-between items-start">
+                                    <Text className="text-sm font-semibold text-gray-700">
+                                        {feed.time}
+                                    </Text>
+                                    <TouchableOpacity>
+                                        <Feather name="edit" size={14} color="gray" />
+                                    </TouchableOpacity>
+                                    </View>
+                                    <Text className="text-sm text-gray-800 mt-1">{feed.text}</Text>
+                                </View>
+                                ))}
+                            </View>
 
-                            </>
-                        )}
-                    </ScrollView>
+                        </>
+                    )}
+                    </View>
                 )}
                 { tabType === "Match Feed" &&(
-                <ScrollView
-                    contentContainerStyle={{ paddingBottom: 40 }} // extra space at bottom
-                    showsVerticalScrollIndicator={false}
-                >
+                <>
                     {(sport === "Football") &&(
                         <>
                             {/* Goals Scored */}
@@ -517,7 +512,7 @@ const ScoringScreen = () => {
                         </View>
                         ))}
                     </View>
-                </ScrollView>
+                </>
                 )}
 
                 {/* Bottom Sheet Modal */}
@@ -681,7 +676,7 @@ const ScoringScreen = () => {
                     </View>
                     </View>
                 </Modal>
-            </View>
+            </ScrollView>
         </ImageBackground>
     </SafeAreaView>
   );

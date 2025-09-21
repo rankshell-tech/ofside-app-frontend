@@ -82,7 +82,7 @@ export default function AdvanceTournamentSettings() {
         <Text className="text-2xl font-bold my-5">Advance Tournament Settings</Text>
 
         <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-[12px] font-bold">If you want categories teams into different groups</Text>
+            <Text className="w-[90%] text-lg font-bold">If you want categories teams into different groups</Text>
             <Switch
                 value={isCategoryOn}
                 onChange={()=>setIsCategoryOn(!isCategoryOn)}
@@ -98,9 +98,9 @@ export default function AdvanceTournamentSettings() {
             icon={<AntDesign name="downcircleo" size={18} color="black" />}
         />
         <View className="flex-row justify-between items-center my-10">
-            <View className="w-[80%]">
-                <Text className="text-[12px] font-bold">If you want team Automatic Fixtures/Match making</Text>
-                <Text className="text-[8px]">(If you are ticking this ON, you'll be able to built fixtures amnually for knockout format)</Text>
+            <View className="w-[90%]">
+                <Text className="text-lg font-bold">If you want team Automatic Fixtures/Match making</Text>
+                <Text className="text-[10px]">(If you are ticking this ON, you'll be able to built fixtures amnually for knockout format)</Text>
             </View>
             <Switch
                 value={isCategoryOn}

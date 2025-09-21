@@ -113,7 +113,7 @@ const MatchSetupScreen = () => {
                 <View className="items-center">
                     <View
                         style={{ backgroundColor: theme.colors.accent }}
-                        className="w-24 h-24 rounded-full items-center justify-center shadow"
+                        className="w-28 h-28 rounded-full items-center justify-center shadow"
                     >
                         <FontAwesome
                             name="user"
@@ -128,7 +128,7 @@ const MatchSetupScreen = () => {
                 <View className="items-center">
                     <Image
                     source={require("../../assets/images/vsIconGray.png")}
-                    style={{ width: 150, height: 150 }}
+                    style={{ width: 100, height: 100 }}
                     resizeMode="contain"
                     />
                     <Text className="text-gray-600 text-[12px]">
@@ -143,7 +143,7 @@ const MatchSetupScreen = () => {
                 <View className="items-center">
                     <View
                     style={{ backgroundColor: theme.colors.accent }}
-                    className="w-24 h-24 rounded-full items-center justify-center shadow"
+                    className="w-28 h-28 rounded-full items-center justify-center shadow"
                     >
                     <FontAwesome
                         name="user"

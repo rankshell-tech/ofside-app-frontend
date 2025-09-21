@@ -221,7 +221,7 @@ export default function BookingDetails() {
             end={{ x: 0.7, y: 0 }}
             className="py-2"
           >
-            <Text className="text-center font-bold text-black text-lg">Continue</Text>
+            <Text className={`text-center font-bold text-xl ${isBottom ?"text-white":"text-black"}`}>Continue</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>

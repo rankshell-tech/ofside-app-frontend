@@ -114,7 +114,7 @@ export default function MatchRulesScreen() {
                         className="flex-row justify-between items-center"
                     >
                         <View className="flex-row items-baseline">
-                            <Text className="text-xl font-bold">
+                            <Text className="text-2xl font-bold">
                                 {rule.label.split(" ")[0]}{" "}{rule.label.split(" ")[1]}{" "}
                             </Text>
                             <Text className="text-md">{rule.label.split(" ")[2]}</Text>
@@ -132,8 +132,8 @@ export default function MatchRulesScreen() {
                 </View>
                 <View className="mt-3 flex-row justify-between px-2">
                     <View className="flex-row items-baseline">
-                    <Text className="text-lg font-bold">Basketball court </Text>
-                    <Text className="text-sm">size</Text>
+                    <Text className="text-2xl font-bold">Basketball court </Text>
+                    <Text className="text-md">size</Text>
                     </View>
                     <View className="flex-row space-x-3">
                     {["Half", "Full"].map((size) => (
@@ -173,10 +173,10 @@ export default function MatchRulesScreen() {
                         className="flex-row justify-between items-center"
                     >
                         <View className="flex-row items-baseline">
-                            <Text className="text-xl font-extrabold">
+                            <Text className="text-2xl font-extrabold">
                                 {rule.label.split(" ")[0]}{" "}
                             </Text>
-                            <Text className="text-sm">{rule.label.split(" ")[1]}</Text>
+                            <Text className="text-md">{rule.label.split(" ")[1]}</Text>
                         </View>
                         <Switch
                             value={rules[rule.key as keyof typeof rules]}
@@ -193,12 +193,12 @@ export default function MatchRulesScreen() {
                 {/* Goal size selection */}
                 <View className="mt-3 flex-row justify-between px-2">
                     <View className="flex-row items-baseline">
-                    <Text className="text-lg font-bold">Goal </Text>
-                    <Text className="text-sm">size</Text>
+                    <Text className="text-2xl font-bold">Goal </Text>
+                    <Text className="text-md">size</Text>
                     </View>
                     <View className="flex-row space-x-3">
                     {["Futsal", "Standard"].map((size) => (
-                        <TouchableOpacity
+                    <TouchableOpacity
                         key={size}
                         onPress={() => setGoalSize(size as "Futsal" | "Standard")}
                         className="px-2 py-1 rounded-full border m-1"
@@ -330,8 +330,8 @@ export default function MatchRulesScreen() {
                     >
                         <View>
                             <View className="flex-row items-center">
-                                <Text className="text-lg font-bold">{rule.label.split(" ")[0]} </Text>
-                                <Text className="text-base">
+                                <Text className="text-2xl font-bold">{rule.label.split(" ")[0]} </Text>
+                                <Text className="text-md">
                                     {rule.label.split(" ").slice(1).join(" ")}
                                 </Text>
                             </View>

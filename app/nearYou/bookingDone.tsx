@@ -1,6 +1,6 @@
 // screens/PlayerAddedScreen.tsx
 import React,{ useEffect } from "react";
-import { View, Text, ImageBackground } from "react-native";
+import { View, Text, ImageBackground, Image } from "react-native";
 import { Feather,  } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from "@react-navigation/native";
@@ -26,12 +26,11 @@ const PlayerAddedScreen = () => {
     <View className="flex-1 items-center justify-center">
       {/* Text */}
       <View className="flex-row items-center space-x-2">
-        <Text className="text-4xl font-semibold text-green-500">Slot booked</Text>
-
-        {/* Check Icon */}
-        <View className="w-18 h-18 rounded-full ml-2" >
-          <Feather name="check-circle" size={50} color={theme.colors.primary } />
-        </View>
+        <Text className="text-4xl font-semibold text-green-500 mr-2">Slot booked</Text>
+        <Image
+          source={require('../../assets/images/check.png')}
+          style={{ width: 50, height: 50, resizeMode: 'contain' }}
+        />
       </View>
     </View>
     </ImageBackground>
