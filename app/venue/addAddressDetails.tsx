@@ -1,5 +1,5 @@
 // screens/VenueAddress.tsx
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +8,49 @@ import * as Location from "expo-location";
 import { router } from "expo-router";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+
+// Floating Label Input component
+const FloatingLabelInput = ({
+  label,
+  value,
+  onPress,
+  onChangeText,
+  isPicker,
+  icon,
+}: {
+  label: string;
+  value: string;
+  onPress?: () => void;
+  onChangeText?: (text: string) => void;
+  isPicker?: boolean;
+  icon?: JSX.Element;
+}) => (
+  <View className="mt-6">
+    {/* Label */}
+    <View className="absolute -top-2 left-4 bg-white px-1 z-10">
+      <Text className="text-xs font-semibold">{label}</Text>
+    </View>
+
+    {/* Input / Picker style */}
+    {isPicker ? (
+      <TouchableOpacity
+        onPress={onPress}
+        className="border border-black rounded-2xl px-4 py-4 flex-row justify-between items-center"
+      >
+        <Text className="flex-1 text-center">{value}</Text>
+        {icon}
+      </TouchableOpacity>
+    ) : (
+      <View className="border border-black rounded-2xl px-4 py-1">
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          className="text-center"
+        />
+      </View>
+    )}
+  </View>
+);
 
 export default function VenueAddress() {
   const navigation = useNavigation();
@@ -64,7 +107,7 @@ export default function VenueAddress() {
       <LinearGradient
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
-        end={{ x: 1, y: 0.8 }}
+        end={{ x: 1, y: 0.5 }}
       >
         <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
           <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
@@ -96,59 +139,41 @@ export default function VenueAddress() {
 
         {/* Address Form */}
         <ScrollView
-            contentContainerStyle={{ paddingBottom: 120, padding:20 }}
+            contentContainerStyle={{ paddingBottom: 400, padding:20 }}
             showsVerticalScrollIndicator={false}
         >
             <Text className="text-lg font-bold mb-3">Venue address details</Text>
 
-            {/* Row 1 */}
-            <View className="flex-row space-x-3 mb-3">
-            <TextInput
-                value={form.shopNo}
-                onChangeText={(t) => setForm({ ...form, shopNo: t })}
-                placeholder="Shop no. / building no.*"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
+            <FloatingLabelInput
+              label="Shop no. / building no.*"
+              value={form.shopNo}
+              onChangeText={(t) => setForm({ ...form, shopNo: t })}
             />
-            <TextInput
-                value={form.floor}
-                onChangeText={(t) => setForm({ ...form, floor: t })}
-                placeholder="Floor / tower (optional)"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+            <FloatingLabelInput
+              label="Floor / tower (optional)"
+              value={form.floor}
+              onChangeText={(t) => setForm({ ...form, floor: t })}
             />
-            </View>
-
-            {/* Row 2 */}
-            <View className="flex-row space-x-3 mb-3">
-            <TextInput
-                value={form.area}
-                onChangeText={(t) => setForm({ ...form, area: t })}
-                placeholder="Area / Sector / Locality*"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
+            <FloatingLabelInput
+              label="Area / Sector / Locality*"
+              value={form.area}
+              onChangeText={(t) => setForm({ ...form, area: t })}
             />
-            <TextInput
-                value={form.city}
-                onChangeText={(t) => setForm({ ...form, city: t })}
-                placeholder="City*"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+            <FloatingLabelInput
+              label="City*"
+              value={form.city}
+              onChangeText={(t) => setForm({ ...form, city: t })}
             />
-            </View>
-
-            {/* Row 3 */}
-            <View className="flex-row space-x-3 mb-3">
-            <TextInput
-                value={form.landmark}
-                onChangeText={(t) => setForm({ ...form, landmark: t })}
-                placeholder="Any landmark area (optional)"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 mr-1"
+            <FloatingLabelInput
+              label="Any landmark area (optional)"
+              value={form.landmark}
+              onChangeText={(t) => setForm({ ...form, landmark: t })}
             />
-            <TextInput
-                value={form.pincode}
-                onChangeText={(t) => setForm({ ...form, pincode: t })}
-                placeholder="Area pincode"
-                keyboardType="numeric"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+            <FloatingLabelInput
+              label="Area pincode*"
+              value={form.pincode}
+              onChangeText={(t) => setForm({ ...form, pincode: t })}
             />
-            </View>
 
             <Text className="text-xs text-gray-600 my-5">
               Please note Users will see this address on Ofside

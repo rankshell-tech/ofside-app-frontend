@@ -91,6 +91,22 @@ export default function VenueOnboarding() {
                     onChangeText={(text) => setForm({ ...form, brandName: text })}
                 />
 
+                <View className="mb-5">
+                    <Text className="font-bold text-lg mb-1">Description</Text>
+                    <TextInput
+                        multiline
+                        numberOfLines={4}
+                        textAlignVertical="top"
+                        value={form.description}
+                        onChangeText={(text) => setForm({ ...form, description: text })}
+                        placeholder=""
+                        placeholderTextColor="#888"
+                        className={`rounded-xl px-4 py-3 border h-32 ${
+                            !form.description ? "border-red-500" : "border-gray-300"
+                        }`}
+                    />
+                </View>
+
                 <InputField
                     label="Venue primary contact number"
                     sublabel=""
@@ -131,22 +147,6 @@ export default function VenueOnboarding() {
                     value={form.ownerContact}
                     onChangeText={(text) => setForm({ ...form, ownerContact: text })}
                 />
-
-                <View className="mb-5">
-                    <Text className="font-bold text-lg mb-1">Description</Text>
-                    <TextInput
-                        multiline
-                        numberOfLines={4}
-                        textAlignVertical="top"
-                        value={form.description}
-                        onChangeText={(text) => setForm({ ...form, description: text })}
-                        placeholder=""
-                        placeholderTextColor="#888"
-                        className={`rounded-xl px-4 py-3 border h-32 ${
-                            !form.description ? "border-red-500" : "border-gray-300"
-                        }`}
-                    />
-                </View>
             </ScrollView>
         </LinearGradient>
         {/* Sticky Bottom Button */}

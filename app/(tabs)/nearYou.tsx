@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ImageBackground, Modal } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, ImageBackground, Modal, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/hooks/useTheme';
-import { Menu, Search,} from 'lucide-react-native';
-import FontAwesome from '@expo/vector-icons/build/FontAwesome';
+import { Search } from 'lucide-react-native';
+import { FontAwesome, Entypo, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Entypo, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import Iconify from "@/components/Iconify";
@@ -363,11 +362,11 @@ export default function NearYou() {
                         />
                       </View>
                       <View className="flex-row items-center justify-end mb-3">
-                        {item.sportsAvailable.map((sport) => (
-                          <View className='mr-1'>
-                            <Iconify icon={sport.icon} size={24} color="black" type="svg" />
-                          </View>
-                        ))}
+                          {item.sportsAvailable.map((sport, index) => (
+                            <View key={`${item.id}-${sport.name}-${index}`} className="mr-1">
+                              <Iconify icon={sport.icon} size={24} color="black" type="svg" />
+                            </View>
+                          ))}
                       </View>
 
                       <View className="flex-1 mx-2">
