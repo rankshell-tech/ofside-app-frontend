@@ -85,7 +85,7 @@ export default function VenueAmenities() {
 
       </LinearGradient>
       {/* Sticky Bottom Button */}
-      <TouchableOpacity onPress={()=> router.push('/venue/addOperationalDays')} className="rounded-lg border overflow-hidden absolute bottom-0 right-0 mr-2 mb-10">
+      <TouchableOpacity onPress={()=> router.push('/venue/addAvailableSports')} className="rounded-lg border overflow-hidden absolute bottom-0 right-0 mr-2 mb-10">
           <LinearGradient
               colors={["#FFF201", "#E0E0E0"]}
               start={{ x: 0, y: 0 }}

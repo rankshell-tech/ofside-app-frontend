@@ -1,12 +1,13 @@
 // screens/VenueOnboarding.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import Iconify from "@/components/Iconify";
 
 // Reusable Input Component
 type InputFieldProps = {
@@ -42,20 +43,16 @@ export default function VenueOnboarding() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const [form, setForm] = useState({
     brandName: "Xyz turfs",
-    contactNumber: "Xyz turfs",
-    email: "Xyz turfs",
-    ownerName: "",
-    ownerEmail: "Xyz turfs",
-    ownerContact: "Xyz turfs",
     description: ""
   });
-  const [open24, setOpen24] = useState(false);
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [endTime, setEndTime] = useState<Date | null>(null);
-
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
+  const [is24Hours, setIs24Hours] = useState(false);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const [openTime, setOpenTime] = useState<Date | null>(null);
+    const [closeTime, setCloseTime] = useState<Date | null>(null);
+    const [showPicker, setShowPicker] = useState<{
+      mode: "open" | "close" | null;
+    }>({ mode: null });
+
 
 
   const toggleDay = (day: string) => {
@@ -63,6 +60,29 @@ export default function VenueOnboarding() {
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
+
+  const handleTimeChange = (event: any, selected?: Date) => {
+    if (showPicker.mode === "open" && selected) {
+      setOpenTime(selected);
+    } else if (showPicker.mode === "close" && selected) {
+      setCloseTime(selected);
+    }
+    setShowPicker({ mode: null });
+  };
+
+  const formatTime = (date: Date) => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
+    return `${hours}:${minutesStr} ${ampm}`;
+  };
+
+  const resetTime = () =>{
+    setOpenTime(null);
+    setCloseTime(null)
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -84,7 +104,7 @@ export default function VenueOnboarding() {
                 showsVerticalScrollIndicator={false}
             >
                 <InputField
-                    label="Brand/Venue name"
+                    label="Venue name"
                     sublabel="Users will see this name on Ofside"
                     placeholder="Xyz turfs"
                     value={form.brandName}
@@ -107,46 +127,90 @@ export default function VenueOnboarding() {
                     />
                 </View>
 
-                <InputField
-                    label="Venue primary contact number"
-                    sublabel=""
-                    placeholder="Xyz turfs"
-                    value={form.contactNumber}
-                    onChangeText={(text) => setForm({ ...form, contactNumber: text })}
-                />
+                {/* Days */}
+                <Text className="text-lg font-bold mb-3">
+                  Select the operational days
+                </Text>
+                <View className="flex-row flex-wrap justify-between">
+                  {days.map((day) => {
+                    const isSelected = selectedDays.includes(day);
+                    return (
+                      <TouchableOpacity
+                        key={day}
+                        onPress={() => toggleDay(day)}
+                        className={`w-[48%] py-3 px-2 rounded-lg mb-3 border ${
+                          isSelected
+                            ? "bg-green-500 border-green-500"
+                            : "bg-white border-gray-400"
+                        }`}
+                      >
+                        <Text
+                          className={`text-center font-semibold ${
+                            isSelected ? "text-white" : "text-black"
+                          }`}
+                        >
+                          {day}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
 
-                <InputField
-                    label="Venue communication email"
-                    sublabel=""
-                    placeholder="Xyz turfs"
-                    value={form.email}
-                    onChangeText={(text) => setForm({ ...form, email: text })}
-                />
+                {/* 24 hours toggle */}
+                <View className="flex-row items-center justify-between mb-6">
+                  <Text className="text-base font-medium">
+                    Is your venue open 24 hours?
+                  </Text>
+                  <Switch
+                    value={is24Hours}
+                    onValueChange={()=> { setIs24Hours(!is24Hours); resetTime() }}
+                    trackColor={{ false: "#ccc", true: "#4CAF50" }}
+                  />
+                </View>
 
-                <InputField
-                    label="Owner’s Name"
-                    sublabel=""
-                    placeholder="Xyz turfs"
-                    value={form.ownerName}
-                    onChangeText={(text) => setForm({ ...form, ownerName: text })}
-                    error={!form.ownerName} // red border if empty
-                />
+                {/* Open / Close time */}
+                <View className="flex-row justify-between items-center mb-5">
+                  <TouchableOpacity
+                    onPress={() => setShowPicker({ mode: "open" })}
+                    className={`flex-1 py-3 border border-gray-400 rounded-lg mx-5 bg-white ${is24Hours ? 'opacity-50': 'opacity-100'}`}
+                    disabled={is24Hours}
+                  >
+                    <Text className="text-center font-semibold">
+                    {openTime ? formatTime(openTime) : "Open time"}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={resetTime}>
+                    <Iconify icon="subway:refresh-time" size={20} type="svg"/>
+                    </TouchableOpacity>
 
-                <InputField
-                    label="Owner’s email"
-                    sublabel=""
-                    placeholder="Xyz turfs"
-                    value={form.ownerEmail}
-                    onChangeText={(text) => setForm({ ...form, ownerEmail: text })}
-                />
+                  <TouchableOpacity
+                    onPress={() => setShowPicker({ mode: "close" })}
+                    className={`flex-1 py-3 border border-gray-400 rounded-lg mx-5 bg-white ${is24Hours ? 'opacity-50': 'opacity-100'}`}
+                    disabled={is24Hours}
+                  >
+                    <Text className="text-center font-semibold">
+                      {closeTime ? formatTime(closeTime) : "Close time"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
-                <InputField
-                    label="Owner’s contact number"
-                    sublabel=""
-                    placeholder="Xyz turfs"
-                    value={form.ownerContact}
-                    onChangeText={(text) => setForm({ ...form, ownerContact: text })}
-                />
+                {showPicker.mode && (
+                  <DateTimePicker
+                    value={
+                      (showPicker.mode === "open" ? openTime : closeTime) ?? new Date()
+                    }
+                    mode="time"
+                    is24Hour={false}
+                    display={Platform.OS === "ios" ? "spinner" : "default"}
+                    onChange={handleTimeChange}
+                  />
+                )}
+                {/* Note */}
+                <Text className="text-xs text-gray-600 mt-6">
+                  <Text className="font-bold">Note: </Text>
+                  Your Venue profile details will help attract users to your Venue.
+                  Please fill correct details of your venue/turf/ground.
+                </Text>
             </ScrollView>
         </LinearGradient>
         {/* Sticky Bottom Button */}

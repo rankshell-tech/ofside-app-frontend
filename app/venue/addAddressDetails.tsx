@@ -1,6 +1,6 @@
 // screens/VenueAddress.tsx
 import React, { JSX, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Marker, MapPressEvent } from "react-native-maps";
@@ -61,6 +61,12 @@ export default function VenueAddress() {
     city: "",
     landmark: "",
     pincode: "",
+    contactPersonName: "",
+    contactPersonEmail: "",
+    contactPersonContact: "",
+    ownerName: "",
+    ownerEmail: "",
+    ownerContact: "",
   });
 
   const [location, setLocation] = useState({
@@ -74,6 +80,7 @@ export default function VenueAddress() {
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
+  const [areOwnerDetailsSame, setAreOwnerDetailsSame] = useState(false);
 
   // 🔹 Get address from coordinates
   const fetchAddress = async (lat: number, lng: number) => {
@@ -100,6 +107,23 @@ export default function VenueAddress() {
     setLocation({ latitude, longitude });
     fetchAddress(latitude, longitude);
   };
+   const setOwnerDetails = ()=>{
+    if(!areOwnerDetailsSame){
+      setForm(prev => ({
+        ...prev,
+        ownerName: prev.contactPersonName,
+        ownerEmail: prev.contactPersonEmail,
+        ownerContact: prev.contactPersonContact
+      }));
+    }else{
+      setForm(prev => ({
+        ...prev,
+        ownerName:"",
+        ownerEmail:"",
+        ownerContact:""
+      }));
+    }
+   }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -107,7 +131,7 @@ export default function VenueAddress() {
       <LinearGradient
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
-        end={{ x: 1, y: 0.5 }}
+        end={{ x: 1, y: 0.3 }}
       >
         <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
           <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
@@ -145,7 +169,7 @@ export default function VenueAddress() {
             <Text className="text-lg font-bold mb-3">Venue address details</Text>
 
             <FloatingLabelInput
-              label="Shop no. / building no.*"
+              label="Shop no./ building no.*"
               value={form.shopNo}
               onChangeText={(t) => setForm({ ...form, shopNo: t })}
             />
@@ -178,6 +202,56 @@ export default function VenueAddress() {
             <Text className="text-xs text-gray-600 my-5">
               Please note Users will see this address on Ofside
             </Text>
+
+            <FloatingLabelInput
+              label="Contact Person Name"
+              value={form.contactPersonName}
+              onChangeText={(t) => setForm({ ...form, contactPersonName: t })}
+            />
+            <FloatingLabelInput
+              label="Contact Person Phone number*"
+              value={form.contactPersonContact}
+              onChangeText={(t) => setForm({ ...form, contactPersonContact: t })}
+            />
+            <FloatingLabelInput
+              label="Contact Person Email Address*"
+              value={form.contactPersonEmail}
+              onChangeText={(t) => setForm({ ...form, contactPersonEmail: t })}
+            />
+            <Text className="text-xs text-gray-600 bg-yellow-100 my-2 mx-3">
+              Booking Confirmation emails will be sent to this address
+            </Text>
+            <View className="flex-row items-center justify-between mb-6">
+              <Text className="text-base font-medium">
+                Are Owner details same as contact person?
+              </Text>
+              <Switch
+                value={areOwnerDetailsSame}
+                onValueChange={()=> { setAreOwnerDetailsSame(!areOwnerDetailsSame); setOwnerDetails() }}
+                trackColor={{ false: "#ccc", true: "#4CAF50" }}
+              />
+            </View>
+            {!areOwnerDetailsSame && (
+              <>
+                <FloatingLabelInput
+                  label="Owner Name"
+                  value={form.ownerName}
+                  onChangeText={(t) => setForm({ ...form, ownerName: t })}
+                />
+                <FloatingLabelInput
+                  label="Owner Phone number*"
+                  value={form.ownerContact}
+                  onChangeText={(t) => setForm({ ...form, ownerContact: t })}
+                />
+                <FloatingLabelInput
+                  label="Owner Email Address*"
+                  value={form.ownerEmail}
+                  onChangeText={(t) => setForm({ ...form, ownerEmail: t })}
+                />
+              </>
+            )}
+
+
         </ScrollView>
       </LinearGradient>
 

@@ -21,6 +21,36 @@ export default function Declaration() {
     tax: 80.82,
   };
 
+  const venueDetails = {
+    brandName: "Chetana Turf",
+    description: "fghjkl;kjh hgfddhgjk kjhgf hgfhjkj jiuhgvfcgggggggggggggggggggggg ghjkjlkjlkjk hjggggggggggggggggggggggg hhkjwkedhgjgfuiqwhdiowjckschhscvas kahdjabgdjagdiuhaiudhq dihwawjdgjadbjabdjq dihaudhaqh",
+    venueType: "Not Specified",
+    sportsOfferred: "Not Specified",
+    operationDays: "Monday, Tuesday, Saturday, Sunday",
+    timings: "24 hours",
+  };
+
+  const contactDetails = {
+    contactPerson: "Xyz",
+    contactNumber: "xxxx xxxxxx",
+    contactEmail: "xya@gmail.com",
+    ownerName: "Owner Name",
+    ownerNumber: "xxxx xxxxxx",
+    ownerEmail: "Owner Email",
+    address: "Full Address",
+    landmark: "None"
+  };
+
+  const courts = [
+    {
+      sport:"",
+      surface:"",
+      slotDuration:"",
+      maxDuration:"",
+      price:""
+    }
+  ]
+
   const total = details.fee + details.tax;
 
   return (
@@ -51,24 +81,111 @@ export default function Declaration() {
 
         {/* Content */}
         <ScrollView
-            contentContainerStyle={{ paddingBottom: 100, padding:20 }} // 👈 leaves space for button
+            contentContainerStyle={{ paddingBottom: 200, padding:20 }} // 👈 leaves space for button
             showsVerticalScrollIndicator={false}
         >
             {/* Title */}
         <Text className="text-lg font-bold">Review venue details</Text>
         <View className="border-b w-[80%] mb-3" />
 
-        {/* Venue Info */}
-        <Text className="font-bold">Brand/Venue Name: <Text className="font-normal">{details.brandName}</Text></Text>
-        <Text className="font-bold">Primary Contact person: <Text className="font-normal">{details.contactPerson}</Text></Text>
-        <Text className="font-bold">Primary Contact Number: <Text className="font-normal">{details.contactNumber}</Text></Text>
-        <Text className="font-bold">Communication Email: <Text className="font-normal">{details.email}</Text></Text>
+        <View className="bg-yellow-100 p-4 rounded-xl shadow-md mt-4">
+          {/* Venue Info */}
+          <Text className="text-lg font-bold mb-3">Venue Details</Text>
 
-        <Text className="font-bold mt-3">Owner’s Name: <Text className="font-normal">{details.ownerName}</Text></Text>
-        <Text className="font-bold">Owner’s Email: <Text className="font-normal">{details.ownerEmail}</Text></Text>
+          <Text className="font-bold">
+            Venue Name:{" "}
+            <Text className="font-normal">{venueDetails.brandName}</Text>
+          </Text>
+          <Text className="font-bold">
+            Description:{" "}
+            <Text className="font-normal">{venueDetails.description}</Text>
+          </Text>
+          <Text className="font-bold">
+            Venue Type:{" "}
+            <Text className="font-normal">{venueDetails.venueType}</Text>
+          </Text>
+          <Text className="font-bold">
+            Sports Offered:{" "}
+            <Text className="font-normal">{venueDetails.sportsOfferred}</Text>
+          </Text>
+          <Text className="font-bold">
+            Operational days:{" "}
+            <Text className="font-normal">{venueDetails.operationDays}</Text>
+          </Text>
+          <Text className="font-bold">
+            Timings:{" "}
+            <Text className="font-normal">{venueDetails.timings}</Text>
+          </Text>
+        </View>
 
-        <Text className="font-bold mt-3">Venue Address: <Text className="font-normal">{details.address}</Text></Text>
-        <Text className="font-bold">Sports Available: <Text className="font-normal">{details.sports.join(", ")}</Text></Text>
+        <View className="bg-blue-100 p-4 rounded-xl shadow-md mt-4">
+          <Text className="text-lg font-bold mb-3">Contact & Address</Text>
+
+        <Text className="font-bold">
+          Contact Person:{" "}
+          <Text className="font-normal">{contactDetails.contactPerson}</Text>
+        </Text>
+        <Text className="font-bold">
+          Contact Number:{" "}
+          <Text className="font-normal">{contactDetails.contactNumber}</Text>
+        </Text>
+        <Text className="font-bold">
+          Contact Email:{" "}
+          <Text className="font-normal">{contactDetails.contactEmail}</Text>
+        </Text>
+
+        <Text className="font-bold mt-3">
+          Owner’s Name: <Text className="font-normal">{contactDetails.ownerName}</Text>
+        </Text>
+        <Text className="font-bold">
+          Owner’s Phone: <Text className="font-normal">{contactDetails.ownerEmail}</Text>
+        </Text>
+        <Text className="font-bold">
+          Owner’s Email: <Text className="font-normal">{contactDetails.ownerEmail}</Text>
+        </Text>
+
+        <Text className="font-bold mt-3">
+          Address: <Text className="font-normal">{contactDetails.address}</Text>
+        </Text>
+        <Text className="font-bold">
+          Landmark:{" "}
+          <Text className="font-normal">{contactDetails.landmark}</Text>
+        </Text>
+        </View>
+        <View className="bg-yellow-100 p-4 rounded-xl shadow-md mt-4">
+          {/* Venue Info */}
+          <Text className="text-lg font-bold mb-3">Amenities</Text>
+
+        </View>
+        <View className="bg-white p-4 rounded-xl shadow-md mt-4">
+          {/* Venue Info */}
+          <Text className="text-lg font-bold mb-3">Courts</Text>
+          {courts.map((court, index) => (
+            <View key={index} className="mb-4">
+              <Text className="font-bold">
+                Court {index + 1}{" "}
+                <Text className="font-normal">{court.sport}</Text>
+              </Text>
+              <Text className="font-bold">
+                Surface:{" "}
+                <Text className="font-normal">{court.surface}</Text>
+              </Text>
+              <Text className="font-bold">
+                Slot Duration:{" "}
+                <Text className="font-normal">{court.slotDuration}</Text>
+              </Text>
+              <Text className="font-bold">
+                Max bookings/slot:{" "}
+                <Text className="font-normal">{court.maxDuration}</Text>
+              </Text>
+              <Text className="font-bold">
+                Price/slot:{" "}
+                <Text className="font-normal">{court.price}</Text>
+              </Text>
+            </View>
+          ))}
+        </View>
+
 
         {/* Amount Payable */}
         <Text className="text-lg font-bold mt-6">Amount payable</Text>
