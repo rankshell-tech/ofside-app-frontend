@@ -124,7 +124,7 @@ export default function ChooseSportScreen() {
                   params: { sport: selectedSport, format: selectedFormat },
                 })
               : router.push({
-                  pathname: "/xplore/selectTeamsScreen",
+                  pathname: "/scoring/selectTeamsScreen",
                   params: { sport: selectedSport, format: selectedFormat },
                 })
               }

@@ -1,16 +1,19 @@
 import React,{ useEffect } from "react";
 import { View, Text, ImageBackground, Image } from "react-native";
-import { Feather,  } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 
 const TournamentCreated = () => {
   const theme = useTheme();
+    const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
   const navigation = useNavigation();
     useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.goBack();
-      navigation.goBack();
+      router.replace({
+                    pathname: "/tournament/teamSelection",
+                    params: { sport, format }
+                  })
     }, 2000); // 2 seconds
 
     return () => clearTimeout(timer);

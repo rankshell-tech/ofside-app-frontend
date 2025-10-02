@@ -15,7 +15,7 @@ export default function Index() {
       if (isAuthenticated || isGuest) {
         router.replace('/(tabs)');
       } else {
-        router.replace('/login');
+        router.replace('/login/loginViaApp');
       }
     }, 1000);
 

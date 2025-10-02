@@ -31,8 +31,8 @@ export default function SelectTeamsScreen() {
           <TouchableOpacity
             className="flex-row items-center mb-8"
             onPress={() => router.push({
-                            pathname: "/xplore/teamsScreen",
-                            params: { sport, format },})}
+                            pathname: "/scoring/teamsScreen",
+                            params: { sport, format, activatedTab : "My Teams" },})}
             >
             <View
               className="w-20 h-20 rounded-full items-center justify-center"
@@ -55,8 +55,8 @@ export default function SelectTeamsScreen() {
           {/* B */}
           <TouchableOpacity className="flex-row items-center mt-8"
             onPress={() => router.push({
-                            pathname: "/xplore/teamsScreen",
-                            params: { sport, format },})}
+                            pathname: "/scoring/teamsScreen",
+                            params: { sport, format, activatedTab : "Opponents" },})}
           >
             <View
               className="w-20 h-20 rounded-full items-center justify-center"

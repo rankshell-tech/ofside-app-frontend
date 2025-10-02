@@ -435,9 +435,9 @@ const MatchSetupScreen = () => {
             <View className="absolute bottom-4 left-4 right-4">
             <TouchableOpacity
                 onPress={() =>sport === "Basketball"
-                    ? router.push({ pathname: "/xplore/scoringScreen",
+                    ? router.push({ pathname: "/scoring/scoringScreen",
                                     params: { sport, format }})
-                    : router.push({ pathname: "/xplore/matchTossScreen",
+                    : router.push({ pathname: "/scoring/matchTossScreen",
                                     params: { sport, format }})}
                 className="rounded-lg py-3 items-center"
                 style={{ backgroundColor: theme.colors.primary }}
@@ -481,7 +481,7 @@ const MatchSetupScreen = () => {
                 onPress={() => {
                 setRulesVisible(false);
                 router.push({
-                        pathname: "/xplore/matchRulesScreen",
+                        pathname: "/scoring/matchRulesScreen",
                         params: { sport, format }})
                 }}
                 className="py-3 border-b border-gray-200"

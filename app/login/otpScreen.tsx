@@ -16,9 +16,9 @@ export default function OtpScreen() {
             className="flex-1"
         >
             {/* Skip Button */}
-            <View className="flex-row justify-end p-4">
+            {/* <View className="flex-row justify-end p-4">
                 <Text className="text-black text-base font-medium">Skip</Text>
-            </View>
+            </View> */}
 
             {/* Logo */}
             <View className="items-center mt-4">

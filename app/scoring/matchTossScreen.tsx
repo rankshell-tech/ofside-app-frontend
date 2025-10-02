@@ -117,7 +117,7 @@ export default function TossScreen({ navigation }: any) {
             {/* Kick off Button */}
             <View className="px-4 mb-5">
                 <TouchableOpacity
-                    onPress={()=> router.push({ pathname: "/xplore/scoringScreen",
+                    onPress={()=> router.push({ pathname: "/scoring/scoringScreen",
                                                         params: { sport, format }})}
                     className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>
                 <Text className="font-bold text-black text-lg">{sport === 'Football' ? "Kick off" : "Start match"}</Text>

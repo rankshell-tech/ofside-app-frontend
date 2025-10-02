@@ -542,7 +542,7 @@ export default function ManageTornamentRules() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                onPress={() => router.push("/xplore/matchRulesSaved")}
+                onPress={() => router.push("/scoring/matchRulesSaved")}
                 className="flex-1 py-3 rounded-lg ml-3"
                 style={{ backgroundColor: theme.colors.primary }}
                 >

@@ -302,12 +302,10 @@ export default function MatchesScreen() {
             {/* Row 1 */}
             {(() => {
               const stats = [
-                { label: "Goals Scored", value: 18 },
+                { label: "Goals Scored", value: 18, color: "text-green-600" },
                 { label: "Assists", value: 6 },
                 { label: "Shots on Goal", value: 24 },
               ];
-              const maxValue = Math.max(...stats.map((s) => s.value));
-              const minValue = Math.min(...stats.map((s) => s.value));
               return (
                 <View className="flex-row justify-between mb-4">
                   {stats.map((s, i) => (
@@ -315,10 +313,9 @@ export default function MatchesScreen() {
                       <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-2 text-[12px]">
                         {s.label}
                       </Text>
-                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                      <View className="border rounded-md py-5 items-center bg-gray-200">
                         <Text
-                          className={`text-4xl font-bold italic ${
-                            s.value === maxValue ? "text-green-600" : "text-black"},`}
+                          className={`text-4xl font-bold italic ${s.color}`}
                         >
                           {s.value}
                         </Text>
@@ -335,7 +332,6 @@ export default function MatchesScreen() {
                 { label: "Matches Played", value: 34 },
                 { label: "Man of the Match Awards", value: 2 },
               ];
-              const maxValue = Math.max(...stats.map((s) => s.value));
               return (
                 <View className="flex-row justify-between mb-4">
                   {stats.map((s, i) => (
@@ -343,11 +339,9 @@ export default function MatchesScreen() {
                       <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
                         {s.label}
                       </Text>
-                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                      <View className="border rounded-md py-5 items-center bg-gray-200">
                         <Text
-                          className={`text-4xl font-bold italic ${
-                            s.value === maxValue ? "text-green-600" : "text-black"
-                          }`}
+                          className={`text-4xl font-bold italic`}
                         >
                           {s.value}
                         </Text>
@@ -361,12 +355,10 @@ export default function MatchesScreen() {
             {/* Row 3 */}
             {(() => {
               const stats = [
-                { label: "Matches Lose", value: 20 },
-                { label: "Matches Won", value: 14 },
+                { label: "Matches Lose", value: 20, color: "text-green-600" },
+                { label: "Matches Won", value: 14, color: "text-red-600" },
                 { label: "Mins Played", value: 222 },
               ];
-              const maxValue = Math.max(...stats.map((s) => s.value));
-              const minValue = Math.min(...stats.map((s) => s.value));
               return (
                 <View className="flex-row justify-between mb-4">
                   {stats.map((s, i) => (
@@ -374,14 +366,9 @@ export default function MatchesScreen() {
                       <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
                         {s.label}
                       </Text>
-                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                      <View className="border rounded-md py-5 items-center bg-gray-200">
                         <Text
-                          className={`text-4xl italic font-bold ${
-                            s.value === maxValue ? "text-green-600" : "text-black"
-                          },
-                            ${s.value === minValue ? "text-red-600":""
-                          }
-                          `}
+                          className={`text-4xl italic font-bold ${s.color}`}
                         >
                           {s.value}
                         </Text>
@@ -395,12 +382,10 @@ export default function MatchesScreen() {
             {/* Row 4 */}
             {(() => {
               const stats = [
-                { label: "Matches Lose", value: 20 },
-                { label: "Matches Won", value: 14 },
+                { label: "Matches Lose", value: 20, color: "text-green-600" },
+                { label: "Matches Won", value: 14, color: "text-red-600" },
                 { label: "Mins Played", value: 222 },
               ];
-              const maxValue = Math.max(...stats.map((s) => s.value));
-              const minValue = Math.min(...stats.map((s) => s.value));
               return (
                 <View className="flex-row justify-between mb-4">
                   {stats.map((s, i) => (
@@ -408,13 +393,9 @@ export default function MatchesScreen() {
                       <Text className="bg-[#FFF201] text-black text-center font-bold py-1 border rounded-md mb-1 text-[12px]">
                         {s.label}
                       </Text>
-                      <View className="border rounded-md py-3 items-center bg-gray-200">
+                      <View className="border rounded-md py-5 items-center bg-gray-200">
                         <Text
-                          className={`text-4xl italic font-bold ${
-                            s.value === maxValue ? "text-green-600" : "text-black"
-                          },
-                            ${s.value === minValue ? "text-red-600":""
-                          }
+                          className={`text-4xl italic font-bold ${s.color}
                           `}
                         >
                           {s.value}

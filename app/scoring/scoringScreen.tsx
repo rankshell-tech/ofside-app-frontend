@@ -43,7 +43,7 @@ const ScoringScreen = () => {
     ];
 
     const actions = [
-        { label: "Foul", color: "text-red-600" },
+        { label: "Foul", color: "text-red-600", onPress: () => setTeamsVisible(true)},
         { label: "Free Kick", color: "text-black" },
         { label: "Penalty scored/missed", color: "text-black" },
         { label: "Corner Kick", color: "text-black" },
@@ -199,24 +199,25 @@ const ScoringScreen = () => {
                             {/* Actions */}
                             <View className="flex-row flex-wrap justify-between mb-5">
                                 <View className="w-[48%]">
-                                    <TouchableOpacity className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <TouchableOpacity onPress={() => setTeamsVisible(true)} className="h-16 mb-3 border border-black rounded-lg bg-gray-100 items-center justify-center">
                                     <Text className="text-red-600 font-semibold text-lg">Self Goal</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <TouchableOpacity onPress={() => setTeamsVisible(true)} className="h-16 border border-black rounded-lg bg-gray-100 items-center justify-center">
                                     <Text className="text-green-600 font-semibold text-lg">Goal Saved</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* Right column (1 big Goal button spanning both rows) */}
                                 <View className="w-[48%] mb-4">
-                                    <TouchableOpacity className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
+                                    <TouchableOpacity onPress={() => setTeamsVisible(true)} className="h-[120px] border border-black rounded-lg bg-gray-100 items-center justify-center">
                                     <Text className="text-green-600 font-bold text-4xl">Goal</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 {actions.map((action, index) => (
                                     <TouchableOpacity
+                                        onPress={()=> action.onPress}
                                         key={index}
                                         className="w-[48%] h-16 border rounded-lg mb-3 items-center justify-center bg-gray-50"
                                     >
@@ -525,12 +526,7 @@ const ScoringScreen = () => {
                     <View className="bg-white rounded-2xl p-5 shadow-lg">
 
                     {/* Rules List */}
-                    <TouchableOpacity
-                        onPress={() => {
-                                        setTeamsVisible(true);
-                                        setRulesVisible(false);
-                                    }}
-                        className="py-2">
+                    <TouchableOpacity className="py-2">
                         <Text className="text-base">Match Abandoned</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="py-2">
@@ -539,7 +535,7 @@ const ScoringScreen = () => {
                     <TouchableOpacity className="py-2">
                         <Text className="text-base">Walkover</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=> {setRulesVisible(false); router.push('/xplore/winnerScreen')}} className="py-2">
+                    <TouchableOpacity onPress={()=> {setRulesVisible(false); router.push('/scoring/winnerScreen')}} className="py-2">
                         <Text className="text-base">End Match</Text>
                     </TouchableOpacity>
                     </View>

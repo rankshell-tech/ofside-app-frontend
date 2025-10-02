@@ -1,11 +1,12 @@
 import Iconify from "@/components/Iconify";
 import { useTheme } from "@/hooks/useTheme";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Zocial from "@expo/vector-icons/Zocial";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
@@ -47,18 +48,31 @@ export default function ProfileScreen() {
         </View>
 
         {/* Profile Section */}
-        <View className="flex-row items-center px-10">
-          <View className="mr-4">
-            <View  className="w-24 h-24 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.accent }}>
-              <FontAwesome name="user" size={65} color="white" />
-            </View>
+        <LinearGradient
+          colors={["#004aad", "#000428"]} // blue gradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          className="flex-row items-center border rounded-xl overflow-hidden p-2 m-4"
+        >
+          {/* Avatar */}
+          <View  className="w-20 h-20 rounded-full items-center justify-center bg-white mr-2">
+            <FontAwesome name="user" size={50} color="#004aad" />
           </View>
+
+          {/* Text + Icon */}
           <View>
-            <Text className="text-3xl font-bold text-gray-900">
-              Hi Swarit!
-            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-white font-bold text-2xl mr-1">
+                Hi Swarit!
+              </Text>
+              <View  className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
+                <FontAwesome5 name="crown" size={12} color="black" />
+              </View>
+
+            </View>
+            <Text className="text-[#fff201] text-sm">Elite/Club Member</Text>
           </View>
-        </View>
+        </LinearGradient>
 
         {/* Menu List */}
         <ScrollView className="flex-1 mt-6 px-6">

@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -51,26 +51,35 @@ export default function App() {
         className="flex-1"
       >
         {/* Profile Section */}
-        <View className="flex-row items-center mx-2 my-5">
-          <View
-            className="w-20 h-20 rounded-full items-center justify-center mx-4 shadow"
-            style={{ backgroundColor: theme.colors.primary }}
-          >
-            <FontAwesome name="user" size={60} color={theme.colors.accent} />
+        <LinearGradient
+          colors={["#004aad", "#000428"]} // blue gradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          className="flex-row items-center border rounded-xl overflow-hidden p-2 m-4"
+        >
+          {/* Avatar */}
+          <View  className="w-20 h-20 rounded-full items-center justify-center bg-white mr-2">
+            <FontAwesome name="user" size={50} color="#004aad" />
           </View>
-          <View className="flex-1">
-            <Text className="text-xl font-bold">Hi Swarit!</Text>
-            <View className="flex-row mt-2 items-center">
-              <View className="border border-black rounded px-2 py-1 mr-2" >
-                <Text className="text-xs">Hard hitter</Text>
+
+          {/* Text + Icon */}
+          <View>
+            <View className="flex-row items-center">
+              <Text className="text-white font-bold text-2xl mr-1">
+                Hi Swarit!
+              </Text>
+              <View  className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
+                <FontAwesome5 name="crown" size={12} color="black" />
               </View>
+
             </View>
+            <Text className="text-[#fff201] text-sm">Elite/Club Member</Text>
           </View>
-        </View>
+        </LinearGradient>
         <ScrollView>
             {/* Buttons */}
             <View className="flex-row mt-5 w-full h-28">
-              <MenuButton title="Start a match" onPress={()=>router.push(`/xplore/chooseSportScreen`)} />
+              <MenuButton title="Start a match" onPress={()=>router.push(`/scoring/chooseSportScreen`)} />
               <MenuButton title="Create Tournament" onPress={()=> router.push('/tournament/createTournament')} />
             </View>
             <View className="flex-row mt-5 w-full h-28">
@@ -84,7 +93,7 @@ export default function App() {
               <MenuButton title="ABCD - Your AI Coach" comingSoon />
             </View>
             <View className="my-4">
-              <MenuButton title="Game Leaderboard" comingSoon />
+              <MenuButton title="Game Leaderboard" onPress={()=> router.push('/leaderboard/leaderboard')} />
             </View>
 
         </ScrollView>

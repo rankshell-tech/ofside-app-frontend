@@ -65,6 +65,7 @@ export default function AdvanceTournamentSettings() {
 
   const [teams, setTeams] = useState("8");
   const [isCategoryOn, setIsCategoryOn] = useState(true)
+  const [isAutomaticFixturesOn, setIsAutomaticFixturesOn] = useState(true)
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -103,8 +104,8 @@ export default function AdvanceTournamentSettings() {
                 <Text className="text-[10px]">(If you are ticking this ON, you'll be able to built fixtures amnually for knockout format)</Text>
             </View>
             <Switch
-                value={isCategoryOn}
-                onChange={()=>setIsCategoryOn(!isCategoryOn)}
+                value={isAutomaticFixturesOn}
+                onChange={()=>setIsAutomaticFixturesOn(!isAutomaticFixturesOn)}
                 thumbColor={"#fff"}
                 trackColor={{ false: "#ccc", true: "#22c55e" }}
             />
@@ -113,12 +114,12 @@ export default function AdvanceTournamentSettings() {
 
         {/* Next Button */}
         <View className="absolute bottom-4 left-4 right-4">
-            <TouchableOpacity onPress={()=> router.push('/tournament/tournamentCreated')} className="h-12">
+            <TouchableOpacity onPress={()=> navigation.goBack()} className="h-12">
             <View
                 className="flex-1 items-center justify-center rounded-xl bg-[#FFF201]"
             >
                 <Text className="font-extrabold text-base text-black">
-                Next
+                  Save
                 </Text>
             </View>
             </TouchableOpacity>

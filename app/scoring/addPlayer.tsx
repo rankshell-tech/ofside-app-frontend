@@ -106,7 +106,7 @@ export default function AddPlayerScreen() {
 
           {/* Add Player button at bottom-right */}
           <View className="flex-1 justify-end items-end mb-8">
-            <TouchableOpacity onPress={() => router.push('/xplore/playerAddedScreen')} className="px-6 py-3 rounded-md border" style={{ backgroundColor: theme.colors.primary }} >
+            <TouchableOpacity onPress={() => router.push('/scoring/playerAddedScreen')} className="px-6 py-3 rounded-md border" style={{ backgroundColor: theme.colors.primary }} >
               <Text className="text-black font-bold text-base">Add player</Text>
             </TouchableOpacity>
           </View>

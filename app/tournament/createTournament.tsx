@@ -62,7 +62,7 @@ export default function CreateTornamnent() {
   );
   const handleRoute = () => {
     router.push({
-        pathname: "/xplore/chooseSportScreen",
+        pathname: "/scoring/chooseSportScreen",
         params: { isTournament: "true"},
     })
 

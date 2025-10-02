@@ -25,44 +25,56 @@ const players: Player[] = [
 export default function TeamsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState<"My Teams" | "Opponents" | "Add Players">("My Teams");
+  const { sport, format, activatedTab } = useLocalSearchParams<{ sport: string; format: string, activatedTab: "My Teams" }>();
+  const [activeTab, setActiveTab] = useState<"My Teams" | "Opponents" | "Add Players">(activatedTab);
   const [searchOpponents, setSearchOpponents] = useState("");
   const [searchPlayer, setSearchPlayer] = useState("");
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]); // store player IDs
   const [selectAll, setSelectAll] = useState(false);
-  const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
+  interface Team {
+    id: number;
+    name: string;
+    matches: number;
+    won: number;
+    loss: number;
+    location: string;
+    captain: string;
+  }
 
-  const filteredPlayers = players.filter((p) =>
-    p.name.toLowerCase().includes(searchPlayer.toLowerCase())
-  );
+  const [myTeam, setMyTeam] = useState<Team | null>(null);
+  const [opponentTeam, setOpponentTeam] = useState<Team | null>(null);
 
-  const teams = [
-    { id: 1, name: "Stallions", matches: 212, won: 126, loss: 86, location: "New Delhi", captain: "Swarti Jain" },
-    { id: 2, name: "Stallions", matches: 212, won: 126, loss: 86, location: "New Delhi", captain: "Swarti Jain" },
-  ];
+    const filteredPlayers = players.filter((p) =>
+      p.name.toLowerCase().includes(searchPlayer.toLowerCase())
+    );
 
-    // Toggle select all
-    const handleSelectAll = () => {
-      if (selectAll) {
-        // Deselect all
-        setSelectedPlayers([]);
-        setSelectAll(false);
-      } else {
-        // Select all (all ids from filteredPlayers)
-        const allIds = filteredPlayers.map((p) => p.id);
-        setSelectedPlayers(allIds);
-        setSelectAll(true);
-      }
-    };
+    const teams: Team[] = [
+      { id: 1, name: "Stallions", matches: 212, won: 126, loss: 86, location: "New Delhi", captain: "Swarti Jain" },
+      { id: 2, name: "Stallions", matches: 212, won: 126, loss: 86, location: "New Delhi", captain: "Swarti Jain" },
+    ];
 
-    // Toggle single player
-    const togglePlayer = (id: string) => {
-      if (selectedPlayers.includes(id)) {
-        setSelectedPlayers(selectedPlayers.filter((p) => p !== id));
-      } else {
-        setSelectedPlayers([...selectedPlayers, id]);
-      }
-    };
+      // Toggle select all
+      const handleSelectAll = () => {
+        if (selectAll) {
+          // Deselect all
+          setSelectedPlayers([]);
+          setSelectAll(false);
+        } else {
+          // Select all (all ids from filteredPlayers)
+          const allIds = filteredPlayers.map((p) => p.id);
+          setSelectedPlayers(allIds);
+          setSelectAll(true);
+        }
+      };
+
+      // Toggle single player
+      const togglePlayer = (id: string) => {
+        if (selectedPlayers.includes(id)) {
+          setSelectedPlayers(selectedPlayers.filter((p) => p !== id));
+        } else {
+          setSelectedPlayers([...selectedPlayers, id]);
+        }
+      };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -101,16 +113,18 @@ export default function TeamsScreen() {
           <View className="flex-1">
             {/* Add Teams button */}
             <TouchableOpacity className="mx-6 mt-6 rounded-lg py-3 flex-row justify-center items-center" style={{ backgroundColor: theme.colors.primary }}>
-              <Text className="font-bold text-black mr-2">Add Teams</Text>
+              <Text className="font-bold text-black mr-2">Add Team</Text>
               <FontAwesome name="plus" size={20} color="black" />
             </TouchableOpacity>
 
             {/* Teams List */}
             <ScrollView className="mt-6 px-4">
               {teams.map((team) => (
-                <View
+                <TouchableOpacity
+                  onPress={() => setMyTeam(team)}
                   key={team.id}
                   className="flex-row items-center bg-white border border-gray-300 rounded-2xl p-4 mb-4 shadow-sm"
+                  style={{ backgroundColor: team?.id == myTeam?.id ? "#55ba75" : "white"}}
                 >
                   <View
                     style={{ backgroundColor: theme.colors.grey }}
@@ -138,7 +152,7 @@ export default function TeamsScreen() {
                       </View>
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -147,7 +161,7 @@ export default function TeamsScreen() {
         {activeTab === "Opponents" && (
           <View className="flex-1">
             {/* Search Bar */}
-            <View className="flex-row items-center border border-gray-400 rounded-full mx-6 mt-6 px-3">
+            {/* <View className="flex-row items-center border border-gray-400 rounded-full mx-6 mt-6 px-3">
               <TextInput
                 placeholder="Search Opponent..."
                 value={searchOpponents}
@@ -155,16 +169,23 @@ export default function TeamsScreen() {
                 className="flex-1 py-2 px-2 text-gray-700"
               />
               <Ionicons name="search" size={20} color="black" />
-            </View>
+            </View> */}
+            {/* Add Teams button */}
+            <TouchableOpacity className="mx-6 mt-6 rounded-lg py-3 flex-row justify-center items-center" style={{ backgroundColor: theme.colors.primary }}>
+              <Text className="font-bold text-black mr-2">Add Team</Text>
+              <FontAwesome name="plus" size={20} color="black" />
+            </TouchableOpacity>
 
             {/* Opponents List */}
             <ScrollView className="mt-6 px-4">
               {teams
                 .filter((o) => o.name.toLowerCase().includes(searchOpponents.toLowerCase()))
                 .map((team) => (
-                  <View
+                  <TouchableOpacity
+                    onPress={()=> setOpponentTeam(team)}
                     key={team.id}
                     className="flex-row items-center bg-white border border-gray-300 rounded-2xl p-4 mb-4 shadow-sm"
+                    style={{ backgroundColor: team?.id == opponentTeam?.id ? "#55ba75" : "white"}}
                   >
                     <View
                       style={{ backgroundColor: theme.colors.grey }}
@@ -192,7 +213,7 @@ export default function TeamsScreen() {
                         </View>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))}
             </ScrollView>
           </View>
@@ -209,7 +230,7 @@ export default function TeamsScreen() {
 
             <View>
               <TouchableOpacity
-                onPress={() => router.push("/xplore/addPlayer")}
+                onPress={() => router.push("/scoring/addPlayer")}
                 className="px-2 py-1 rounded mb-2"
                 style={{ backgroundColor: theme.colors.primary }}
               >
@@ -280,7 +301,7 @@ export default function TeamsScreen() {
           {/* Next Button */}
           <TouchableOpacity
             onPress={() => router.push({
-                      pathname: "/xplore/matchSetupScreen",
+                      pathname: "/scoring/matchSetupScreen",
                       params: { sport, format },
                     })}
             className="py-3 rounded-md mt-3"

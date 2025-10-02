@@ -287,7 +287,7 @@ export default function EditTournament() {
         {/* Next Button */}
         <View className="absolute bottom-4 left-4 right-4">
             <TouchableOpacity onPress={() => router.push({
-                                        pathname: "/tournament/teamSelection",
+                                        pathname: "/tournament/tournamentCreated",
                                         params: { sport, format },})}
                               className="h-12">
             <View

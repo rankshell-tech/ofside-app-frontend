@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Modal, Linking, Animated, TextInput, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image, Linking, Animated, TextInput, ImageBackground } from 'react-native';
+import Modal from "react-native-modal";
 import { useRouter } from 'expo-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
@@ -16,7 +17,7 @@ import { Trophy } from 'lucide-react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo, FontAwesome6, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Iconify from '@/components/Iconify';
 
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
   const theme = useTheme();
+  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
 
   const { user, isGuest } = useSelector((state: RootState) => state.auth);
   const { filteredVenues, searchQuery, selectedSports } = useSelector((state: RootState) => state.venues);
@@ -240,6 +242,9 @@ export default function HomeScreen() {
                     style={{ width: 30, height: 30 }}
                     resizeMode="contain"
                 />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=> setIsNotificationsVisible(true)}>
+                <Fontisto className='ml-2' name="bell-alt" size={24} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}
@@ -463,6 +468,32 @@ export default function HomeScreen() {
             </View>
           )} */}
         </ScrollView>
+
+        <Modal
+          isVisible={isNotificationsVisible}
+          onBackdropPress={() => setIsNotificationsVisible(false)}
+          onBackButtonPress={() => setIsNotificationsVisible(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            className="flex-1"
+          >
+            <View className="absolute right-4 bg-white border border-gray-300 rounded-2xl shadow-lg w-48 py-5 px-2">
+              <View>
+                <View className='flex-row justify-between items-center mb-2'>
+                  <Text className='font-bold text-lg'>Notifications</Text>
+                  <Entypo onPress={()=> setIsNotificationsVisible(false)} name="circle-with-cross" size={20} color="black" />
+                </View>
+                <View>
+                  <Text className='border-b border-gray-400'>Post a match</Text>
+                  <Text className='border-b border-gray-400'>Post a match</Text>
+                  <Text className='border-b border-gray-400'>Post a match</Text>
+                  <Text className='border-b border-gray-400'>Post a match</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </ImageBackground>
     </SafeAreaView>
   );

@@ -167,19 +167,7 @@ export default function NearYou() {
             resizeMode="contain"
             className='flex-1'
         >
-            {/* Enhanced Fixed Header */}
-            <View style={{ backgroundColor: theme.colors.background }} className="px-4 py-2">
-                <View className="flex-row justify-end items-center space-x-3">
-                    {/* Menu Button */}
-                    <TouchableOpacity
-                      className="w-10 h-10 rounded-full items-center justify-center"
-                      onPress={() => router.push("/settings/ProfileScreen")}
-                    >
-                      <Iconify icon="fluent-mdl2:collapse-menu" size={30} color="black" type="svg" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View className='flex-row mb-2 justify-center'>
+            <View className='flex-row mt-5 mb-2 justify-center'>
                 <TouchableOpacity  style={{backgroundColor: isSortingOpen? theme.colors.primary:'white'}} onPress={()=> setIsSortingOpen(!isSortingOpen)} className="px-3 py-2 border rounded-lg flex-row items-center mr-1">
                     <Text className="mr-1 font-bold">Sort by</Text>
                     <Ionicons name="swap-vertical" size={16} color="black" />
