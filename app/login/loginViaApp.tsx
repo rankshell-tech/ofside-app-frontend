@@ -42,7 +42,7 @@ export default function LoginScreen() {
             </View>
 
             {/* Continue Button */}
-            <TouchableOpacity className="my-8 py-3 rounded-md" >
+            <TouchableOpacity onPress={()=> router.push("/login/otpScreen")} className="my-8 py-3 rounded-md" >
                 <Text className="text-2xl font-black text-center">Continue</Text>
             </TouchableOpacity>
 

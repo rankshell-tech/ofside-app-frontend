@@ -83,7 +83,7 @@ export default function App() {
               <MenuButton title="Create Tournament" onPress={()=> router.push('/tournament/createTournament')} />
             </View>
             <View className="flex-row mt-5 w-full h-28">
-              <MenuButton title="My Game" />
+              <MenuButton title="My Game" onPress={()=> router.push('/myGame/myGame')} />
               <MenuButton title="My Performance" />
             </View>
             <View className="flex-row mt-5 w-full h-28">

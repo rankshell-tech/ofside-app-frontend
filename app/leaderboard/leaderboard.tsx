@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ImageBackground, Dimensions } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,8 +11,22 @@ export default function Leaderboard() {
   const navigation = useNavigation();
   const [city, setCity] = useState("");
   const [sport, setSport] = useState("Football");
+  const [singlesOrDoubles, setSinglesOrDoubles] = useState("");
   const [footballTab, setFootballTab] = useState("Striker");
   const [volleyballTab, setVolleyballTab] = useState("Top Spiker");
+  const screenWidth = Dimensions.get("window").width;
+
+    const visiblePickers = [
+    (sport === "Badminton" || sport === "Tennis" || sport === "Pickleball") ? "singlesOrDoubles" : null,
+    "city",
+    "sport",
+    ].filter(Boolean); // removes nulls
+
+    // Decide width: if 3 pickers, divide screen width; else fallback fixed size
+    const pickerWidth =
+    visiblePickers.length === 3
+        ? screenWidth / 3 - 16 // fit 3 across screen
+        : 150; // default fixed width
 
   const data = [
     { rank: 1, name: "Vikas", city: "Delhi", matches: 22, goals: 10, gsr: "45%" },
@@ -51,13 +65,13 @@ export default function Leaderboard() {
                         colors={["#FFF201", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="border rounded-xl overflow-hidden px-1 mx-1 flex-1"
+                        className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                        style={{ width: pickerWidth }}
                         >
                         <Picker
-                            selectedValue={city}
-                            dropdownIconColor="black"
-                            className="h-10 text-black font-bold"
-                            onValueChange={(itemValue) => setCity(itemValue)}
+                            selectedValue={singlesOrDoubles}
+                            style={{ width: "100%" }}
+                            onValueChange={(itemValue) => setSinglesOrDoubles(itemValue)}
                         >
                             <Picker.Item label="Singles" value="Singles" />
                             <Picker.Item label="Doubles" value="Doubles" />
@@ -68,12 +82,12 @@ export default function Leaderboard() {
                     colors={["#FFF201", "#FFFFFF"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="border rounded-xl overflow-hidden px-1 mx-1 flex-1"
+                    className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                     style={{ width: pickerWidth }}
                     >
                     <Picker
                         selectedValue={city}
-                        dropdownIconColor="black"
-                        className="h-10 text-black font-bold"
+                        style={{ width: "100%" }}
                         onValueChange={(itemValue) => setCity(itemValue)}
                     >
                         <Picker.Item label="Select City" value="" />
@@ -85,9 +99,14 @@ export default function Leaderboard() {
                     colors={["#FFF201", "#FFFFFF"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="border rounded-xl overflow-hidden px-1 mx-1 flex-1"
+                    className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                     style={{ width: pickerWidth }}
                     >
-                    <Picker selectedValue={sport} onValueChange={(val) => setSport(val)}>
+                    <Picker
+                        selectedValue={sport}
+                        onValueChange={(val) => setSport(val)}
+                        style={{ width: "100%" }}
+                    >
                         <Picker.Item label="Football" value="Football" />
                         <Picker.Item label="Volleyball" value="Volleyball" />
                         <Picker.Item label="Badminton" value="Badminton" />
@@ -96,6 +115,7 @@ export default function Leaderboard() {
                         <Picker.Item label="Basketball" value="Basketball" />
                     </Picker>
                 </LinearGradient>
+
             </View>
 
             {/* Tabs */}

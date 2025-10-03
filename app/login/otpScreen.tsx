@@ -21,7 +21,7 @@ export default function OtpScreen() {
             </View> */}
 
             {/* Logo */}
-            <View className="items-center mt-4">
+            <View className="items-center mt-4 p-4">
                 <Image
                     source={require('../../assets/images/logo.png')} // transparent logo
                     style={{ width: 200, height: 200, resizeMode: 'contain' }}

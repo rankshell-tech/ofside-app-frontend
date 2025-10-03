@@ -1,5 +1,5 @@
 // screens/VenueAddress.tsx
-import React, { JSX, useState } from "react";
+import React, { JSX, useState, useRef  } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +8,7 @@ import * as Location from "expo-location";
 import { router } from "expo-router";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+
 
 // Floating Label Input component
 const FloatingLabelInput = ({
@@ -54,6 +55,7 @@ const FloatingLabelInput = ({
 
 export default function VenueAddress() {
   const navigation = useNavigation();
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [form, setForm] = useState({
     shopNo: "",
     floor: "",
@@ -90,10 +92,10 @@ export default function VenueAddress() {
       if (addr) {
         setForm((prev) => ({
           ...prev,
-          area: addr.district || addr.subregion || "",
-          city: addr.city || addr.region || "",
-          pincode: addr.postalCode || "",
-          landmark: addr.street || addr.name || "",
+          area: addr.district || addr.subregion || prev.area,
+          city: addr.city || addr.region || prev.city,
+          pincode: addr.postalCode || prev.pincode,
+          landmark: addr.street || addr.name || prev.landmark,
         }));
       }
     } catch (error) {
@@ -101,11 +103,19 @@ export default function VenueAddress() {
     }
   };
 
+
   // 🔹 When user taps map
   const handleMapPress = (e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
+
     setLocation({ latitude, longitude });
-    fetchAddress(latitude, longitude);
+    setRegion((prev) => ({
+      ...prev,
+      latitude,
+      longitude,
+    }));
+
+    fetchAddress(latitude, longitude); // auto fill inputs
   };
    const setOwnerDetails = ()=>{
     if(!areOwnerDetailsSame){
@@ -124,6 +134,38 @@ export default function VenueAddress() {
       }));
     }
    }
+
+   // 🔹 Forward geocode (convert text → lat/lng)
+  const updateLocationFromForm = async () => {
+    try {
+      // Build full address string from form fields
+      const address = `${form.shopNo} ${form.floor} ${form.area} ${form.city} ${form.pincode}`;
+      if (!address.trim()) return;
+
+      let results = await Location.geocodeAsync(address);
+
+      if (results.length > 0) {
+        const { latitude, longitude } = results[0];
+        setLocation({ latitude, longitude });
+        setRegion((prev) => ({
+          ...prev,
+          latitude,
+          longitude,
+        }));
+      }
+    } catch (err) {
+      console.log("Geocoding failed", err);
+    }
+  };
+  const handleFormChange = (field: keyof typeof form, value: string) => {
+    setForm({ ...form, [field]: value });
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+    typingTimeout.current = setTimeout(() => {
+      updateLocationFromForm();
+    }, 800); // wait 800ms after user stops typing
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -150,13 +192,18 @@ export default function VenueAddress() {
                 onPress={handleMapPress}
             >
             <Marker
-                coordinate={location}
-                draggable
-                onDragEnd={(e) => {
+              coordinate={location}
+              draggable
+              onDragEnd={(e) => {
                 const { latitude, longitude } = e.nativeEvent.coordinate;
                 setLocation({ latitude, longitude });
+                setRegion((prev) => ({
+                  ...prev,
+                  latitude,
+                  longitude,
+                }));
                 fetchAddress(latitude, longitude);
-                }}
+              }}
             />
             </MapView>
         </View>
@@ -186,7 +233,7 @@ export default function VenueAddress() {
             <FloatingLabelInput
               label="City*"
               value={form.city}
-              onChangeText={(t) => setForm({ ...form, city: t })}
+              onChangeText={(t) => handleFormChange("city", t)}
             />
             <FloatingLabelInput
               label="Any landmark area (optional)"
