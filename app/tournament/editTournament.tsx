@@ -171,7 +171,7 @@ export default function EditTournament() {
             value={venue}
             isPicker
             onPress={() => setLocationVisible(true)}
-            icon={<AntDesign name="downcircleo" size={18} color="black" />}
+            icon={<AntDesign name="down-circle" size={18} color="black" />}
         />
         <View className="flex-row justify-between my-5">
           <TimePicker
@@ -246,7 +246,7 @@ export default function EditTournament() {
             label="Number of teams/players will play in tournament"
             value={teams}
             isPicker
-            icon={<AntDesign name="downcircleo" size={18} color="black" />}
+            icon={<AntDesign name="down-circle" size={18} color="black" />}
         />
       </ScrollView>
         {/* Modal for Locations */}

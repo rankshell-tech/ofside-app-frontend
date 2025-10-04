@@ -41,7 +41,7 @@ export default function SelectMatchFixtures() {
                     <Text className="text-base font-semibold">
                         {t || ""}
                     </Text>
-                    <AntDesign name="downcircleo" size={18} color="black" />
+                    <AntDesign name="down-circle" size={18} color="black" />
                 </TouchableOpacity>
                 {/* Connector line */}
                 <View className="w-16 border border-dashed ml-2" />

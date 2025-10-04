@@ -58,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: 'xplore',
           tabBarIcon: ({ size, color }) => (
-            <AntDesign name="appstore1" size={size} color={color} />
+            <AntDesign name="appstore" size={size} color={color} />
           ),
         }}
       />

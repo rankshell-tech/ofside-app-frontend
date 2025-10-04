@@ -153,14 +153,12 @@ export default function HomeScreen() {
   const handleSearchSubmit = () => {
     if (localSearchQuery.trim()) {
       dispatch(setSearchQuery(localSearchQuery.trim()));
-      // router.push(`/search-results?query=${encodeURIComponent(localSearchQuery.trim())}`);
     }
   };
 
   const handleSportPress = (sportId: string) => {
     // Navigate to search results with sport filter
     dispatch(toggleSportFilter(sportId as SportType));
-    // router.push(`/search-results?sport=${sportId}`);
   };
 
   const handleVenuePress = (venueId: string) => {
@@ -168,7 +166,6 @@ export default function HomeScreen() {
       // router.push(`/venue/${venueId}`);
     } else {
       // For trending/top rated venues that don't exist in mock data
-      // router.push('/search-results');
     }
   };
 
@@ -287,7 +284,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon]}>
                     <ThemedText size="xs" weight="bold">
-                      <AntDesign name="rightcircleo" size={12} color="black" />
+                      <AntDesign name="right-circle" size={14} color="black" />
                     </ThemedText>
                   </View>
                 </View>
@@ -317,7 +314,7 @@ export default function HomeScreen() {
                     </ThemedText>
                     <View style={[styles.moreIcon]}>
                       <ThemedText size="xs" weight="bold">
-                        <AntDesign name="rightcircleo" size={12} color="black" />
+                      <AntDesign name="right-circle" size={14} color="black" />
                       </ThemedText>
                     </View>
                   </View>
@@ -348,7 +345,7 @@ export default function HomeScreen() {
                     </ThemedText>
                     <View style={[styles.moreIcon]}>
                       <ThemedText size="xs" weight="bold">
-                        <AntDesign name="rightcircleo" size={12} color="black" />
+                        <AntDesign name="right-circle" size={14} color="black" />
                       </ThemedText>
                     </View>
                   </View>
@@ -379,7 +376,7 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={[styles.moreIcon]}>
                     <ThemedText size="xs" weight="bold">
-                      <AntDesign name="rightcircleo" size={12} color="black" />
+                      <AntDesign name="right-circle" size={14} color="black" />
                     </ThemedText>
                   </View>
                  </View>

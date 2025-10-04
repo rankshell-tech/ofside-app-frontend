@@ -37,7 +37,7 @@ export default function LoginScreen() {
                     <GoogleIcon size={36} />
                 </TouchableOpacity>
                 <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center bg-white">
-                    <AntDesign name="apple1" size={36} color="black" />
+                    <AntDesign name="apple" size={36} color="black" />
                 </TouchableOpacity>
             </View>
 

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
 import { ArrowLeft } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/hooks/useTheme";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TossScreen({ navigation }: any) {
     const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();

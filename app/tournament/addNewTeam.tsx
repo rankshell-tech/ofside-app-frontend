@@ -140,7 +140,7 @@ export default function AddNewTeam() {
             value={venue}
             isPicker
             onPress={() => setLocationVisible(true)}
-            icon={<AntDesign name="downcircleo" size={18} color="black" />}
+            icon={<AntDesign name="down-circle" size={18} color="black" />}
             subLabel={""}
         />
         <FloatingLabelInput

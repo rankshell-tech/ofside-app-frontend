@@ -105,7 +105,7 @@ export default function Leaderboard() {
 
     return (
         <TouchableOpacity onPress={onPress}
-                         className="border bg-gray-300 rounded-lg mb-4 p-4">
+                         className="border bg-gray-300 rounded-3xl mb-4 p-4">
             {/* Match Info */}
             <View className="flex-row justify-between items-center">
                 <View>
@@ -196,15 +196,15 @@ export default function Leaderboard() {
                         onPress={() => setFilterVisible(true)}
                         className="px-2 py-2 border flex-row items-center mx-1"
                     >
-                        <Text className='mr-1 font-bold'>Filter by</Text>
-                        <Ionicons name="grid" size={16} color="black" />
+                        <Text className='mr-1 text-[12px] font-bold'>Filter by</Text>
+                        <Ionicons name="grid" size={14} color="black" />
                     </TouchableOpacity>
                     <LinearGradient
                         colors={["#FFF201", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
-                        style={{ width: 150 }}
+                        style={{ width: 120 }}
                         >
                         <Picker
                             selectedValue={sport}
@@ -223,25 +223,28 @@ export default function Leaderboard() {
             </View>
 
             {/* Tabs */}
-            <View className="flex-row border border-gray-300 rounded-xl overflow-hidden mx-5 mt-4">
+            <View className="flex-row justify-around mx-5 mt-4">
                 {["Current", "Played", "Upcoming"].map((tab) => (
                     <TouchableOpacity
-                        key={tab}
-                        onPress={() => setActiveTab(tab)}
-                        className={`flex-1 py-2 items-center ${
-                            activeTab === tab ? "bg-[#FFF201]" : ""
+                    key={tab}
+                    onPress={() => setActiveTab(tab)}
+                    className={`flex-1 mx-1 py-2 rounded-xl border items-center ${
+                        activeTab === tab ? "bg-[#FFF201]" : "bg-white"
+                    }`}
+                    >
+                    <Text
+                        className={`${
+                        activeTab === tab
+                            ? "font-extrabold text-lg text-black"
+                            : "text-md text-gray-600"
                         }`}
                     >
-                        <Text
-                        className={` ${
-                            activeTab === tab ? "font-extrabold text-lg" : "text-md"
-                        }`}
-                        >
                         {tab}
-                        </Text>
+                    </Text>
                     </TouchableOpacity>
                 ))}
             </View>
+
 
             <View className="mt-10 px-2 flex-1">
                 <FlatList

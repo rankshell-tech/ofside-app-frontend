@@ -96,7 +96,7 @@ export default function AdvanceTournamentSettings() {
             label="Number of teams/players will play in tournament"
             value={teams}
             isPicker
-            icon={<AntDesign name="downcircleo" size={18} color="black" />}
+            icon={<AntDesign name="down-circle" size={18} color="black" />}
         />
         <View className="flex-row justify-between items-center my-10">
             <View className="w-[90%]">
