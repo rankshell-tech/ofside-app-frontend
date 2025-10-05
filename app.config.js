@@ -1,6 +1,6 @@
 export default {
   expo: {
-    name: 'bolt-expo-nativewind',
+    name: 'Offside App',
     slug: 'bolt-expo-nativewind',
     version: '1.0.0',
     orientation: 'portrait',
