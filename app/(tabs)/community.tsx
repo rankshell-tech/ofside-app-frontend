@@ -14,8 +14,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Entypo, FontAwesome, Ionicons, Octicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import OutlinedText from "@/components/OutlinedText";
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useTheme } from "@/hooks/useTheme";
 import { router } from "expo-router";
 
@@ -85,7 +83,7 @@ export default function Community() {
 
   // 🔹 Card Component
   const GameCard = ({ match }: any) => (
-    <TouchableOpacity className="border bg-gray-300 rounded-lg mb-4 p-4 mx-2">
+    <TouchableOpacity className="border bg-gray-300 rounded-lg mb-4 p-2 mx-2">
             {/* Match Info */}
             <View className="flex-row justify-between items-center">
                 <View>
@@ -96,23 +94,27 @@ export default function Community() {
                         {match.venue} | {match.city}
                     </Text>
                 </View>
-                  <View className="flex-col items-end">
-                    <AntDesign name="fire" size={24} color="red" />
-                    <View className="flex-row items-center border bg-blue-700 border-blue-700 rounded-full px-1 mt-2">
-                        <Text className="text-white font-bold text-[10px] p-1">{match.tag}</Text>
-                    </View>
+                <View className="flex-col items-end mt-[-4]">
+                  <Image
+                    source={require("../../assets/images/fire.png")}
+                    className="w-6 h-8" // smaller size
+                    resizeMode="contain"
+                  />
+                  <View className="flex-row items-center bg-blue-700 rounded-full px-1 mt-1">
+                    <Text className="text-white font-bold text-[9px] p-1">{match.tag}</Text>
                   </View>
+                </View>
             </View>
 
-            <View className="flex-1 mt-2">
+            <View className="flex-1">
               <View
                   style={{ backgroundColor: theme.colors.grey }}
                   className="items-center w-20 h-20 rounded-full justify-center shadow"
               >
-                  <FontAwesome name="user" size={40} color={theme.colors.accent} />
+                  <FontAwesome name="user" size={60} color={theme.colors.accent} />
               </View>
               <View className="flex-row justify-between items-center">
-                <Text className="text-md font-bold mt-4">{match.hostName}</Text>
+                <Text className="text-md font-bold">{match.hostName}</Text>
                 <View className="flex-col">
                   <View className="flex-row ml-2">
                       <View className="w-24 h-3 border rounded-full overflow-hidden bg-white">

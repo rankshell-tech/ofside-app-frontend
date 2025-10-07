@@ -374,8 +374,7 @@ export default function HostGameScreen() {
         <View className="flex-row justify-between p-5 bg-white">
 
             <TouchableOpacity
-            onPress={() => router.push("/scoring/matchRulesSaved")}
-            className="flex-1 py-3 rounded-lg ml-3 bg-green-500"
+                className="flex-1 py-3 rounded-lg ml-3 bg-[#10B981]"
             >
             <Text className="text-white text-center font-bold">Host a game</Text>
             </TouchableOpacity>

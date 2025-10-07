@@ -84,10 +84,10 @@ export default function App() {
             </View>
             <View className="flex-row mt-5 w-full h-28">
               <MenuButton title="My Game" onPress={()=> router.push('/myGame/myGame')} />
-              <MenuButton title="My Performance" />
+              <MenuButton title="My Performance" onPress={()=> router.push('/myPerformance/performance')} />
             </View>
             <View className="flex-row mt-5 w-full h-28">
-              <MenuButton title="My Team & Performance" />
+              <MenuButton title="My Team & Performance" onPress={()=> router.push('/myTeamPerformance/teamPerformance')}  />
             </View>
             <View className="mt-5">
               <MenuButton title="ABCD - Your AI Coach" comingSoon />
