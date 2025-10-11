@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '@/types';
 
 interface AuthState {
+  isAuthenticated: any;
   user: User | null;
   role: 'player' | 'venue_owner' | 'admin';
   isGuest: boolean;
@@ -11,6 +12,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  role: 'player',
   isGuest: false,
   isLoading: false,
 };
