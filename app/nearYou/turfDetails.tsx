@@ -233,7 +233,7 @@ export default function HomeScreen() {
                         <Text className="font-bold">Reviews</Text>
                         <TouchableOpacity className='flex-row'>
                             <Text className="text-xs mr-2 font-bold">more</Text>
-                            <AntDesign name="rightcircleo" size={12} color="black" />
+                            <AntDesign name="right-circle" size={12} color="black" />
                         </TouchableOpacity>
                         </View>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
