@@ -355,7 +355,7 @@ export default function AvailableSports() {
 
       {/* Sticky Bottom Button */}
       <TouchableOpacity
-        onPress={() => router.push("/venue/declaration")}
+        onPress={() => router.push("/venue/review")}
         className="rounded-lg border overflow-hidden absolute bottom-0 right-0 mr-2 mb-10"
       >
         <LinearGradient
