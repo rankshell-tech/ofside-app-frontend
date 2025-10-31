@@ -147,7 +147,7 @@ export default function HostGameScreen() {
             <View className="px-2 mt-5">
                 <Text className="font-bold text-xl mb-2">Select your sport <Text className="text-red-600">*</Text></Text>
                     <View
-                        className="h-10 border bg-white rounded-full overflow-hidden mx-1 flex-row items-center"
+                        className="h-6 border bg-white rounded-full overflow-hidden mx-1 flex-row items-center"
                         style={{width: 150}}
                         >
                         <Picker

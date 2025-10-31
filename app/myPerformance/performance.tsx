@@ -58,7 +58,7 @@ export default function MatchesScreen() {
                 <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
             </View>
             <View className="flex-row">
-                <TouchableOpacity  className="bg-gray-300 border-gray-700 rounded-lg px-2 py-1">
+                <TouchableOpacity  className="bg-gray-300 border-gray-700 rounded-lg px-3 py-2">
                     <View className="flex-row items-center">
                         <Text className="font-bold text-[10px] mr-2">Last 7 days</Text>
                         <AntDesign name="down-circle" size={10} color="black" />
@@ -71,8 +71,8 @@ export default function MatchesScreen() {
         <View className="flex-row justify-between items-center mx-1">
             <View className="flex-row items-center">
                 {/* Avatar */}
-                <View className="w-20 h-20 rounded-full items-center justify-center shadow bg-black">
-                    <FontAwesome name="user" size={50} color="white" />
+                <View className="w-24 h-24 rounded-full items-center justify-center shadow bg-black">
+                    <FontAwesome name="user" size={60} color="white" />
                 </View>
 
                 <View>
@@ -87,7 +87,7 @@ export default function MatchesScreen() {
                     {tabType === "Game Stats"
                     ?
                         <View
-                            className="h-10 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
+                            className="h-6 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
                             style={{width: 150}}
                             >
                             <Picker

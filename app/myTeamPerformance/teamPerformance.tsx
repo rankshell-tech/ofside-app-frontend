@@ -77,8 +77,8 @@ export default function MatchesScreen() {
         <View className="flex-row justify-between items-center mx-1">
             <View className="flex-row items-center">
                 {/* Avatar */}
-                <View className="w-20 h-20 rounded-full items-center justify-center shadow bg-black">
-                    <FontAwesome name="user" size={50} color="white" />
+                <View className="w-24 h-24 rounded-full items-center justify-center shadow bg-black">
+                    <FontAwesome name="user" size={60} color="white" />
                 </View>
 
                 <View>
@@ -94,7 +94,7 @@ export default function MatchesScreen() {
                     ?
                         <View className="flex-row">
                             <View
-                                className="h-10 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
+                                className="h-6 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
                                 style={{width: 100}}
                                 >
                                 <Picker
@@ -111,7 +111,7 @@ export default function MatchesScreen() {
                                 </Picker>
                             </View>
                             <View
-                                className="h-10 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
+                                className="h-6 border bg-[#FFF201] rounded-full overflow-hidden mx-1 flex-row items-center"
                                 style={{width: 100}}
                                 >
                                 <Picker
@@ -385,10 +385,10 @@ export default function MatchesScreen() {
                         className="flex-1 border rounded-2xl overflow-hidden mx-2 mt-10 p-2"
                       >
                         <View className="flex-row justify-between items-center mx-5">
-                          <Text className="font-bold">Top 3 <Text className="text-red-600">MVP</Text><Text className="text-sm text-red-600">s</Text></Text>
+                          <Text className="text-xl font-bold">Top 3 <Text className="text-red-600">MVP</Text><Text className="text-sm text-red-600">s</Text></Text>
                           <FontAwesome5 name="medal" size={24} color="black" />
                         </View>
-                        <View className="flex-row justify-between items-center border rounded-md bg-white p-2 my-2">
+                        <View className="flex-row justify-between items-center rounded-md bg-white p-2 my-2">
                           <Text className="font-bold text-md mr-2">Name</Text>
                           <Text className="font-bold text-md mr-2">Matches</Text>
                           <Text className="font-bold text-md">PTS</Text>

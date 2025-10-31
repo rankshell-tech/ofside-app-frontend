@@ -54,8 +54,8 @@ export default function Leaderboard() {
             </View>
             {/* Back Button + Title */}
             <View className="flex-row justify-center items-center px-4">
-                <OutlinedText text="LEADER " fillColor="black" strokeColor="#FFF201"></OutlinedText>
-                <OutlinedText text="BOARD"></OutlinedText>
+                <OutlinedText fontSize={40} text="LEADER " fillColor="black" strokeColor="#FFF201" strokeWidth={2}></OutlinedText>
+                <OutlinedText fontSize={40} text="BOARD" strokeWidth={2}></OutlinedText>
             </View>
 
             {/* Filters */}
@@ -65,7 +65,7 @@ export default function Leaderboard() {
                         colors={["#FFF201", "#FFFFFF"]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                        className="h-8 border rounded-full overflow-hidden mx-1 flex-row items-center"
                         style={{ width: pickerWidth }}
                         >
                         <Picker
@@ -82,7 +82,7 @@ export default function Leaderboard() {
                     colors={["#FFF201", "#FFFFFF"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                    className="h-8 border rounded-full overflow-hidden mx-1 flex-row items-center"
                      style={{ width: pickerWidth }}
                     >
                     <Picker
@@ -99,7 +99,7 @@ export default function Leaderboard() {
                     colors={["#FFF201", "#FFFFFF"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
+                    className="h-8 border rounded-full overflow-hidden mx-1 flex-row items-center"
                      style={{ width: pickerWidth }}
                     >
                     <Picker

@@ -59,7 +59,7 @@ export default function SlotBookingScreen() {
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {/* Select Sport */}
-        <Text className="font-bold mt-5 mb-2">Select any sport</Text>
+        <Text className="text-lg font-bold mt-5 mb-2">Select any sport</Text>
         <View className="border-t my-1" style={{ width: "70%" }} />
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="my-4">
@@ -84,7 +84,7 @@ export default function SlotBookingScreen() {
           </ScrollView>
 
         {/* Date Selection */}
-        <Text className="font-bold mb-2">Date selection</Text>
+        <Text className="text-lg font-bold mt-5 mb-2">Date selection</Text>
         <View className="border-t my-1" style={{ width: "70%" }} />
         <View className="flex-row justify-center items-center my-4">
           {/* Left Arrow */}
@@ -127,7 +127,7 @@ export default function SlotBookingScreen() {
         </View>
 
         {/* Slot Selection */}
-        <Text className="font-bold mt-4 mb-2">Slot selection</Text>
+        <Text className="text-lg font-bold mt-5 mb-2">Slot selection</Text>
         <View className="border-t my-1" style={{ width: "70%" }} />
 
          <View className="flex-row justify-between my-5">
