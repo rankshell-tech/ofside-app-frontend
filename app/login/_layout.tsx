@@ -7,6 +7,7 @@ export default function LoginLayout() {
       <Stack.Screen name="loginScreen" />
       <Stack.Screen name="otpScreen" />
       <Stack.Screen name="loginViaApp" />
+      <Stack.Screen name="signup" />
     </Stack>
   );
 }

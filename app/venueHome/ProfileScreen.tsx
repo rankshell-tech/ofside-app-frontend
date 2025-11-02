@@ -7,7 +7,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Zocial from "@expo/vector-icons/Zocial";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
 import {
@@ -75,8 +75,8 @@ export default function ProfileScreen() {
                 </Text>
               </TouchableOpacity>
             ))}
-            <TouchableOpacity className="mt-2">
-              <Text className="text-center font-bold text-xl">Sign out</Text>
+            <TouchableOpacity className="mt-2" onPress={() => {router.replace("/login/loginViaApp")}}>
+              <Text className="text-center font-bold text-xl">Sign outss</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

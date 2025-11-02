@@ -55,25 +55,53 @@ export default function App() {
           colors={["#004aad", "#000428"]} // blue gradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          className="flex-row items-center border rounded-xl overflow-hidden p-2 m-4"
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: 12,
+            overflow: 'hidden',
+            padding: 8,
+            margin: 16,
+            borderWidth: 1,
+            borderColor: '#e0e0e0'
+          }}
         >
           {/* Avatar */}
-          <View  className="w-20 h-20 rounded-full items-center justify-center bg-white mr-2">
+          <View style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'white',
+            marginRight: 8
+          }}>
             <FontAwesome name="user" size={50} color="#004aad" />
           </View>
 
           {/* Text + Icon */}
           <View>
-            <View className="flex-row items-center">
-              <Text className="text-white font-bold text-2xl mr-1">
-                Hi Swarit!
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 20,
+          marginRight: 4
+              }}>
+          Hi Swarit!
               </Text>
-              <View  className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
-                <FontAwesome5 name="crown" size={12} color="black" />
+              <View style={{
+          width: 24,
+          height: 24,
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: theme.colors.primary
+              }}>
+          <FontAwesome5 name="crown" size={12} color="black" />
               </View>
-
             </View>
-            <Text className="text-[#fff201] text-sm">Elite/Club Member</Text>
+            <Text style={{ color: '#fff201', fontSize: 14 }}>Elite/Club Member</Text>
           </View>
         </LinearGradient>
         <ScrollView>
