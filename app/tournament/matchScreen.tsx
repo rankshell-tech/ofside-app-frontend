@@ -275,13 +275,13 @@ export default function MatchesScreen() {
                         <View key={rank} className="flex-row items-center border-t border-gray-400 py-2 px-3">
                             {rank === 1
                             ?
-                                <OutlinedText text={rank} fillColor="#FFF201" strokeColor="black" fontSize={30}/>
+                                <OutlinedText text={rank} fillColor="#FFF201" strokeColor="black" fontSize={40}/>
                             :
-                                <OutlinedText text={rank} fillColor="black" strokeColor="black" fontSize={30}/>
+                                <OutlinedText text={rank} fillColor="black" strokeColor="black" fontSize={40}/>
                             }
                         <View className="flex-1 items-center ml-8 mr-10">
-                            <View className="w-10 h-10 rounded-full bg-gray-300 items-center justify-center">
-                                <FontAwesome name="user" size={24} color="black" />
+                            <View className="w-20 h-20 rounded-full bg-gray-300 items-center justify-center">
+                                <FontAwesome name="user" size={40} color="black" />
                             </View>
                             <Text className="text-[8px] font-bold">Player name</Text>
                         </View>

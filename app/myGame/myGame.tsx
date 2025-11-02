@@ -204,7 +204,7 @@ export default function Leaderboard() {
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         className="h-10 border rounded-full overflow-hidden mx-1 flex-row items-center"
-                        style={{ width: 120 }}
+                        style={{ width: 150 }}
                         >
                         <Picker
                             selectedValue={sport}
@@ -264,7 +264,7 @@ export default function Leaderboard() {
                             ? undefined // no action for played matches
                             : () =>
                                 router.push({
-                                pathname: "/scoring/scoringScreen",
+                                pathname: "/myGame/scoring",
                                 params: { sport },
                                 })
                         }

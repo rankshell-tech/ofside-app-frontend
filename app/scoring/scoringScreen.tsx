@@ -179,14 +179,6 @@ const ScoringScreen = () => {
                     </View>
                     </View>
                 </View>
-
-                {/* Undo */}
-                <View className="flex-row justify-end px-4 mt-2">
-                    <TouchableOpacity className="flex-row items-center space-x-1">
-                        <Text className="text-black">Undo</Text>
-                        <MaterialCommunityIcons name="undo-variant" size={24} color="black" />
-                    </TouchableOpacity>
-                </View>
             <ScrollView
                 contentContainerStyle={{ paddingBottom: 100 }} // add extra space at bottom
                 showsVerticalScrollIndicator={false}
@@ -194,6 +186,14 @@ const ScoringScreen = () => {
 
                 { tabType === "Scoring" && (
                    <View className="px-2">
+
+                    {/* Undo */}
+                    <View className="flex-row justify-end px-4 mt-2">
+                        <TouchableOpacity className="flex-row items-center space-x-1">
+                            <Text className="text-black">Undo</Text>
+                            <MaterialCommunityIcons name="undo-variant" size={24} color="black" />
+                        </TouchableOpacity>
+                    </View>
                     {(sport === "Football") &&(
                     <>
                             {/* Actions */}
@@ -363,7 +363,7 @@ const ScoringScreen = () => {
                     </View>
                 )}
                 { tabType === "Match Feed" &&(
-                <>
+                <View className="mt-5">
                     {(sport === "Football") &&(
                         <>
                             {/* Goals Scored */}
@@ -513,7 +513,7 @@ const ScoringScreen = () => {
                         </View>
                         ))}
                     </View>
-                </>
+                </View>
                 )}
 
                 {/* Bottom Sheet Modal */}

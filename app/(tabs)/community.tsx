@@ -114,7 +114,7 @@ export default function Community() {
                   <FontAwesome name="user" size={60} color={theme.colors.accent} />
               </View>
               <View className="flex-row justify-between items-center">
-                <Text className="text-md font-bold">{match.hostName}</Text>
+                <Text className="ml-5 text-md font-bold">{match.hostName}</Text>
                 <View className="flex-col">
                   <View className="flex-row ml-2">
                       <View className="w-24 h-3 border rounded-full overflow-hidden bg-white">

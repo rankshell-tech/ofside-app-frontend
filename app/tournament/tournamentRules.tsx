@@ -453,7 +453,7 @@ export default function ManageTornamentRules() {
                         <View className="flex-row justify-between items-start px-2 my-4">
                             <View className="w-[70%]">
                                 <Text className="text-lg font-bold">Advantage rule</Text>
-                                <Text className="text-[8px]">
+                                <Text className="text-[10px]">
                                     <Text className="font-extrabold">If turned On: </Text>At deuce, player must win by 2 points.{"\n"}
                                     <Text className="font-extrabold">If turned Off: </Text>At deuce (40-40), next point wins the game.
                                 </Text>
@@ -470,9 +470,9 @@ export default function ManageTornamentRules() {
                         <View className="flex-row justify-between items-start px-2 mu-4">
                             <View className="w-[70%]">
                                 <Text className="text-lg font-bold">Final Set Tie-break</Text>
-                                <Text className="text-[8px] mt-1">
-                                <Text className="font-extrabold">If turned On: </Text>If sets are tied(eg., 1-1 in beast of 3), final set is decided by a tie-break(7 or 10 points).{"\n"}
-                                <Text className="font-extrabold">If turned Off: </Text>Final sets must be won by 2 clear games(eg., 10-8).
+                                <Text className="text-[10px] mt-1">
+                                    <Text className="font-extrabold">If turned On: </Text>If sets are tied(eg., 1-1 in beast of 3), final set is decided by a tie-break(7 or 10 points).{"\n"}
+                                    <Text className="font-extrabold">If turned Off: </Text>Final sets must be won by 2 clear games(eg., 10-8).
                                 </Text>
                             </View>
                             <Switch
@@ -487,7 +487,7 @@ export default function ManageTornamentRules() {
                         <View className="flex-row justify-between items-start px-2 mb-4">
                         <View className="w-[70%]">
                             <Text className="text-lg font-bold">Match Tie-break</Text>
-                            <Text className="text-[8px] mt-1">
+                            <Text className="text-[10px] mt-1">
                             <Text className="font-extrabold">If turned On: </Text>Instead of playing full 3rd set, a single tie-break(usually 10 points) decides the match.{"\n"}
                             <Text className="font-extrabold">If turned Off: </Text>Players must play full 3rd set.
                             </Text>
@@ -510,7 +510,7 @@ export default function ManageTornamentRules() {
                                     onPress={() =>
                                     setTennisRules({ ...tennisRules, superTiebreakPoints: points })
                                     }
-                                    className={`px-2 py-1 mx-1 rounded-full border ${
+                                    className={`px-1 py-1 mx-1 rounded-full border ${
                                     tennisRules.superTiebreakPoints === points
                                         ? "bg-yellow-300 border-yellow-400"
                                         : "border-gray-400"

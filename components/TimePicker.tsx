@@ -69,7 +69,7 @@ export default function TimePicker({
 
   return (
     <View style={{ height: PICKER_HEIGHT, width: "45%" }}>
-      <Text className="font-bold text-xl mb-2 ml-4">{label}</Text>
+      <Text className="font-bold text-center text-lg mb-2 ml-4">{label}</Text>
       <View className="flex-row items-center">
         {/* Time Picker */}
         <ScrollView

@@ -312,13 +312,15 @@ const MatchSetupScreen = () => {
                 </View>
 
                 {/* Match Duration Slider */}
-                <RangeSelector
-                    title="Each Quarter Duration"
-                    options={[0, 1,2,3,4,5,6,7,8,9,10,11,12]}
-                    selected={quarterDuration}
-                    onSelect={setQuarterDuration} // ✅ no error now
-                    unit="Mins"
-                />
+                <View className="px-4 mt-2">
+                    <RangeSelector
+                        title="Each Quarter Duration"
+                        options={[0, 1,2,3,4,5,6,7,8,9,10,11,12]}
+                        selected={quarterDuration}
+                        onSelect={setQuarterDuration} // ✅ no error now
+                        unit="Mins"
+                    />
+                </View>
             </>
             )}
 
