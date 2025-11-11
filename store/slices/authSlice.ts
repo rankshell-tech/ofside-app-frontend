@@ -9,6 +9,12 @@ interface AuthState {
   isLoading: boolean;
 }
 
+interface LoginPayload {
+  user: User;
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -24,13 +30,23 @@ const authSlice = createSlice({
     loginStart: (state) => {
       state.isLoading = true;
     },
-    loginSuccess: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    loginSuccess: (state, action: PayloadAction<LoginPayload>) => {
+      const { user, accessToken, refreshToken } = action.payload;
+    
+      // set user and attach tokens in one go (this is safe with RTK's immer)
+      state.user = {
+        ...user,
+        ...(accessToken ? { accessToken } : {}),
+        ...(refreshToken ? { refreshToken } : {}),
+      };
+    
       state.isAuthenticated = true;
       state.isGuest = false;
       state.isLoading = false;
-      console.log('Login success - User role:', action.payload.role);
+    
+      console.log('Login success - User role:', user?.role);
     },
+    
     loginFailure: (state) => {
       state.isLoading = false;
     },
