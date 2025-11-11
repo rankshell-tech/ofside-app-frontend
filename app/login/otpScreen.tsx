@@ -6,6 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import GoogleIcon from '@/components/GoogleIcon';
 import { router, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import OfsideLoader from '@/components/ui/ofsideLoader';
+
 const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
 
 export default function OtpScreen() {
@@ -19,27 +22,108 @@ export default function OtpScreen() {
     const inputRefs = useRef<Array<TextInput | null>>([]);
 
     const handleCodeVerify = async () => {
-
         console.log('Verifying OTP for:', identifier, 'with OTP:', otp.join(''), 'and type:', typeOfAuth);
         try {
+            // Basic validation
+            const joinedOtp = otp.join('');
+            if (joinedOtp.length !== 4) {
+                Alert.alert('Invalid code', 'Please enter the 4-digit code.');
+                return;
+            }
+            if (!identifier) {
+                Alert.alert('Missing identifier', 'No email or phone number found.');
+                return;
+            }
+            if (!typeOfAuth) {
+                Alert.alert('Missing auth type', 'Authentication type is not provided.');
+                return;
+            }
+
             setLoading(true);
             const response = await fetch(API_URL + '/api/auth/verify-otp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ identifier, otp: otp.join(''), type: typeOfAuth }),
+                body: JSON.stringify({ identifier, otp: joinedOtp, type: typeOfAuth }),
             });
 
-            if (!response.ok) {
-                throw new Error('Login failed');
+            let parsed: any = null;
+            try {
+                parsed = await response.json();
+            } catch {
+                // ignore json parse errors; will fall back to generic messages
             }
-            const data = await response.json();
+
+            console.log('verify-otp status:', response.status, 'body:', parsed);
+
+            if (!response.ok) {
+                const message =
+                    parsed?.message ||
+                    parsed?.error ||
+                    'Verification failed. Please check the code and try again.';
+                Alert.alert('Error', message);
+                setLoading(false);
+                return;
+            }
+
+            // If API returns a success flag/token, we could store it here
+            // For now, consider any 2xx as success
             setLoading(false);
-           
+            router.replace({ pathname: '/(tabs)', params: { screen: 'Home' } });
         } catch (error) {
-            Alert.alert('Error', 'Failed to send code. Please try again.');
-            console.error('Login error:', error);
+            setLoading(false);
+            Alert.alert('Error', 'Failed to verify code. Please try again.');
+            console.error('OTP verification error:', error);
+        }
+    };
+
+
+
+    const handleResendOtp = async () => {
+        console.log('API_URL:', API_URL + '/api/auth/resend-otp');
+        try {
+            if (!identifier) {
+                Alert.alert('Missing identifier', 'No email or phone number found.');
+                return;
+            }
+            if (!typeOfAuth) {
+                Alert.alert('Missing auth type', 'Authentication type is not provided.');
+                return;
+            }
+
+            const response = await fetch(API_URL + '/api/auth/resend-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ identifier, type: typeOfAuth }),
+            });
+
+            let parsed: any = null;
+            try {
+                parsed = await response.json();
+            } catch {
+                // ignore parse errors
+            }
+
+            console.log('resend-otp status:', response.status, 'body:', parsed);
+
+            if (!response.ok) {
+                const message =
+                    parsed?.message ||
+                    parsed?.error ||
+                    'Failed to resend OTP. Please try again.';
+                Alert.alert('Error', message);
+                return;
+            }
+
+            Alert.alert('Success', parsed?.message || 'OTP sent successfully.');
+        } catch (error) {
+            Alert.alert('Error', 'Failed to resend OTP. Please try again.');
+            console.error('Resend OTP error:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -57,10 +141,10 @@ export default function OtpScreen() {
             inputRefs.current[index + 1]?.focus();
         }
 
-        // Auto-submit if all fields are filled
-        if (newOtp.every(digit => digit !== '') && index === 3) {
-            handleCodeVerify();
-        }
+        // // Auto-submit if all fields are filled
+        // if (newOtp.every(digit => digit !== '') && index === 3) {
+        //     handleCodeVerify();
+        // }
     };
 
     // Handle backspace key press
@@ -79,12 +163,18 @@ export default function OtpScreen() {
         setOtp(newOtp);
     };
 
+
+    if(loading) {
+        return <OfsideLoader text="Verifying OTP..." />;
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-white">
             <LinearGradient
                 colors={['#FFF201', '#FFFFFF']}
                 className="flex-1"
             >
+                <KeyboardAwareScrollView>
                 {/* Skip Button */}
                 <TouchableOpacity onPress={() => router.replace("/(tabs)")} className="flex-row justify-end p-4">
                     <Text className="text-black text-base font-medium">Skip</Text>
@@ -127,9 +217,9 @@ export default function OtpScreen() {
 
                 {/* Resend OTP */}
                 <View className="flex-row justify-center mt-6">
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleResendOtp} disabled={loading}>
                         <Text className="text-base text-black font-medium underline">
-                            Resend OTP
+                            {loading ? 'Resending...' : 'Resend OTP'}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -160,6 +250,8 @@ export default function OtpScreen() {
                         </Text>
                     </Text>
                 </View>
+
+                </KeyboardAwareScrollView>
             </LinearGradient>
         </SafeAreaView>
     );

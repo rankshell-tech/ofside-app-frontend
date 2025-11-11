@@ -37,7 +37,7 @@ export default {
       typedRoutes: true,
     },
     extra: {
-      API_URL: 'http://192.168.1.5:5000',
+      API_URL: 'http://192.168.1.8:5000',
     },
   },
 };
