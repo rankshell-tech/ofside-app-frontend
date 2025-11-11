@@ -1,13 +1,21 @@
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  role: 'player' | 'venue_owner' | 'admin';
-  phone?: string;
-  location?: string;
-}
-
+  export interface User {
+    _id?: string;
+    name: string;
+    mobile: string;
+    email?: string;
+    referralCode?: string;
+    role: 0 | 1 | 2; // 0: user, 1: venue owner, 2: admin
+    isActive: boolean;
+    profilePicture?: string;
+    gender?: 'male' | 'female' | 'other';
+    favSports?: string[];
+    createdAt?: Date;
+    updatedAt?: Date;
+    dateOfBirth?: Date;
+    accessToken?: string;
+    refreshToken?: string;
+   
+  }
 export interface Venue {
   id: string;
   name: string;
