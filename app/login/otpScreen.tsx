@@ -7,8 +7,17 @@ import GoogleIcon from '@/components/GoogleIcon';
 import { router, useLocalSearchParams } from 'expo-router';
 import Constants from 'expo-constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+// Custom full-screen loader to indicate async operations (verify/resend) in progress
 import OfsideLoader from '@/components/ui/ofsideLoader';
-
+// Redux: dispatch typed with our app store for safe action dispatching
+import { useDispatch } from 'react-redux';
+// Redux actions: update auth state on successful OTP verification
+import { loginSuccess, logout } from '@/store/slices/authSlice';
+// Redux: access typed state if needed (kept for future state reads on this screen)
+import { useSelector } from 'react-redux';
+// Typed RootState and AppDispatch from our store for TS safety
+import { RootState } from '@/store';
+import { AppDispatch } from '@/store';
 const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
 
 export default function OtpScreen() {
@@ -20,6 +29,10 @@ export default function OtpScreen() {
     
     // Create refs for each input
     const inputRefs = useRef<Array<TextInput | null>>([]);
+
+    const dispatch = useDispatch<AppDispatch>();
+ 
+
 
     const handleCodeVerify = async () => {
         console.log('Verifying OTP for:', identifier, 'with OTP:', otp.join(''), 'and type:', typeOfAuth);
@@ -65,11 +78,13 @@ export default function OtpScreen() {
                 Alert.alert('Error', message);
                 setLoading(false);
                 return;
+                
             }
 
             // If API returns a success flag/token, we could store it here
             // For now, consider any 2xx as success
             setLoading(false);
+            dispatch(loginSuccess(parsed?.data));
             router.replace({ pathname: '/(tabs)', params: { screen: 'Home' } });
         } catch (error) {
             setLoading(false);

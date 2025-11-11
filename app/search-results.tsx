@@ -14,8 +14,8 @@ import { setSearchQuery, toggleSportFilter, clearFilters } from '@/store/slices/
 import { ArrowLeft, Filter, SlidersHorizontal, X } from 'lucide-react-native';
 import { sports } from '@/constants/theme';
 import { SportType, Venue } from '@/types';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, runOnJS } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, runOnJS } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SortOption = 'relevance' | 'rating' | 'price_low' | 'price_high' | 'distance';
@@ -46,6 +46,8 @@ export default function SearchResults() {
   // Price slider values
   const minPriceSlider = useSharedValue(0);
   const maxPriceSlider = useSharedValue(SLIDER_WIDTH);
+  const minStartX = useSharedValue(0);
+  const maxStartX = useSharedValue(0);
 
   useEffect(() => {
     if (query && query !== searchQuery) {
@@ -204,29 +206,27 @@ export default function SearchResults() {
   const hasActiveFilters = selectedSports.length > 0 || sortBy !== 'relevance' || minPrice > 0 || maxPrice < 200 || minRating > 0 || category !== 'all' || courtType !== 'all';
 
   // Price slider gesture handlers
-  const minPriceGestureHandler = useAnimatedGestureHandler({
-    onStart: (_, context) => {
-      context.startX = minPriceSlider.value;
-    },
-    onActive: (event, context) => {
-      const newValue = Math.max(0, Math.min(maxPriceSlider.value - 20, (context.startX || 0) + event.translationX));
+  const minPriceGesture = Gesture.Pan()
+    .onBegin(() => {
+      minStartX.value = minPriceSlider.value;
+    })
+    .onChange((event) => {
+      const newValue = Math.max(0, Math.min(maxPriceSlider.value - 20, minStartX.value + event.translationX));
       minPriceSlider.value = newValue;
       const price = Math.round((newValue / SLIDER_WIDTH) * MAX_PRICE);
       runOnJS(setMinPrice)(price);
-    },
-  });
+    });
 
-  const maxPriceGestureHandler = useAnimatedGestureHandler({
-    onStart: (_, context) => {
-      context.startX = maxPriceSlider.value;
-    },
-    onActive: (event, context) => {
-      const newValue = Math.max(minPriceSlider.value + 20, Math.min(SLIDER_WIDTH, (context.startX || 0) + event.translationX));
+  const maxPriceGesture = Gesture.Pan()
+    .onBegin(() => {
+      maxStartX.value = maxPriceSlider.value;
+    })
+    .onChange((event) => {
+      const newValue = Math.max(minPriceSlider.value + 20, Math.min(SLIDER_WIDTH, maxStartX.value + event.translationX));
       maxPriceSlider.value = newValue;
       const price = Math.round((newValue / SLIDER_WIDTH) * MAX_PRICE);
       runOnJS(setMaxPrice)(price);
-    },
-  });
+    });
 
   const minPriceAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -446,17 +446,17 @@ export default function SearchResults() {
                     <View style={[styles.sliderTrack, { backgroundColor: theme.colors.border }]} />
                     <Animated.View style={[styles.sliderActiveTrack, { backgroundColor: theme.colors.primary }, sliderTrackStyle]} />
 
-                    <PanGestureHandler onGestureEvent={minPriceGestureHandler}>
+                    <GestureDetector gesture={minPriceGesture}>
                       <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, minPriceAnimatedStyle]}>
                         <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
                       </Animated.View>
-                    </PanGestureHandler>
+                    </GestureDetector>
 
-                    <PanGestureHandler onGestureEvent={maxPriceGestureHandler}>
+                    <GestureDetector gesture={maxPriceGesture}>
                       <Animated.View style={[styles.sliderThumb, { backgroundColor: theme.colors.primary }, maxPriceAnimatedStyle]}>
                         <View style={[styles.sliderThumbInner, { backgroundColor: theme.colors.background }]} />
                       </Animated.View>
-                    </PanGestureHandler>
+                    </GestureDetector>
                   </View>
                 </View>
               </View>

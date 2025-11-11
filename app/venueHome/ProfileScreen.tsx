@@ -10,6 +10,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
+// Redux: dispatch typed with our store and select user data from auth slice
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { AppDispatch } from '@/store';
 import {
   ImageBackground,
   ScrollView,
@@ -21,6 +26,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+
+  // Typed dispatcher for any profile-related actions; select current user info
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log('user:', user);
 
   const menuItems = [
     { label: "Update profile", icon: "user" ,},
@@ -54,7 +64,7 @@ export default function ProfileScreen() {
             </View>
             <View className="flex-row items-center">
                 <Text className="font-bold text-2xl mr-1">
-                Hi Swarit!
+                Hi {user?.name}!
                 </Text>
             </View>
 

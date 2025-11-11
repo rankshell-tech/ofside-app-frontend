@@ -10,6 +10,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { AppDispatch } from '@/store';
 import {
   ImageBackground,
   ScrollView,
@@ -23,6 +27,10 @@ export default function ProfileScreen() {
   const theme = useTheme();
   const router = useRouter();
   const navigation = useNavigation();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log('user:', user);
 
   const menuItems = [
     { label: "Complete profile", icon: "user" , onPress: () => router.push("/settings/editProfile")},
@@ -63,7 +71,7 @@ export default function ProfileScreen() {
           <View>
             <View className="flex-row items-center">
               <Text className="text-white font-bold text-2xl mr-1">
-                Hi Swarit!
+                Hi {user?.name}!
               </Text>
               <View  className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
                 <FontAwesome5 name="crown" size={12} color="black" />
@@ -90,7 +98,7 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             ))}
             <TouchableOpacity className="mt-2" onPress={() => {router.replace("/login/loginScreen")}}>
-              <Text className="text-center font-bold text-xl">Sign outxx</Text>
+              <Text className="text-center font-bold text-xl">Sign out</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
