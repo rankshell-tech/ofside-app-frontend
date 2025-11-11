@@ -197,7 +197,7 @@ export default function SignupScreen(): JSX.Element {
                   <View className="mt-8 bottom-0 w-full items-center">
                     <Text className="text-black font-bold text-lg">
                         Already have an account?{' '}
-                        <Text className="text-yellow-500 font-semibold underline" onPress={() => router.push('/login/loginViaApp')}>
+                        <Text className="text-yellow-500 font-semibold underline" onPress={() => router.push('/login/loginScreen')}>
                             Log in
                         </Text>
                     </Text>

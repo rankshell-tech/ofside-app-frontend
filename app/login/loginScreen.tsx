@@ -22,6 +22,7 @@ export default function LoginScreen() {
   const [identifier, setIdentifier] = React.useState('ashi888032@gmail.com');
   
   const handleSendCode = async () => {
+    console.log('API_URL:', API_URL + '/api/auth/login');
     try {
       setLoading(true);
       const response = await fetch(API_URL + '/api/auth/login', {
@@ -36,6 +37,7 @@ export default function LoginScreen() {
         throw new Error('Login failed');
       }
       const data = await response.json();
+      console.log('Login response data:', data);
       setLoading(false);
       router.replace({
         pathname: '/login/otpScreen',

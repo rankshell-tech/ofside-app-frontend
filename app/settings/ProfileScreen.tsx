@@ -89,7 +89,7 @@ export default function ProfileScreen() {
                 </Text>
               </TouchableOpacity>
             ))}
-            <TouchableOpacity className="mt-2" onPress={() => {router.replace("/login/loginViaApp")}}>
+            <TouchableOpacity className="mt-2" onPress={() => {router.replace("/login/loginScreen")}}>
               <Text className="text-center font-bold text-xl">Sign outxx</Text>
             </TouchableOpacity>
           </View>
