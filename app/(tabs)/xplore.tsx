@@ -9,11 +9,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from 'react-redux';
+
+import { AppDispatch } from '@/store';
 
 export default function App() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const { user, isGuest } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   type MenuButtonProps = {
     title: string;
@@ -88,7 +92,7 @@ export default function App() {
           fontSize: 20,
           marginRight: 4
               }}>
-          Hi Swarit!
+          Hi {user?.name}!
               </Text>
               <View style={{
           width: 24,
@@ -101,7 +105,7 @@ export default function App() {
           <FontAwesome5 name="crown" size={12} color="black" />
               </View>
             </View>
-            <Text style={{ color: '#fff201', fontSize: 14 }}>Elite/Club Member</Text>
+            <Text style={{ color: '#fff201', fontSize: 14 }}>{user?.role == 0 ? 'Player' : (user?.role == 1 ? 'Venue Owner' : 'Admin')}</Text>
           </View>
         </LinearGradient>
         <ScrollView>

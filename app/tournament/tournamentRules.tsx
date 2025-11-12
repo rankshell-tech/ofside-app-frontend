@@ -16,7 +16,7 @@ export default function ManageTornamentRules() {
         extraTime: true,
         penalty: true,
         substitution: true,
-        offside: true,
+        Ofside: true,
         cards: true,
         freeKicks: true,
         cornerKicks: true,
@@ -32,7 +32,7 @@ export default function ManageTornamentRules() {
         { key: "extraTime", label: "Extra time" },
         { key: "penalty", label: "Penalty shootout" },
         { key: "substitution", label: "Player Substitution" },
-        { key: "offside", label: "Offside rule" },
+        { key: "Ofside", label: "Ofside rule" },
         { key: "cards", label: "Cards enforcement" },
         { key: "freeKicks", label: "Free kicks" },
         { key: "cornerKicks", label: "Corner Kicks" }

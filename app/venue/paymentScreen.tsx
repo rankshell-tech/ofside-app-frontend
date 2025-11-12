@@ -58,9 +58,9 @@ export default function PaymentModeScreen() {
             {renderSection("Pay by any UPI app")}
             {renderOption("Add new UPI ID", "", require("@/assets/images/upi.png"))}
 
-            {/* Offside Wallet */}
-            {renderSection("Offside wallet")}
-            {renderOption("Offside wallet", "(add money)")}
+            {/* Ofside Wallet */}
+            {renderSection("Ofside wallet")}
+            {renderOption("Ofside wallet", "(add money)")}
 
             {/* Net banking */}
             {renderSection("Net banking")}

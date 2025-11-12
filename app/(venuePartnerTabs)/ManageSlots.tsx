@@ -13,7 +13,7 @@ export default function ManageSlot() {
     const [name, setName] = useState("Swarit Jain");
     const [email, setEmail] = useState("swaritjain@gmail.com");
     const [number, setNumber] = useState("889976737");
-    const [source, setSource] = useState("Offside");
+    const [source, setSource] = useState("Ofside");
     const [sportAndGround, setSportAndGround] = useState("Box Cricket - Turf 3");
     const [showSourcePicker, setShowSourcePicker] = useState(false);
     const [amount, setAmount] = useState("1200");
