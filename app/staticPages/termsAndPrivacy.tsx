@@ -10,7 +10,7 @@ export default function TermsPrivacyScreen() {
     const renderTerms = () => (
     <>
       <View className="bg-white border border-gray-300 rounded-2xl p-2 mb-4 shadow-sm">
-        <Text className="font-bold mb-2">
+        <Text className="font-bold mb-2 ">
             I. ACCEPTANCE OF TERMS
         </Text>
         <Text className="font-normal text-[12px]">
