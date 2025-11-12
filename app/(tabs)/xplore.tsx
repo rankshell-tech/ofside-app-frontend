@@ -105,7 +105,7 @@ export default function App() {
           <FontAwesome5 name="crown" size={12} color="black" />
               </View>
             </View>
-            <Text style={{ color: '#fff201', fontSize: 14 }}>{user?.role == 0 ? 'Player' : (user?.role == 1 ? 'Venue Owner' : 'Admin')}</Text>
+            <Text style={{ color: '#fff201', fontSize: 14 }}>  {user?.role == 0 ? "Player": (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"))}</Text>
           </View>
         </LinearGradient>
         <ScrollView>

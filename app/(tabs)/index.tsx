@@ -245,7 +245,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.menuButton, {backgroundColor: theme.colors.accent}]}
-                onPress={()=> router.push('/settings/ProfileScreen')}
+                onPress={()=> router.push('/settings/profileScreen')}
                 className='w-10 h-10 rounded-full items-center justify-center bg-gray-200 ml-2'
               >
                 <FontAwesome name="user" size={24} color="white" />

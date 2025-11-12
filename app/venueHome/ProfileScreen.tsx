@@ -24,7 +24,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProfileScreen() {
+export default function profileScreen() {
   const navigation = useNavigation();
 
   // Typed dispatcher for any profile-related actions; select current user info

@@ -19,28 +19,29 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  StyleSheet,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProfileScreen() {
+export default function profileScreen() {
   const theme = useTheme();
   const router = useRouter();
   const navigation = useNavigation();
 
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { user ,isAuthenticated} = useSelector((state: RootState) => state.auth);
   console.log('user:', user);
 
   const menuItems = [
     { label: "Complete profile", icon: "user" , onPress: () => router.push("/settings/editProfile")},
     { label: "Your Bookings", icon: "calendar", onPress: () => router.push("/booking/booking") },
-    { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" },
+    { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" , onPress: () => router.push("/staticPages/refundAndCancellation")},
     { label: "Corporate event booking", icon: "team" },
     { label: "Add/Update your Venue", icon: "pluscircleo", onPress: () => router.push("/venue/addVenue") },
-    { label: "Invite & Earn", icon: "gift" },
-    { label: "Help & Support", icon: "customerservice" },
-    { label: "About Ofside", icon: "infocirlceo" },
+    { label: "Invite & Earn", icon: "gift" , onPress: () => router.push("/staticPages/inviteAndEarn")},
+    { label: "Help & Support", icon: "customerservice" , onPress: () => router.push("/staticPages/helpAndSupport")},
+    { label: "About Ofside", icon: "infocirlceo" , onPress: () => router.push("/staticPages/aboutOfside")},
   ];
 
   return (
@@ -56,31 +57,36 @@ export default function ProfileScreen() {
         </View>
 
         {/* Profile Section */}
-        <LinearGradient
-          colors={["#004aad", "#000428"]} // blue gradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="flex-row items-center border rounded-xl overflow-hidden p-2 m-4"
-        >
-          {/* Avatar */}
-          <View  className="w-20 h-20 rounded-full items-center justify-center bg-white mr-2">
-            <FontAwesome name="user" size={50} color="#004aad" />
-          </View>
+         <View style={styles.wrapper}>
+      <LinearGradient
+        colors={["#004aad", "#000428"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.gradient}
+      >
+        {/* Avatar */}
+        <View style={styles.avatar}>
+          <FontAwesome name="user" size={48} color="#004aad" />
+        </View>
 
-          {/* Text + Icon */}
-          <View>
-            <View className="flex-row items-center">
-              <Text className="text-white font-bold text-2xl mr-1">
-                Hi {user?.name}!
-              </Text>
-              <View  className="w-6 h-6 rounded-full items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
-                <FontAwesome5 name="crown" size={12} color="black" />
-              </View>
+        {/* Text block */}
+        <View style={styles.textBlock}>
+          <View style={styles.row}>
+            <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
+              Hi {user?.name ?? "there"}!
+            </Text>
 
+            <View style={[styles.badge, { backgroundColor: theme?.colors?.primary ?? "#fff201" }]}>
+              <FontAwesome5 name="crown" size={12} color="black" />
             </View>
-            <Text className="text-[#fff201] text-sm">Elite/Club Member</Text>
           </View>
-        </LinearGradient>
+
+          <Text style={styles.role} numberOfLines={1} ellipsizeMode="tail">
+           {user?.role == 0 ? "Player": (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"))}
+          </Text>
+        </View>
+      </LinearGradient>
+    </View>
 
         {/* Menu List */}
         <ScrollView className="flex-1 mt-6 px-6">
@@ -91,9 +97,11 @@ export default function ProfileScreen() {
                 className="flex-row items-center p-3 bg-white rounded-xl shadow-sm border border-black justify-center mb-2"
                 activeOpacity={0.7}
                 onPress={item.onPress}
+                disabled={!isAuthenticated}
+                style={{ opacity: isAuthenticated ? 1 : 0.5 }}
               >
                 <Text className="text-base font-bold">
-                  {item.label}
+                  {item.label} -- {isAuthenticated}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -120,3 +128,60 @@ export default function ProfileScreen() {
     </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  wrapper: {
+    margin: 12,
+    borderRadius: 14,
+    overflow: "hidden", // important for clipping gradient on iOS
+    // optional shadow to match iOS look:
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  gradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    borderRadius: 14, // keep same radius as wrapper
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  textBlock: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  greeting: {
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 20,
+    flexShrink: 1, // allow long names to truncate
+  },
+  badge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
+  },
+  role: {
+    color: "#fff201",
+    marginTop: 4,
+    fontSize: 12,
+  },
+});

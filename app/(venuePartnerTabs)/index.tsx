@@ -82,7 +82,7 @@ export default function HomeScreen() {
           className="flex-1"
       >
         {/* Header */}
-        <TouchableOpacity onPress={()=> router.push("/venueHome/ProfileScreen")} className="flex-row justify-end items-center mb-5 px-5">
+        <TouchableOpacity onPress={()=> router.push("/venueHome/profileScreen")} className="flex-row justify-end items-center mb-5 px-5">
             <Iconify icon="teenyicons:menu-outline" size={30} color="black" type="svg" />
         </TouchableOpacity>
 
