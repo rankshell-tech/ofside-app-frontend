@@ -221,19 +221,19 @@ export default function About() {
 
       <View style={styles.socialLinks}>
         {/* Twitter */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.socialLink, { backgroundColor: "#1DA1F2" }]}
           onPress={() => openSocialLink("https://twitter.com/ofside")}
           activeOpacity={0.8}
         >
           <FontAwesome name="twitter" size={22} color="#fff" />
       
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Instagram */}
         <TouchableOpacity
           style={[styles.socialLink, { backgroundColor: "#E1306C" }]}
-          onPress={() => openSocialLink("https://instagram.com/ofside")}
+          onPress={() => openSocialLink("https://instagram.com/ofsideapp")}
           activeOpacity={0.8}
         >
           <FontAwesome name="instagram" size={22} color="#fff" />
@@ -241,14 +241,14 @@ export default function About() {
         </TouchableOpacity>
 
         {/* LinkedIn */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.socialLink, { backgroundColor: "#0077B5" }]}
           onPress={() => openSocialLink("https://linkedin.com/company/ofside")}
           activeOpacity={0.8}
         >
           <FontAwesome5 name="linkedin-in" size={22} color="#fff" />
         
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
 

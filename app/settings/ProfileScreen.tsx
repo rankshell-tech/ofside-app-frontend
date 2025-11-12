@@ -33,16 +33,92 @@ export default function profileScreen() {
   const { user ,isAuthenticated} = useSelector((state: RootState) => state.auth);
   console.log('user:', user);
 
-  const menuItems = [
-    { label: "Complete profile", icon: "user" , onPress: () => router.push("/settings/editProfile")},
-    { label: "Your Bookings", icon: "calendar", onPress: () => router.push("/booking/booking") },
-    { label: "Refunds/Cancellation policy", icon: "exclamationcircleo" , onPress: () => router.push("/staticPages/refundAndCancellation")},
-    { label: "Corporate event booking", icon: "team" },
-    { label: "Add/Update your Venue", icon: "pluscircleo", onPress: () => router.push("/venue/addVenue") },
-    { label: "Invite & Earn", icon: "gift" , onPress: () => router.push("/staticPages/inviteAndEarn")},
-    { label: "Help & Support", icon: "customerservice" , onPress: () => router.push("/staticPages/helpAndSupport")},
-    { label: "About Ofside", icon: "infocirlceo" , onPress: () => router.push("/staticPages/aboutOfside")},
-  ];
+
+  const openSocialLink = (url: string) => {
+    // Use Linking API to open the URL
+    import("react-native").then(({ Linking }) => {
+      Linking.openURL(url).catch((err) =>
+        console.error("Failed to open URL:", err)
+      );
+    });
+  };
+
+  const getMenuItems = () => {
+    const allMenuItems = [
+      { 
+        label: "Complete profile", 
+        icon: "user", 
+        onPress: () => router.push("/settings/editProfile"),
+        requiresAuth: true 
+      },
+      { 
+        label: "Your Bookings", 
+        icon: "calendar", 
+        onPress: () => router.push("/booking/booking"),
+        requiresAuth: true 
+      },
+      { 
+        label: "Refunds/Cancellation policy", 
+        icon: "exclamationcircleo", 
+        onPress: () => router.push("/staticPages/refundAndCancellation"),
+        requiresAuth: false 
+      },
+      { 
+        label: "Corporate event booking", 
+        icon: "team",
+        requiresAuth: false 
+      },
+      { 
+        label: "Add/Update your Venue", 
+        icon: "pluscircleo", 
+        onPress: () => router.push("/venue/addVenue"),
+        requiresAuth: true 
+      },
+      { 
+        label: "Invite & Earn", 
+        icon: "gift", 
+        onPress: () => router.push("/staticPages/inviteAndEarn"),
+        requiresAuth: false 
+      },
+      { 
+        label: "Help & Support", 
+        icon: "customerservice", 
+        onPress: () => router.push("/staticPages/helpAndSupport"),
+        requiresAuth: false 
+      },
+      { 
+        label: "About Ofside", 
+        icon: "infocirlceo", 
+        onPress: () => router.push("/staticPages/aboutOfside"),
+        requiresAuth: false 
+      },
+    ];
+
+    return allMenuItems.map(item => ({
+      ...item,
+      disabled: item.requiresAuth && !isAuthenticated
+    }));
+  };
+
+  const menuItems = getMenuItems();
+
+  const handleMenuItemPress = (item: any) => {
+    if (item.disabled) {
+      // Optionally show an alert or message that login is required
+      return;
+    }
+    if (item.onPress) {
+      item.onPress();
+    }
+  };
+
+  const getDisplayText = (item: any) => {
+    if (item.disabled) {
+      return `${item.label} - (Login to access)`;
+    }
+    return item.label;
+  };
+
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -76,9 +152,9 @@ export default function profileScreen() {
               Hi {user?.name ?? "there"}!
             </Text>
 
-            <View style={[styles.badge, { backgroundColor: theme?.colors?.primary ?? "#fff201" }]}>
+            {/* <View style={[styles.badge, { backgroundColor: theme?.colors?.primary ?? "#fff201" }]}>
               <FontAwesome5 name="crown" size={12} color="black" />
-            </View>
+            </View> */}
           </View>
 
           <Text style={styles.role} numberOfLines={1} ellipsizeMode="tail">
@@ -89,39 +165,57 @@ export default function profileScreen() {
     </View>
 
         {/* Menu List */}
+                {/* Menu List */}
         <ScrollView className="flex-1 mt-6 px-6">
           <View className="space-y-3">
             {menuItems.map((item, index) => (
               <TouchableOpacity
                 key={index}
                 className="flex-row items-center p-3 bg-white rounded-xl shadow-sm border border-black justify-center mb-2"
-                activeOpacity={0.7}
-                onPress={item.onPress}
-                disabled={!isAuthenticated}
-                style={{ opacity: isAuthenticated ? 1 : 0.5 }}
+                activeOpacity={item.disabled ? 1 : 0.7}
+                onPress={() => handleMenuItemPress(item)}
+                disabled={item.disabled}
+                style={{ 
+                  opacity: item.disabled ? 0.5 : 1,
+                }}
               >
-                <Text className="text-base font-bold">
-                  {item.label} -- {isAuthenticated}
+                <Text className="text-base font-bold text-center">
+                  {getDisplayText(item)}
                 </Text>
               </TouchableOpacity>
             ))}
-            <TouchableOpacity className="mt-2" onPress={() => {router.replace("/login/loginScreen")}}>
-              <Text className="text-center font-bold text-xl">Sign out</Text>
+            
+            {/* Sign Out / Sign In Button */}
+            <TouchableOpacity 
+              className="mt-4 p-3 bg-gray-100 rounded-xl border border-gray-300" 
+              onPress={() => {
+                if (isAuthenticated) {
+                  // Handle sign out logic here
+                  // dispatch(logout());
+                  router.replace("/login/loginScreen");
+                } else {
+                  router.replace("/login/loginScreen");
+                }
+              }}
+            >
+              <Text className="text-center font-bold text-xl text-gray-800">
+                {isAuthenticated ? "Sign Out" : "Sign In"}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
 
         {/* Social Icons */}
         <View className="flex-row absoloute bottom-10 w-full justify-center">
-          <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
+          <TouchableOpacity onPress={() => openSocialLink("mailto:support@ofsideapp.com")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
             <Zocial name="email" size={26} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
+          <TouchableOpacity onPress={() => openSocialLink("https://instagram.com/ofsideapp")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
             <Iconify icon="skill-icons:instagram" size={35} type="svg" />
           </TouchableOpacity>
-          <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center">
+          {/* <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center">
             <Iconify icon="flowbite:facebook-solid" size={35} color="blue" type="svg" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
       </ImageBackground>
