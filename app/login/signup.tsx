@@ -205,7 +205,7 @@ export default function SignupScreen(): JSX.Element {
                   <View className="mt-8  w-full items-center">
                     <Text className="text-black text-sm">
                         I agree to the{' '}
-                        <Text className="underline" onPress={() => router.push('/login/termsAndPrivacy')}>
+                        <Text className="underline" onPress={() => router.push('/staticPages/termsAndPrivacy')}>
                             Terms and Conditions
                         </Text>
                     </Text>

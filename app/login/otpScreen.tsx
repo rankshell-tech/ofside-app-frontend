@@ -259,7 +259,7 @@ export default function OtpScreen() {
                         I agree to the{' '}
                         <Text 
                             className="underline" 
-                            onPress={() => router.push('/login/termsAndPrivacy')}
+                            onPress={() => router.push('/staticPages/termsAndPrivacy')}
                         >
                             Terms and Conditions
                         </Text>
