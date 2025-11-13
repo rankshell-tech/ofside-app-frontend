@@ -4,15 +4,31 @@ import { useTheme } from '@/hooks/useTheme';
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router, useNavigation ,useLocalSearchParams} from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useDispatch } from 'react-redux';
+import { updateSetup } from '@/store/slices/matchScoringSlice';
 export default function SelectTeamsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
-
+  const dispatch = useDispatch();
   // Decide label based on sport/format
   const isSingles = ((sport === "Badminton" || sport === "Pickleball" || sport === "Tennis" || sport === 'Volleyball')) && (format === 'Singles' || format === 'Two Player');
   const label = isSingles ? "Player" : "Team";
+  const handleTeamSelect = (teamSide: 'A' | 'B') => {
+    // Save which team we're selecting to Redux
+    dispatch(updateSetup({
+      currentTeamSelecting: teamSide
+    }));
+
+    router.push({
+      pathname: "/scoring/teamsScreen",
+      params: { 
+        sport, 
+        format, 
+        activatedTab: teamSide === 'A' ? "My Teams" : "Opponents" 
+      },
+    });
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -30,9 +46,7 @@ export default function SelectTeamsScreen() {
           {/* A */}
           <TouchableOpacity
             className="flex-row items-center mb-8"
-            onPress={() => router.push({
-                            pathname: "/scoring/teamsScreen",
-                            params: { sport, format, activatedTab : "My Teams" },})}
+              onPress={() => handleTeamSelect('A')}
             >
             <View
               className="w-20 h-20 rounded-full items-center justify-center"
@@ -54,9 +68,7 @@ export default function SelectTeamsScreen() {
 
           {/* B */}
           <TouchableOpacity className="flex-row items-center mt-8"
-            onPress={() => router.push({
-                            pathname: "/scoring/teamsScreen",
-                            params: { sport, format, activatedTab : "Opponents" },})}
+              onPress={() => handleTeamSelect('B')}
           >
             <View
               className="w-20 h-20 rounded-full items-center justify-center"

@@ -12,6 +12,8 @@ import {  SlidersHorizontal } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import RangeSelector from "../../components/rangeSelector"
 import { useLocalSearchParams } from "expo-router";
+import { useDispatch } from 'react-redux';
+import { updateSetup } from '@/store/slices/matchScoringSlice';
 
 const MatchSetupScreen = () => {
     const theme = useTheme();
@@ -40,6 +42,8 @@ const MatchSetupScreen = () => {
     const numberOfMatches = ["1 Match", "2 Matches"];
     const [matchDuration, setMatchDuration] = useState(10);
     const [quarterDuration, setQuarterDuration] = useState(6);
+    const dispatch = useDispatch();
+
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-GB", {
@@ -91,6 +95,41 @@ const MatchSetupScreen = () => {
       )}
     </View>
   );
+
+const handleSaveConfig = () => {
+    // Save config to Redux first
+    dispatch(updateSetup({
+      configuration: {
+        // ... your sport-specific config
+        pitchType,
+        matchDuration,
+        numberofSets, 
+        pointsPerSet,
+        numberOfQuarters,
+        quarterDuration,
+        surfaceType,
+        numberOfMatches
+      },
+      matchType,
+      location: { city, ground },
+      date
+    }));
+
+    // Then navigate
+    if (sport === "Basketball") {
+      router.push({ 
+        pathname: "/scoring/scoringScreen",
+        params: { sport, format }
+      });
+    } else {
+      router.push({
+        pathname: "/scoring/matchTossScreen", 
+        params: { sport, format }
+      });
+    }
+  };
+
+
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -436,11 +475,7 @@ const MatchSetupScreen = () => {
             {/* ✅ Fixed Bottom Button */}
             <View className="absolute bottom-4 left-4 right-4">
             <TouchableOpacity
-                onPress={() =>sport === "Basketball"
-                    ? router.push({ pathname: "/scoring/scoringScreen",
-                                    params: { sport, format }})
-                    : router.push({ pathname: "/scoring/matchTossScreen",
-                                    params: { sport, format }})}
+                onPress={handleSaveConfig}
                 className="rounded-lg py-3 items-center"
                 style={{ backgroundColor: theme.colors.primary }}
             >
