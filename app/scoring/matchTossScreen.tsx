@@ -30,6 +30,7 @@ export default function TossScreen({ navigation }: any) {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             className="p-4 items-center justify-center"
+            style={{ flex: 1 ,justifyContent: 'center', alignItems: 'center'}}
           >
             <Text className="text-2xl font-bold">{label}</Text>
           </LinearGradient>
@@ -53,7 +54,7 @@ export default function TossScreen({ navigation }: any) {
             {/* Header */}
             <View className="flex-row justify-between items-center mt-2 mx-2">
                 <View className="w-8 h-8 bg-white rounded-full border-4" >
-                  <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
+                  <Entypo onPress={()=> router.back()} name="chevron-left" size={20} color="black" />
                 </View>
                 <TouchableOpacity>
                   <Text className="text-gray-600 font-medium underline">Skip</Text>
@@ -69,9 +70,10 @@ export default function TossScreen({ navigation }: any) {
                       colors={["#FFF201", "transparent"]} // 👈 fade to transparent
                       start={{ x: 0, y: 0 }}
                       end={{ x: 0.8, y: 0 }}
-                      className="px-1 py-1 rounded-t-md mb-3"
+                      className="px-1 py-1 rounded-t-md"
+                      style={{flex:1 ,marginBottom:16}}
                     >
-                      <Text className="text-[10px] font-bold">Select the toss winner</Text>
+                      <Text className="text-[13px] font-bold px-2 py-1">Select the toss winner</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Team A", tossWinner === "A", () => setTossWinner("A"))}
@@ -87,8 +89,9 @@ export default function TossScreen({ navigation }: any) {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="px-1 py-1 rounded-t-md mb-3"
+                      style={{flex:1 ,marginBottom:16}}
                     >
-                        <Text className="text-[10px] font-bold">Which team will take the first Kick-Off ?</Text>
+                        <Text className="text-[13px] font-bold px-2 py-1">Which team will take the first Kick-Off ?</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Team A", kickOff === "A", () => setKickOff("A"))}
@@ -104,8 +107,9 @@ export default function TossScreen({ navigation }: any) {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="px-1 py-1 rounded-t-md mb-3"
+                      style={{flex:1 ,marginBottom:16}}
                     >
-                        <Text className="text-[10px] font-bold">Choose the side of toss winning team</Text>
+                        <Text className="text-[13px] font-bold px-2 py-1">Choose the side of toss winning team</Text>
                     </LinearGradient>
                     <View className="flex-row mb-6">
                         {renderOption("Left", side === "L", () => setSide("L"))}
