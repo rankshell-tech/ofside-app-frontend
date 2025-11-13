@@ -4,18 +4,18 @@ import { View, Text, ImageBackground,Image } from "react-native";
 import { Feather,  } from "@expo/vector-icons";
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 const PlayerAddedScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
-    useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.goBack(); // 👈 go back to previous screen
-      navigation.goBack();
-    }, 2000); // 2 seconds
+      router.replace("/scoring/teamsScreen");
+    }, 1000); // redirect after 1 second
 
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, [router]);
 
   return (
     <ImageBackground
