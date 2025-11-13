@@ -128,7 +128,6 @@ export default function EditProfile() {
   };
 
   const handleUpdateProfile = async () => {
-    console.log('==========================================================================');
     const endpoint = API_URL + '/api/auth/update-profile';
     setLoading(true);
 
