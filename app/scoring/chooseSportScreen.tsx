@@ -5,11 +5,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useNavigation, useLocalSearchParams } from "expo-router";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 
+import { useDispatch } from 'react-redux';
+import { updateSetup } from '@/store/slices/matchScoringSlice';
+
 export default function ChooseSportScreen() {
   const navigation = useNavigation();
   const [selectedSport, setSelectedSport] = useState("Football");
   const [selectedFormat, setSelectedFormat] = useState("Team");
   const { isTournament } = useLocalSearchParams<{ isTournament?: string }>();
+
+    const dispatch = useDispatch();
+  
   const tournamentMode = isTournament === "true";
 
   const sports = ["Football", "Badminton", "Volleyball", "Basketball", "Tennis", "Pickleball"];
@@ -28,7 +34,27 @@ export default function ChooseSportScreen() {
     const availableFormats = sportFormats[sport];
     setSelectedFormat(availableFormats[0]); // Default to first option
   };
+ const handleNext = () => {
+    // Save sport and format to Redux before navigating
+    dispatch(updateSetup({
+      sport: selectedSport as any,
+      format: selectedFormat as any,
+      tournamentMode: tournamentMode
+    }));
 
+    // Keep existing navigation logic
+    if (tournamentMode) {
+      router.push({
+        pathname: "/tournament/editTournament",
+        params: { sport: selectedSport, format: selectedFormat },
+      });
+    } else {
+      router.push({
+        pathname: "/scoring/selectTeamsScreen", 
+        params: { sport: selectedSport, format: selectedFormat },
+      });
+    }
+  };
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ImageBackground
@@ -120,21 +146,12 @@ export default function ChooseSportScreen() {
         {/* Bottom Button */}
         <View className="absolute bottom-4 left-4 right-4">
           <TouchableOpacity
-             onPress={() =>
-              tournamentMode
-              ? router.push({
-                  pathname: "/tournament/editTournament",
-                  params: { sport: selectedSport, format: selectedFormat },
-                })
-              : router.push({
-                  pathname: "/scoring/selectTeamsScreen",
-                  params: { sport: selectedSport, format: selectedFormat },
-                })
-              }
+             onPress={handleNext}
             className="h-12 rounded-xl overflow-hidden mt-48">
             <LinearGradient
               colors={["#FFF201", "#FFF201"]}
               className="flex-1 items-center justify-center rounded-xl"
+              style={{ borderRadius: 12,alignItems: 'center', justifyContent: 'center' ,flex:1}}
             >
               <Text className="font-extrabold text-base text-black">
                 Select Teams
