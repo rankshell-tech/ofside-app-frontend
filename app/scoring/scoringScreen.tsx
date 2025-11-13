@@ -517,29 +517,56 @@ const ScoringScreen = () => {
                 )}
 
                 {/* Bottom Sheet Modal */}
-                <Modal
-                    isVisible={rulesVisible}
-                    onBackdropPress={() => setRulesVisible(false)}
-                    onBackButtonPress={() => setRulesVisible(false)}
-                    style={{ justifyContent: "flex-start", marginLeft: 150 }}
-                >
-                    <View className="bg-white rounded-2xl p-5 shadow-lg">
+               <Modal
+    isVisible={rulesVisible}
+    onBackdropPress={() => setRulesVisible(false)}
+    onBackButtonPress={() => setRulesVisible(false)}
+    style={{ justifyContent: "flex-start", marginLeft: 160, marginTop: 95 }}
+>
+    <View className="bg-white rounded-2xl p-0 shadow-xl overflow-hidden">
+        {/* Header with Close Button */}
+        <View className="flex-row justify-between items-center px-5 py-4 border-b border-gray-200 bg-gray-50">
+            <Text className="text-lg font-bold text-gray-800">Match Actions</Text>
+            <TouchableOpacity 
+                onPress={() => setRulesVisible(false)}
+                className="w-8 h-8 items-center justify-center rounded-full hover:bg-gray-200"
+            >
+                <Ionicons name="close" size={20} color="#6B7280" />
+            </TouchableOpacity>
+        </View>
 
-                    {/* Rules List */}
-                    <TouchableOpacity className="py-2">
-                        <Text className="text-base">Match Abandoned</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="py-2">
-                        <Text className="text-base">Match Rescheduled</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="py-2">
-                        <Text className="text-base">Walkover</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=> {setRulesVisible(false); router.push('/scoring/winnerScreen')}} className="py-2">
-                        <Text className="text-base">End Match</Text>
-                    </TouchableOpacity>
-                    </View>
-                </Modal>
+        {/* Rules List with Subtle Borders */}
+        <TouchableOpacity className="flex-row items-center px-5 py-4 border-b border-gray-100 active:bg-gray-50">
+            <Ionicons name="warning-outline" size={18} color="#6B7280" className="mr-3" />
+            <Text className="text-base text-gray-700 flex-1">Match Abandoned</Text>
+         
+        </TouchableOpacity>
+        
+        <TouchableOpacity className="flex-row items-center px-5 py-4 border-b border-gray-100 active:bg-gray-50">
+            <Ionicons name="calendar-outline" size={18} color="#6B7280" className="mr-3" />
+            <Text className="text-base text-gray-700 flex-1">Match Rescheduled</Text>
+            
+        </TouchableOpacity>
+        
+        <TouchableOpacity className="flex-row items-center px-5 py-4 border-b border-gray-200 active:bg-gray-50">
+            <Ionicons name="walk-outline" size={18} color="#6B7280" className="mr-3" />
+            <Text className="text-base text-gray-700 flex-1">Walkover</Text>
+            
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+            onPress={() => { 
+                setRulesVisible(false); 
+                router.push('/scoring/winnerScreen'); 
+            }} 
+            className="flex-row items-center px-5 py-4  active:bg-red-100"
+        >
+            <Ionicons name="flag-outline" size={18} color="#DC2626" className="mr-3" />
+            <Text className="text-base font-semibold text-red-700 flex-1">End Match</Text>
+          
+        </TouchableOpacity>
+    </View>
+</Modal>
 
                 <Modal
                     isVisible={teamsVisible}
