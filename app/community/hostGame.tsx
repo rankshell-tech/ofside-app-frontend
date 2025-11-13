@@ -40,7 +40,7 @@ export default function HostGameScreen() {
         month: "long",
         year: "numeric",
         });
-    };
+    }; 
 
     const FloatingLabelInput = ({
     label,

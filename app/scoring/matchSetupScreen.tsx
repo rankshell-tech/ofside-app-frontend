@@ -24,8 +24,8 @@ const MatchSetupScreen = () => {
     const [pitchType, setPitchType] = useState("Artificial Turf");
     const [city, setCity] = useState("Delhi");
     const [ground, setGround] = useState("Delhi Cricket Turf");
-    const [date, setDate] =  useState(new Date(2025, 4, 13));
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(true);
     const [rulesVisible, setRulesVisible] = useState(false);
     const [numberofSet, setNumberOfSet] = useState("3 Sets");
     const [pointsPerSet, setPointsPerSet] = useState("15 points");
@@ -460,16 +460,27 @@ const handleSaveConfig = () => {
                     value={ground}
                     onChangeText={setGround}
                 />
-                {(sport !== "Badminton" &&  sport !== "Pickleball" && sport !== 'Tennis' && sport !== 'Volleyball') &&
-                    <FloatingLabelInput
+                   <FloatingLabelInput
                         label="Date & Time"
                         value={formatDate(date)}
                         isPicker
                         onPress={() => setShowDatePicker(true)}
                         icon={<Ionicons name="calendar" size={18} color="black" />}
                     />
-                }
             </View>
+
+            
+        {/* Date Picker */}
+        {showDatePicker && (
+            <DateTimePicker
+            value={date}
+            mode="date"
+            onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) setDate(selectedDate);
+            }}
+            />
+        )}
             </ScrollView>
 
             {/* ✅ Fixed Bottom Button */}
@@ -484,17 +495,6 @@ const handleSaveConfig = () => {
             </View>
         </LinearGradient>
 
-        {/* Date Picker */}
-        {showDatePicker && (
-            <DateTimePicker
-            value={date}
-            mode="date"
-            onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) setDate(selectedDate);
-            }}
-            />
-        )}
 
         {/* Bottom Sheet Modal */}
         <Modal
