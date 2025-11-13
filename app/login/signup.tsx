@@ -21,6 +21,7 @@ type Gender = 'male' | 'female' | 'other';
 export default function SignupScreen(): JSX.Element {
     const [form, setForm] = useState<{
         name: string;
+        username: string;
         mobile: string;
         email?: string;
         referralCode?: string;
@@ -29,6 +30,7 @@ export default function SignupScreen(): JSX.Element {
         favSports: string[];
     }>({
         name: '',
+        username: '',   
         mobile: '',
         email: '',
         referralCode: '',
@@ -105,6 +107,16 @@ export default function SignupScreen(): JSX.Element {
                                 className="text-lg"
                                 placeholderTextColor="#666"
                                 autoCapitalize="words"
+                            />
+                        </View>
+                          <View className="border border-black rounded-lg p-3 bg-white mb-4 ">
+                            <TextInput
+                                placeholder="Username"
+                                value={form.username}
+                                onChangeText={(t) => setForm((s) => ({ ...s, username: t }))}
+                                className="text-lg"
+                                placeholderTextColor="#666"
+                                autoCapitalize="none"
                             />
                         </View>
 
