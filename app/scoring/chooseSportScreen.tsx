@@ -57,6 +57,7 @@ export default function ChooseSportScreen() {
                   key={sport}
                   className="w-[30%] h-16 mb-4 rounded-xl border overflow-hidden"
                   onPress={() => handleSportSelect(sport)}
+                  style={{ borderRadius: 12 }}
                 >
                   {isSelected ? (
                     <LinearGradient
@@ -64,6 +65,7 @@ export default function ChooseSportScreen() {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="flex-1 items-center justify-center"
+                      style={{ borderRadius: 12,alignItems: 'center', justifyContent: 'center' ,flex:1}}
                     >
                       <Text className="font-extrabold text-base text-black">
                         {sport}
@@ -98,6 +100,7 @@ export default function ChooseSportScreen() {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       className="flex-1 items-center justify-center rounded-xl"
+                        style={{ borderRadius: 12,alignItems: 'center', justifyContent: 'center' ,flex:1}}
                     >
                       <Text className="font-extrabold text-base text-black">
                         {format}

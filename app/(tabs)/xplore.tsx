@@ -31,6 +31,7 @@ export default function App() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       className="flex-1 mx-3 rounded-xl overflow-hidden border"
+      style={{ flex:1 }}
     >
       <TouchableOpacity className="flex-1 p-5 items-center justify-center" onPress={onPress}>
         <Text className="text-xl font-extrabold text-black">{title}</Text>
@@ -108,7 +109,7 @@ export default function App() {
             <Text style={{ color: '#fff201', fontSize: 14 }}>  {user?.role == 0 ? "Player": (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"))}</Text>
           </View>
         </LinearGradient>
-        <ScrollView>
+        <ScrollView className="p-4">
             {/* Buttons */}
             <View className="flex-row mt-5 w-full h-28">
               <MenuButton title="Start a match" onPress={()=>router.push(`/scoring/chooseSportScreen`)} />

@@ -81,6 +81,7 @@ export default function HomeScreen() {
       rating: 4.9,
       sport: 'tennis',
     },
+    
   ];
 
   // Top rated venues data
