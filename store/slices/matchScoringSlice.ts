@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import Constants from 'expo-constants';
 
+const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
 // Types - Clear and simple
 export type MatchStatus = 'scheduled' | 'live' | 'paused' | 'completed' | 'cancelled';
 export type SportType = 'Football' | 'Badminton' | 'Volleyball' | 'Basketball' | 'Tennis' | 'Pickleball';
@@ -22,12 +24,17 @@ export interface Team {
   shortName?: string;
   logoUrl?: string;
   players: Player[];
-   won: number;
+  won: number;
   loss: number;
   location: string;
-  captain: string;
+  captain: Player[];
   sport: string;
-    matches: number;
+  matches: number;
+  homeGround?: string;
+  city?: string;
+  description?: string;
+  createdBy?: Player[];
+  admin?: Player[];
 }
 
 
@@ -43,7 +50,7 @@ export interface MatchSetup {
     city: string;
     ground: string;
   };
-  date?: Date;
+  date?: string;
   configuration: Record<string, any>;
   rules: Record<string, any>;
   toss?: {
@@ -52,6 +59,7 @@ export interface MatchSetup {
     side?: 'L' | 'R';
   };
   currentTeamSelecting?: TeamSide; // 'A' | 'B'
+  isScheduled: boolean;
 
 }
 
@@ -119,7 +127,7 @@ export const createMatch = createAsyncThunk(
     try {
       const matchData = transformToBackendModel(setupData);
       
-      const response = await fetch('/api/matches', {
+      const response = await fetch(`${API_URL}/api/matches`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(matchData),
@@ -129,8 +137,9 @@ export const createMatch = createAsyncThunk(
         const error = await response.json();
         throw new Error(error.message || 'Failed to create match');
       }
-
-      return await response.json();
+     const res = await response.json();
+     console.log('res in create match thunk', res)
+      return res;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to create match');
     }
@@ -153,7 +162,7 @@ export const updateScore = createAsyncThunk(
         throw new Error('No active match');
       }
 
-      const response = await fetch(`/api/matches/${state.matchScoring.matchId}/score`, {
+      const response = await fetch(`${API_URL}/api/matches/${state.matchScoring.matchId}/score`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scoreUpdate),
@@ -170,6 +179,58 @@ export const updateScore = createAsyncThunk(
     }
   }
 );
+
+
+// In matchScoringSlice.ts - update the thunk
+export const createMatchFromCurrentSetup = createAsyncThunk(
+  'matchScoring/createMatchFromCurrentSetup',
+  async (setupData: MatchSetup, { rejectWithValue }) => {
+    try {
+      if (!setupData.teams) {
+        throw new Error('Teams data is missing');
+      }
+
+      const matchData = transformToBackendModel(setupData);
+      
+      console.log('Sending match data to API:', matchData);
+      
+      const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
+      const response = await fetch(`${API_URL}/api/matches`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(matchData),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+      // ✅ FIX: Properly parse the response
+      const responseText = await response.text();
+      console.log('Raw response text:', responseText);
+
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        throw new Error('Invalid JSON response from server');
+      }
+
+      console.log('Parsed response data:', responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.error || responseData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // ✅ Return the parsed data
+      return responseData;
+    } catch (error: any) {
+      console.error('Match creation error:', error);
+      return rejectWithValue(error.message || 'Failed to create match');
+    }
+  }
+);
+
 
 // Main slice - clean and readable
 const matchScoringSlice = createSlice({
@@ -244,43 +305,44 @@ const matchScoringSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder
-      // Create match
-      .addCase(createMatch.pending, (state) => {
-        state.matchCreationLoading = true;
-        state.matchCreationError = null;
-      })
-      .addCase(createMatch.fulfilled, (state, action) => {
-        state.matchCreationLoading = false;
-        state.matchId = action.payload.matchId;
-        state.status = action.payload.status || 'scheduled';
-        state.scores = action.payload.scores || { teamA: 0, teamB: 0 };
-        state.scoringState = action.payload.scoringState || {};
-      })
-      .addCase(createMatch.rejected, (state, action) => {
-        state.matchCreationLoading = false;
-        state.matchCreationError = action.payload as string;
-      })
+  builder
+    // Create match from current setup
+    .addCase(createMatchFromCurrentSetup.pending, (state) => {
+      state.matchCreationLoading = true;
+      state.matchCreationError = null;
+    })
+    .addCase(createMatchFromCurrentSetup.fulfilled, (state, action) => {
+      console.log('✅ Match creation fulfilled:', action.payload);
       
-      // Update score
-      .addCase(updateScore.fulfilled, (state, action) => {
-        const updatedMatch = action.payload;
-        state.scores = updatedMatch.scores;
-        state.scoringState = updatedMatch.scoringState;
-        state.feed = updatedMatch.feed || state.feed;
-      });
-  }
+      state.matchCreationLoading = false;
+      // ✅ Use the correct response structure: action.payload.data._id
+      state.matchId = action.payload.data._id;
+      state.status = action.payload.data.status || 'scheduled';
+      state.scores = { 
+        teamA: action.payload.data.score?.team1 || 0, 
+        teamB: action.payload.data.score?.team2 || 0 
+      };
+      state.scoringState = action.payload.data.rules || {};
+    })
+    .addCase(createMatchFromCurrentSetup.rejected, (state, action) => {
+      console.error('❌ Match creation rejected:', action.payload);
+      state.matchCreationLoading = false;
+      state.matchCreationError = action.payload as string;
+    });
+}
 });
 
 // Helper function - clean transformation
 const transformToBackendModel = (setup: MatchSetup) => {
+    const startAt = setup.date ? new Date(setup.date) : new Date();
   const baseData = {
     sport: setup.sport,
     format: setup.format,
     tournament: setup.tournamentMode,
-    startAt: setup.date,
+    startAt: startAt.toISOString(),
     location: setup.location.city,
     teams: setup.teams.map(team => ({
+       _id: team._id, 
       name: team.name,
       shortName: team.shortName,
       logoUrl: team.logoUrl,
