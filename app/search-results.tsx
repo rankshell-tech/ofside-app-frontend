@@ -345,7 +345,7 @@ export default function SearchResults() {
               <VenueCard
                 key={venue.id}
                 venue={venue}
-                onPress={() => router.push(`/venue/${venue.id}`)}
+                onPress={() => router.push(`/`)}
               />
             ))
           ) : (
