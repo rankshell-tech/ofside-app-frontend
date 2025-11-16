@@ -12,7 +12,7 @@ interface PlayerSearchProps {
   placeholder?: string;
 }
 
-export const PlayerSearch: React.FC<PlayerSearchProps> = ({
+export const PlayerSearch: React.FC<PlayerSearchProps> = React.memo(({
   searchQuery,
   onSearchChange,
   suggestions,
@@ -31,11 +31,16 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
           onChangeText={onSearchChange}
           autoCapitalize="none"
           autoCorrect={false}
+          returnKeyType="search"
         />
         {loading ? (
           <ActivityIndicator size="small" color="#000" />
+        ) : searchQuery ? (
+          <TouchableOpacity onPress={() => onSearchChange('')}>
+            <Ionicons name="close-circle" size={20} color="#999" />
+          </TouchableOpacity>
         ) : (
-          <Ionicons name="search" size={20} color="black" />
+          <Ionicons name="search" size={20} color="#999" />
         )}
       </View>
 
@@ -52,10 +57,11 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
           <ScrollView 
             nestedScrollEnabled={true}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
             {suggestions.map((player) => (
               <TouchableOpacity
-                key={player.id}
+                key={`search-${player.id}`}
                 onPress={() => onSelectPlayer(player)}
                 className="flex-row items-center p-3 border-b border-gray-100 active:bg-gray-50"
               >
@@ -63,11 +69,11 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
                 {player.profilePicture ? (
                   <Image 
                     source={{ uri: player.profilePicture }} 
-                    className="w-12 h-12 rounded-full mr-3"
+                    className="w-10 h-10 rounded-full mr-3"
                   />
                 ) : (
-                  <View className="w-12 h-12 rounded-full bg-gray-200 items-center justify-center mr-3">
-                    <Text className="text-gray-600 font-medium text-lg">
+                  <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-3">
+                    <Text className="text-gray-600 font-medium">
                       {player.name.charAt(0).toUpperCase()}
                     </Text>
                   </View>
@@ -75,23 +81,20 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
                 
                 {/* Player Info */}
                 <View className="flex-1">
-                  <Text className="font-semibold text-base">{player.name}</Text>
-                  <View className="flex-row flex-wrap">
-                    {player.email && (
-                      <Text className="text-gray-500 text-sm mr-3">{player.email}</Text>
-                    )}
-                    {player.mobile && (
-                      <Text className="text-gray-500 text-sm">{player.mobile}</Text>
-                    )}
-                  </View>
+                  <Text className="font-semibold text-sm" numberOfLines={1}>
+                    {player.name}
+                  </Text>
+                  <Text className="text-gray-500 text-xs" numberOfLines={1}>
+                    {player.email || player.mobile || 'No contact info'}
+                  </Text>
                 </View>
                 
                 {/* Add Button */}
                 <TouchableOpacity 
                   onPress={() => onSelectPlayer(player)}
-                  className="bg-green-500 w-8 h-8 rounded-full items-center justify-center"
+                  className="bg-green-500 w-7 h-7 rounded-full items-center justify-center ml-2"
                 >
-                  <Ionicons name="add" size={16} color="white" />
+                  <Ionicons name="add" size={14} color="white" />
                 </TouchableOpacity>
               </TouchableOpacity>
             ))}
@@ -101,12 +104,13 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
 
       {/* No Results Message */}
       {searchQuery.length >= 2 && suggestions.length === 0 && !loading && (
-        <View className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-2">
-          <Text className="text-yellow-800 text-center">
+        <View className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-2">
+          <Text className="text-gray-600 text-center">
             No players found for "{searchQuery}"
           </Text>
         </View>
       )}
     </View>
   );
-};
+});
+export default PlayerSearch;
