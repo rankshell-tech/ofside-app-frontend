@@ -19,6 +19,9 @@ export const TeamForm: React.FC<TeamFormProps> = ({
   onTeamChange,
   sport
 }) => {
+
+
+
   return (
     <View>
       {/* Team Name */}
@@ -34,7 +37,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       </View>
 
       {/* Team Bio/Description */}
-      <View className="mb-4">
+      {/* <View className="mb-4">
         <Text className="text-sm font-medium mb-2">Team Description</Text>
         <TextInput
           placeholder="Enter team description or bio (optional)"
@@ -45,7 +48,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
           numberOfLines={4}
           textAlignVertical="top"
         />
-      </View>
+      </View> */}
 
       {/* Logo URL */}
       <View className="mb-4">
@@ -98,7 +101,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       </View>
 
       {/* City/Location */}
-      <View className="mb-4">
+      {/* <View className="mb-4">
         <Text className="text-sm font-medium mb-2">City</Text>
         <TextInput
           placeholder="Enter city (optional)"
@@ -107,7 +110,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
           className="border border-gray-300 rounded-lg p-3 bg-white"
           autoCapitalize="words"
         />
-      </View>
+      </View> */}
     </View>
   );
 };
