@@ -131,7 +131,7 @@ export default function LoginScreen() {
 
             {/* Terms and Conditions */}
             <View className="mt-10 bottom-0 w-full items-center">
-              <Text className="text-black text-sm">
+              <Text className="text-black    text-sm">
                 I agree to the{' '}
                 <Text
                   className="underline"
