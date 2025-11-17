@@ -10,18 +10,51 @@ import {
   View,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoogleIcon from '@/components/GoogleIcon';
 import Constants from 'expo-constants';
 import OfsideLoader from './ofsideLoader';
+import * as Google from 'expo-auth-session/providers/google';
+import * as AppleAuthentication from 'expo-apple-authentication';
+
 const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
 
+// Type definitions
+interface GoogleAuthResponse {
+  type: 'success' | 'error' | 'cancel';
+  authentication?: {
+    accessToken: string;
+  };
+}
+
+interface AppleAuthCredential {
+  identityToken: string | null;
+  user: string;
+  email: string | null;
+  fullName: AppleAuthentication.AppleAuthenticationFullName | null;
+}
+
 export default function LoginScreen() {
-  const [loading, setLoading] = React.useState(false);
-  const [identifier, setIdentifier] = React.useState('ashi888032@gmail.com');
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [identifier, setIdentifier] = React.useState<string>('ashi888032@gmail.com');
   
-  const handleSendCode = async () => {
+  // Google Auth with proper TypeScript typing
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId: 'YOUR_GOOGLE_EXPO_CLIENT_ID',
+    iosClientId: 'YOUR_GOOGLE_IOS_CLIENT_ID',
+    androidClientId: 'YOUR_GOOGLE_ANDROID_CLIENT_ID', // Added for Android
+  });
+
+  // Handle Google Auth Response
+  React.useEffect(() => {
+    if (response?.type === 'success' && response.authentication?.accessToken) {
+      handleGoogleSignIn(response.authentication.accessToken);
+    }
+  }, [response]);
+
+  const handleSendCode = async (): Promise<void> => {
     console.log('API_URL:', API_URL + '/api/auth/login');
     try {
       setLoading(true);
@@ -44,15 +77,101 @@ export default function LoginScreen() {
         params: { email: identifier, type: 'login' },
       });
     } catch (error) {
+      setLoading(false);
       Alert.alert('Error', 'Failed to send code. Please try again.');
       console.error('Login error:', error);
     }
   };
 
+  // Google Sign In
+  const handleGoogleSignIn = async (accessToken: string): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      // Send the Google token to your backend
+      const response = await fetch(API_URL + '/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accessToken: accessToken,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Google sign-in failed');
+      }
+
+      const data = await response.json();
+      console.log('Google sign-in success:', data);
+      
+      // Navigate to main app
+      router.replace('/(tabs)');
+    } catch (error) {
+      Alert.alert('Error', 'Google sign-in failed. Please try again.');
+      console.error('Google sign-in error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Apple Sign In
+  const handleAppleSignIn = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      const credential: AppleAuthentication.AppleAuthenticationCredential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      // Send Apple credential to your backend
+      const response = await fetch(API_URL + '/api/auth/apple', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          identityToken: credential.identityToken,
+          user: credential.user,
+          email: credential.email,
+          fullName: credential.fullName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Apple sign-in failed');
+      }
+
+      const data = await response.json();
+      console.log('Apple sign-in success:', data);
+      
+      // Navigate to main app 
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      if (error.code === 'ERR_CANCELED') {
+        // User canceled Apple Sign In - no need to show error
+        console.log('Apple sign-in canceled');
+      } else {
+        Alert.alert('Error', 'Apple sign-in failed. Please try again.');
+        console.error('Apple sign-in error:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGooglePress = (): void => {
+    promptAsync();
+  };
+
   return (
     <>
-      {loading  ? (
-        <OfsideLoader text="Sending code..." />
+      {loading ? (
+        <OfsideLoader text="Signing in..." />
       ) : (
         <SafeAreaView className="flex-1 bg-white">
           <LinearGradient colors={['#FFF201', '#FFFFFF']} className="flex-1">
@@ -67,7 +186,7 @@ export default function LoginScreen() {
             {/* Logo */}
             <View className="items-center mt-4">
               <Image
-                source={require('../../assets/images/logo.png')} // transparent logo
+                source={require('../../assets/images/logo.png')}
                 style={{ width: 200, height: 200, resizeMode: 'contain' }}
               />
             </View>
@@ -89,9 +208,7 @@ export default function LoginScreen() {
               </View>
 
               <TouchableOpacity
-                onPress={() => {
-                  handleSendCode();
-                }}
+                onPress={handleSendCode}
                 className="mt-2 bg-black rounded-lg py-3 items-center"
               >
                 <Text className="text-white text-lg font-medium">
@@ -106,15 +223,29 @@ export default function LoginScreen() {
 
             {/* Social Icons */}
             <View className="mt-10 flex-row justify-center space-x-6">
+              {/* Email */}
               <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white">
                 <Zocial name="email" size={36} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white">
+              
+              {/* Google */}
+              <TouchableOpacity 
+                onPress={handleGooglePress}
+                disabled={!request}
+                className="w-16 h-16 border border-black rounded-lg items-center justify-center mr-10 bg-white"
+              >
                 <GoogleIcon size={36} />
               </TouchableOpacity>
-              <TouchableOpacity className="w-16 h-16 border border-black rounded-lg items-center justify-center bg-white">
-                <AntDesign name="apple" size={36} color="black" />
-              </TouchableOpacity>
+              
+              {/* Apple - Only show on iOS */}
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity 
+                  onPress={handleAppleSignIn}
+                  className="w-16 h-16 border border-black rounded-lg items-center justify-center bg-white"
+                >
+                  <AntDesign name="apple" size={36} color="black" />
+                </TouchableOpacity>
+              )}
             </View>
 
             <View className="mt-10 bottom-0 w-full items-center">
@@ -131,7 +262,7 @@ export default function LoginScreen() {
 
             {/* Terms and Conditions */}
             <View className="mt-10 bottom-0 w-full items-center">
-              <Text className="text-black    text-sm">
+              <Text className="text-black text-sm">
                 I agree to the{' '}
                 <Text
                   className="underline"
