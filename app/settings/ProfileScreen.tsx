@@ -210,8 +210,8 @@ export default function profileScreen() {
           <TouchableOpacity onPress={() => openSocialLink("mailto:play@ofside.in")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
             <Zocial name="email" size={26} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => openSocialLink("https://instagram.com/ofsideapp")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
-            <Iconify icon="skill-icons:instagram" size={35} type="svg" />
+          <TouchableOpacity 
+              onPress={() => openSocialLink("https://instagram.com/ofsideapp")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8"><FontAwesome5 name="instagram" size={28} color="#E1306C" />
           </TouchableOpacity>
           {/* <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center">
             <Iconify icon="flowbite:facebook-solid" size={35} color="blue" type="svg" />
