@@ -20,6 +20,9 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Entypo, FontAwesome6, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Iconify from '@/components/Iconify';
+import Constants from 'expo-constants';
+const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
+
 
 const { width } = Dimensions.get('window');
 const NUM_COLUMNS = 3;
