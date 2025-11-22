@@ -185,7 +185,7 @@ const MatchSetupScreen = () => {
     teams: teamsFromParams,
     tournamentMode: false,
      rules: {  
-        // Add any default or selected rules here
+       
      }
   };
 
@@ -208,7 +208,14 @@ const MatchSetupScreen = () => {
         alert('Match created but ID not found. Please try again.');
         return;
       }
-      
+
+      if(!isNowSelected) {
+        router.push({
+          pathname: "/scoring/matchScheduledSuccess",
+        });
+        return;
+      } else {
+              
       if (sport === "Basketball") {
         router.push({
           pathname: "/scoring/scoringScreen",
@@ -220,6 +227,11 @@ const MatchSetupScreen = () => {
           params: { sport, format, matchId }
         });
       }
+      }
+
+
+
+
     } else {
       console.error('❌ Failed to create match:', result.payload);
       alert('Failed to create match: ' + result.payload);
