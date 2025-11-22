@@ -335,22 +335,52 @@ const matchScoringSlice = createSlice({
 // Helper function - clean transformation
 const transformToBackendModel = (setup: MatchSetup) => {
     const startAt = setup.date ? new Date(setup.date) : new Date();
+  
+  // Transform teams with proper player extraction
+  const transformedTeams = setup.teams.map((team, index) => {
+    // Ensure players array exists and extract player IDs
+    let playerIds: string[] = [];
+    
+    if (team.players && Array.isArray(team.players) && team.players.length > 0) {
+      playerIds = team.players.map((player: any) => {
+        // Handle both Player objects and plain IDs
+        if (typeof player === 'string') {
+          return player;
+        }
+        // Try multiple possible ID fields
+        return player.id || player._id || player;
+      }).filter((id: any) => id && typeof id === 'string'); // Remove any undefined/null values and ensure strings
+    }
+    
+    console.log(`Team ${index + 1} (${team.name || 'Unknown'}):`, {
+      teamId: team._id,
+      originalPlayersCount: team.players?.length || 0,
+      extractedPlayerCount: playerIds.length,
+      playerIds: playerIds,
+      originalPlayers: team.players
+    });
+    
+    return {
+      _id: team._id, 
+      name: team.name,
+      shortName: team.shortName,
+      logoUrl: team.logoUrl,
+      players: playerIds
+    };
+  });
+  
   const baseData = {
     sport: setup.sport,
     format: setup.format,
     tournament: setup.tournamentMode,
     startAt: startAt.toISOString(),
     location: setup.location.city,
-    teams: setup.teams.map(team => ({
-       _id: team._id, 
-      name: team.name,
-      shortName: team.shortName,
-      logoUrl: team.logoUrl,
-      players: team.players.map(player => player.id)
-    })),
+    teams: transformedTeams,
     rules: { ...setup.configuration, ...setup.rules },
     status: 'scheduled' as MatchStatus
   };
+  
+  console.log('Transformed match data for backend:', JSON.stringify(baseData, null, 2));
 
   // Sport-specific transformations
   switch (setup.sport) {

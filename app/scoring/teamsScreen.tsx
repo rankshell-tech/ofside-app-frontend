@@ -14,6 +14,7 @@ import { Team, Player } from "@/store/slices/matchScoringSlice";
 // Components
 import { AddTeamModal } from '@/components/AddTeamModal';
 import { TeamCard } from '@/components/TeamCard';
+import { PlayerSelectionModal } from '@/components/PlayerSelectionModal';
 
 import { AppDispatch } from '@/store';
 // Hooks
@@ -73,7 +74,11 @@ export default function TeamsScreen() {
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [opponentTeam, setOpponentTeam] = useState<Team | null>(null);
+  const [selectedTeamPlayers, setSelectedTeamPlayers] = useState<Player[]>([]);
+  const [opponentTeamPlayers, setOpponentTeamPlayers] = useState<Player[]>([]);
   const [showAddTeamModal, setShowAddTeamModal] = useState(false);
+  const [showPlayerSelectionModal, setShowPlayerSelectionModal] = useState(false);
+  const [playerSelectionForTeam, setPlayerSelectionForTeam] = useState<'myTeam' | 'opponent' | null>(null);
   const [loading, setLoading] = useState(false);
   const [playerLoading, setPlayerLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Player[]>([]);
@@ -86,6 +91,36 @@ export default function TeamsScreen() {
   useEffect(() => {
     setBothTeamsSelected(selectedTeam !== null && opponentTeam !== null);
   }, [selectedTeam, opponentTeam]);
+
+  // Handle team selection - reset players when team changes
+  const handleSelectTeam = (team: Team, isMyTeam: boolean) => {
+    if (isMyTeam) {
+      setSelectedTeam(team);
+      // Don't auto-select players - start with empty selection
+      setSelectedTeamPlayers([]);
+    } else {
+      setOpponentTeam(team);
+      // Don't auto-select players - start with empty selection
+      setOpponentTeamPlayers([]);
+    }
+  };
+
+  // Handle player selection confirmation
+  const handlePlayerSelectionConfirm = (players: Player[]) => {
+    if (playerSelectionForTeam === 'myTeam') {
+      setSelectedTeamPlayers(players);
+    } else if (playerSelectionForTeam === 'opponent') {
+      setOpponentTeamPlayers(players);
+    }
+    setShowPlayerSelectionModal(false);
+    setPlayerSelectionForTeam(null);
+  };
+
+  // Open player selection modal
+  const handleOpenPlayerSelection = (isMyTeam: boolean) => {
+    setPlayerSelectionForTeam(isMyTeam ? 'myTeam' : 'opponent');
+    setShowPlayerSelectionModal(true);
+  };
 
   // Debounced searches
   const debouncedSearch = useDebounce(searchPlayer, 300);
@@ -269,16 +304,16 @@ export default function TeamsScreen() {
         </View>
 
         {/* Tabs */}
-        <View className="flex-row border border-gray-300 rounded-xl overflow-hidden mx-5">
+        <View className="flex-row border-2 border-[#FFF201] rounded-xl overflow-hidden mx-5 bg-white">
           {["My Teams", "Opponents"].map((tab) => (
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(tab as typeof activeTab)}
               className={`flex-1 py-3 items-center ${
-                activeTab === tab ? "bg-black" : "bg-white"
+                activeTab === tab ? "bg-[#FFF201]" : "bg-white"
               }`}
             >
-              <Text className={activeTab === tab ? "text-white font-bold" : "text-black"}>
+              <Text className={activeTab === tab ? "text-black font-bold" : "text-gray-600 font-medium"}>
                 {tab}
               </Text>
             </TouchableOpacity>
@@ -288,28 +323,31 @@ export default function TeamsScreen() {
         {/* Content */}
         {activeTab === "My Teams" && (
           <View className="flex-1">
-              <Text className="mx-6 mt-6 text-lg font-bold text-black mr-2">Select a Team</Text>
-              
-            <TouchableOpacity 
-              onPress={() => setShowAddTeamModal(true)}
-              className="mx-6 mt-6 rounded-lg py-3 flex-row justify-center items-center" 
-              style={{ backgroundColor: theme.colors.primary }}
-            >
-              <Text className="font-bold text-black mr-2">Create New Team</Text>
-              <FontAwesome name="plus" size={20} color="black" />
-            </TouchableOpacity>
+              <View className="flex-row items-center justify-between mx-6 mt-4 mb-2">
+                <Text className="text-xl font-bold text-gray-800">Select a Team</Text>
+                <TouchableOpacity 
+                  onPress={() => setShowAddTeamModal(true)}
+                  className="px-4 py-2 rounded-lg flex-row items-center" 
+                  style={{ backgroundColor: theme.colors.primary }}
+                >
+                  <FontAwesome name="plus" size={14} color="black" />
+                  <Text className="font-semibold text-black ml-2 text-sm">New Team</Text>
+                </TouchableOpacity>
+              </View>
 
-            <ScrollView className="mt-6 px-4" showsVerticalScrollIndicator={false}>
+            <ScrollView className="mt-4 px-4" showsVerticalScrollIndicator={false}>
               {teams?.map((team) => (
                 <TeamCard
                   key={team._id}
                   team={team}
                   isSelected={team._id === selectedTeam?._id}
-                  onSelect={setSelectedTeam}
+                  onSelect={(t) => handleSelectTeam(t, true)}
                   onEditTeam={() => {
                     setSelectedTeam(team);
                     setShowAddTeamModal(true);
                   }}
+                  selectedPlayersCount={team._id === selectedTeam?._id ? selectedTeamPlayers.length : undefined}
+                  onSelectPlayers={() => handleOpenPlayerSelection(true)}
                 />
               ))}
             </ScrollView>
@@ -318,16 +356,19 @@ export default function TeamsScreen() {
 
         {activeTab === "Opponents" && (
           <View className="flex-1">
-            <TouchableOpacity 
-              onPress={() => setShowAddTeamModal(true)}
-              className="mx-6 mt-6 rounded-lg py-3 flex-row justify-center items-center" 
-              style={{ backgroundColor: theme.colors.primary }}
-            >
-              <Text className="font-bold text-black mr-2">Add Team</Text>
-              <FontAwesome name="plus" size={20} color="black" />
-            </TouchableOpacity>
+            <View className="flex-row items-center justify-between mx-6 mt-4 mb-2">
+              <Text className="text-xl font-bold text-gray-800">Select Opponent</Text>
+              <TouchableOpacity 
+                onPress={() => setShowAddTeamModal(true)}
+                className="px-4 py-2 rounded-lg flex-row items-center" 
+                style={{ backgroundColor: theme.colors.primary }}
+              >
+                <FontAwesome name="plus" size={14} color="black" />
+                <Text className="font-semibold text-black ml-2 text-sm">Add Team</Text>
+              </TouchableOpacity>
+            </View>
 
-            <ScrollView className="mt-6 px-4" showsVerticalScrollIndicator={false}>
+            <ScrollView className="mt-4 px-4" showsVerticalScrollIndicator={false}>
               {teams
                 .filter((o) => o.name.toLowerCase().includes(searchOpponents.toLowerCase()))
                 .map((team) => (
@@ -335,11 +376,13 @@ export default function TeamsScreen() {
                     key={team._id}
                     team={team}
                     isSelected={team._id === opponentTeam?._id}
-                    onSelect={setOpponentTeam}
+                    onSelect={(t) => handleSelectTeam(t, false)}
                     onEditTeam={() => {
                       setOpponentTeam(team);
                       setShowAddTeamModal(true);
                     }}
+                    selectedPlayersCount={team._id === opponentTeam?._id ? opponentTeamPlayers.length : undefined}
+                    onSelectPlayers={() => handleOpenPlayerSelection(false)}
                   />
                 ))}
             </ScrollView>
@@ -348,30 +391,62 @@ export default function TeamsScreen() {
           </View>
         )}
 
-        { <TouchableOpacity
-              disabled={!bothTeamsSelected}
-
-              
-                onPress={() => {
-    if (selectedTeam && opponentTeam) {
-      // Create teams array from individual team objects
-      const teamsArray = [selectedTeam, opponentTeam];
-      
-      router.push({
-        pathname: "/scoring/matchSetupScreen",
-        params: { 
-          sport, 
-          format,
-          teams: JSON.stringify(teamsArray) // ✅ Pass as array
-        },
-      });
-    }
-  }}
-              className={`py-3 mx-4 rounded-md mt-3 ${bothTeamsSelected ? 'text-red-600' : ' text-white opacity-50'}`}
-              style={{ backgroundColor: theme.colors.primary }}
-            >
-              <Text className={`text-center text-black font-bold text-base  `}>{bothTeamsSelected ? "Next" : "Please Select Both Teams"}</Text>
-            </TouchableOpacity>}
+        {/* Bottom Action Button */}
+        <View className="px-4 pb-4 pt-2 bg-white border-t border-gray-200">
+          <TouchableOpacity
+            disabled={!bothTeamsSelected}
+            onPress={() => {
+              if (selectedTeam && opponentTeam) {
+                // Create teams array with selected players
+                const team1WithPlayers = {
+                  ...selectedTeam,
+                  players: selectedTeamPlayers.length > 0 ? selectedTeamPlayers : selectedTeam.players || [],
+                };
+                const team2WithPlayers = {
+                  ...opponentTeam,
+                  players: opponentTeamPlayers.length > 0 ? opponentTeamPlayers : opponentTeam.players || [],
+                };
+                
+                const teamsArray = [team1WithPlayers, team2WithPlayers];
+                
+                // Debug: Log teams data before sending
+                console.log('=== Teams Data Before Navigation ===');
+                console.log('Team 1 (My Team):', {
+                  name: team1WithPlayers.name,
+                  _id: team1WithPlayers._id,
+                  playersCount: team1WithPlayers.players?.length || 0,
+                  players: team1WithPlayers.players?.map(p => ({ id: p.id, name: p.name }))
+                });
+                console.log('Team 2 (Opponent):', {
+                  name: team2WithPlayers.name,
+                  _id: team2WithPlayers._id,
+                  playersCount: team2WithPlayers.players?.length || 0,
+                  players: team2WithPlayers.players?.map(p => ({ id: p.id, name: p.name }))
+                });
+                console.log('Full teams array:', JSON.stringify(teamsArray, null, 2));
+                
+                router.push({
+                  pathname: "/scoring/matchSetupScreen",
+                  params: { 
+                    sport, 
+                    format,
+                    teams: JSON.stringify(teamsArray)
+                  },
+                });
+              }
+            }}
+            className={`py-4 rounded-xl items-center ${
+              bothTeamsSelected ? '' : 'opacity-50'
+            }`}
+            style={{ backgroundColor: bothTeamsSelected ? theme.colors.primary : '#E5E7EB' }}
+          >
+            <Text className={`font-bold text-base ${
+              bothTeamsSelected ? 'text-black' : 'text-gray-500'
+            }`}>
+              {bothTeamsSelected ? "Continue to Match Setup" : "Please Select Both Teams"}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <AddTeamModal
           visible={showAddTeamModal}
@@ -389,6 +464,20 @@ export default function TeamsScreen() {
           playerLoading={playerLoading}
           onSelectPlayer={(player) => handleSelectPlayer(player, setSelectedPlayers, setModalSearchPlayer, setModalSuggestions)}
           onRemovePlayer={(playerId) => handleRemovePlayer(playerId, setSelectedPlayers)}
+        />
+
+        <PlayerSelectionModal
+          visible={showPlayerSelectionModal}
+          onClose={() => {
+            setShowPlayerSelectionModal(false);
+            setPlayerSelectionForTeam(null);
+          }}
+          team={playerSelectionForTeam === 'myTeam' ? selectedTeam : opponentTeam}
+          selectedPlayers={
+            playerSelectionForTeam === 'myTeam' ? selectedTeamPlayers : opponentTeamPlayers
+          }
+          onConfirm={handlePlayerSelectionConfirm}
+          userToken={user?.accessToken}
         />
       </ImageBackground>
     </SafeAreaView>

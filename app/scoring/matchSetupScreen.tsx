@@ -54,12 +54,41 @@ const MatchSetupScreen = () => {
         ? JSON.parse(teamsParam) 
         : null;
 
+  // Debug: Log parsed teams
+  useEffect(() => {
+    if (teamsFromParams) {
+      console.log('Parsed teams in matchSetupScreen:');
+      console.log('Team 1:', {
+        name: teamsFromParams[0]?.name,
+        playersCount: teamsFromParams[0]?.players?.length || 0,
+        players: teamsFromParams[0]?.players
+      });
+      console.log('Team 2 (Opponent):', {
+        name: teamsFromParams[1]?.name,
+        playersCount: teamsFromParams[1]?.players?.length || 0,
+        players: teamsFromParams[1]?.players
+      });
+    }
+  }, [teamsFromParams]);
+
 
             // Debug: Check what we're receiving
     useEffect(() => {
-        console.log('Teams from params:', teamsFromParams);
-        console.log('Team A:', teamsFromParams?.[0]?.name);
-        console.log('Team B:', teamsFromParams?.[1]?.name);
+        if (teamsFromParams) {
+            console.log('=== Teams Received in MatchSetupScreen ===');
+            console.log('Team A (My Team):', {
+                name: teamsFromParams[0]?.name,
+                _id: teamsFromParams[0]?._id,
+                playersCount: teamsFromParams[0]?.players?.length || 0,
+                players: teamsFromParams[0]?.players?.map((p: any) => ({ id: p.id, name: p.name }))
+            });
+            console.log('Team B (Opponent):', {
+                name: teamsFromParams[1]?.name,
+                _id: teamsFromParams[1]?._id,
+                playersCount: teamsFromParams[1]?.players?.length || 0,
+                players: teamsFromParams[1]?.players?.map((p: any) => ({ id: p.id, name: p.name }))
+            });
+        }
     }, [teamsFromParams]);
 
 
@@ -189,7 +218,20 @@ const MatchSetupScreen = () => {
      }
   };
 
-  console.log('Complete setup data:', completeSetupData);
+  console.log('=== Complete Setup Data ===');
+  console.log('Team 1:', {
+    name: teamsFromParams?.[0]?.name,
+    _id: teamsFromParams?.[0]?._id,
+    playersCount: teamsFromParams?.[0]?.players?.length || 0,
+    players: teamsFromParams?.[0]?.players
+  });
+  console.log('Team 2 (Opponent):', {
+    name: teamsFromParams?.[1]?.name,
+    _id: teamsFromParams?.[1]?._id,
+    playersCount: teamsFromParams?.[1]?.players?.length || 0,
+    players: teamsFromParams?.[1]?.players
+  });
+  console.log('Full setup data:', JSON.stringify(completeSetupData, null, 2));
 
   // 2. Save to Redux first
   dispatch(updateSetup(completeSetupData));

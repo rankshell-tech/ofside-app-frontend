@@ -8,7 +8,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TossScreen({ navigation }: any) {
-    const { sport, format } = useLocalSearchParams<{ sport: string; format: string }>();
+    const { sport, format, matchId } = useLocalSearchParams<{ sport: string; format: string; matchId: string }>();
   const [tossWinner, setTossWinner] = useState<string | null>("B");
   const [kickOff, setKickOff] = useState<string | null>("B");
   const [side, setSide] = useState<string | null>("L");
@@ -123,7 +123,7 @@ export default function TossScreen({ navigation }: any) {
             <View className="px-4 mb-5">
                 <TouchableOpacity
                     onPress={()=> router.push({ pathname: "/scoring/scoringScreen",
-                                                        params: { sport, format }})}
+                                                        params: { sport, format, matchId }})}
                     className="rounded-lg py-3 items-center" style={{ backgroundColor: theme.colors.primary }}>
                 <Text className="font-bold text-black text-lg">{sport === 'Football' ? "Kick off" : "Start match"}</Text>
                 </TouchableOpacity>
