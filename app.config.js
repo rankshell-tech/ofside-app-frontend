@@ -53,7 +53,7 @@ export default {
     extra: {
        "googleExpoClientId": "your-google-expo-client-id",
       "googleIosClientId": "your-google-ios-client-id",
-      API_URL: 'http://192.168.1.7:5000',
+      API_URL: 'http://192.168.1.6:5000',
       // API_URL: 'http://172.19.0.239:5000',
     },
   },

@@ -1,6 +1,6 @@
 // app/screens/ScoringScreen.tsx
 import React, { useState, useEffect, use } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Pressable,StyleSheet, ImageBackground, Alert } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Pressable,StyleSheet, ImageBackground, Alert, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ChevronDown, SlidersHorizontal } from "lucide-react-native";
 import { Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
@@ -70,6 +70,10 @@ const ScoringScreen = () => {
     const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
     const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
     const [selectedAssistId, setSelectedAssistId] = useState<string | null>(null);
+    const [goalScorerDropdownVisible, setGoalScorerDropdownVisible] = useState(false);
+    const [assistPlayerDropdownVisible, setAssistPlayerDropdownVisible] = useState(false);
+    const [playerDropdownVisible, setPlayerDropdownVisible] = useState(false);
+    const [playerDropdownType, setPlayerDropdownType] = useState<'basketball' | 'other' | null>(null);
     
     // Extract match data
     const teams = matchData?.teams || [];
@@ -823,17 +827,7 @@ const ScoringScreen = () => {
                                             Alert.alert('Please select a team first');
                                             return;
                                         }
-                                        const selectedTeam = selectedTeamId === team1?._id ? team1 : team2;
-                                        const players = selectedTeam?.players || [];
-                                        Alert.alert('Select Goal Scorer', 'Choose a player', 
-                                            players.map((p: any) => ({
-                                                text: p.name || p.username,
-                                                onPress: () => {
-                                                    setGoalScorer(p.name || p.username);
-                                                    setSelectedPlayerId(p.id || p._id);
-                                                }
-                                            }))
-                                        );
+                                        setGoalScorerDropdownVisible(true);
                                     }}
                                     className="flex-row justify-between items-center py-3 px-4 rounded-full mb-5" style={{backgroundColor: theme.colors.primary}}>
                                     <Text className="text-black font-medium">
@@ -850,17 +844,7 @@ const ScoringScreen = () => {
                                             Alert.alert('Please select a team first');
                                             return;
                                         }
-                                        const selectedTeam = selectedTeamId === team1?._id ? team1 : team2;
-                                        const players = selectedTeam?.players || [];
-                                        Alert.alert('Select Assisting Player', 'Choose a player', 
-                                            players.map((p: any) => ({
-                                                text: p.name || p.username,
-                                                onPress: () => {
-                                                    setPlayer(p.name || p.username);
-                                                    setSelectedAssistId(p.id || p._id);
-                                                }
-                                            }))
-                                        );
+                                        setAssistPlayerDropdownVisible(true);
                                     }}
                                     className="flex-row justify-between items-center py-3 px-4 rounded-full mb-5" style={{backgroundColor: theme.colors.primary}}>
                                     <Text className="text-black font-medium">
@@ -876,16 +860,8 @@ const ScoringScreen = () => {
                                 <Text className="text-lg font-bold mb-2">Select Player</Text>
                                 <TouchableOpacity 
                                     onPress={() => {
-                                        const allPlayers = [...(team1?.players || []), ...(team2?.players || [])];
-                                        Alert.alert('Select Player', 'Choose a player', 
-                                            allPlayers.map((p: any) => ({
-                                                text: p.name || p.username,
-                                                onPress: () => {
-                                                    setGoalScorer(p.name || p.username);
-                                                    setSelectedPlayerId(p.id || p._id);
-                                                }
-                                            }))
-                                        );
+                                        setPlayerDropdownType('other');
+                                        setPlayerDropdownVisible(true);
                                     }}
                                     className="flex-row justify-between items-center py-3 px-4 rounded-full mb-5" style={{backgroundColor: theme.colors.primary}}>
                                     <Text className="text-black font-medium">
@@ -921,17 +897,8 @@ const ScoringScreen = () => {
                                             Alert.alert('Please select a team first');
                                             return;
                                         }
-                                        const selectedTeam = selectedTeamId === team1?._id ? team1 : team2;
-                                        const players = selectedTeam?.players || [];
-                                        Alert.alert('Select Player', 'Choose a player', 
-                                            players.map((p: any) => ({
-                                                text: p.name || p.username,
-                                                onPress: () => {
-                                                    setGoalScorer(p.name || p.username);
-                                                    setSelectedPlayerId(p.id || p._id);
-                                                }
-                                            }))
-                                        );
+                                        setPlayerDropdownType('basketball');
+                                        setPlayerDropdownVisible(true);
                                     }}
                                     className="flex-row justify-between items-center py-3 px-4 rounded-full mb-5" style={{backgroundColor: theme.colors.primary}}>
                                     <Text className="text-black font-medium">
@@ -1055,6 +1022,285 @@ const ScoringScreen = () => {
                             </>
                         )}
                     </View>
+                    </View>
+                </Modal>
+
+                {/* Goal Scorer Dropdown Modal */}
+                <Modal
+                    isVisible={goalScorerDropdownVisible}
+                    onBackdropPress={() => setGoalScorerDropdownVisible(false)}
+                    onBackButtonPress={() => setGoalScorerDropdownVisible(false)}
+                    style={{ justifyContent: "flex-end", margin: 0 }}
+                    backdropOpacity={0.5}
+                >
+                    <View className="bg-white rounded-t-3xl" style={{ maxHeight: '70%' }}>
+                        <View className="flex-row justify-between items-center px-5 py-4 border-b border-gray-200">
+                            <Text className="text-lg font-bold text-gray-800">Select Goal Scorer</Text>
+                            <TouchableOpacity 
+                                onPress={() => setGoalScorerDropdownVisible(false)}
+                                className="w-8 h-8 items-center justify-center rounded-full"
+                            >
+                                <Ionicons name="close" size={24} color="#6B7280" />
+                            </TouchableOpacity>
+                        </View>
+                        {(() => {
+                            if (!selectedTeamId) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">Please select a team first</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            // Handle ID comparison - convert both to strings for reliable comparison
+                            const normalizeId = (id: any) => id?.toString() || id;
+                            const team1Id = normalizeId(team1?._id);
+                            const team2Id = normalizeId(team2?._id);
+                            const selectedTeamIdStr = normalizeId(selectedTeamId);
+                            
+                            let selectedTeam = null;
+                            if (selectedTeamIdStr === team1Id) {
+                                selectedTeam = team1;
+                            } else if (selectedTeamIdStr === team2Id) {
+                                selectedTeam = team2;
+                            }
+                            
+                            const players = selectedTeam?.players || [];
+                            
+                            console.log('Goal Scorer Dropdown - selectedTeamId:', selectedTeamIdStr);
+                            console.log('Goal Scorer Dropdown - team1Id:', team1Id);
+                            console.log('Goal Scorer Dropdown - team2Id:', team2Id);
+                            console.log('Goal Scorer Dropdown - selectedTeam:', selectedTeam?.name);
+                            console.log('Goal Scorer Dropdown - players count:', players.length);
+                            console.log('Goal Scorer Dropdown - players:', players);
+                            
+                            if (players.length === 0) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">No players available for this team</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            return (
+                                <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={true}>
+                                    {players.map((item: any, index: number) => {
+                                        const playerId = item.id || item._id;
+                                        const playerName = item.name || item.username;
+                                        const isSelected = selectedPlayerId === playerId;
+                                        
+                                        return (
+                                            <TouchableOpacity
+                                                key={playerId || index}
+                                                onPress={() => {
+                                                    console.log('Selected player:', playerName, playerId);
+                                                    setGoalScorer(playerName);
+                                                    setSelectedPlayerId(playerId);
+                                                    setGoalScorerDropdownVisible(false);
+                                                }}
+                                                className="flex-row items-center px-5 py-4 border-b border-gray-100"
+                                                style={{ backgroundColor: isSelected ? '#f3f4f6' : 'white' }}
+                                            >
+                                                <Text className="text-base text-gray-700 flex-1">
+                                                    {playerName}
+                                                </Text>
+                                                {isSelected && (
+                                                    <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                                                )}
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </ScrollView>
+                            );
+                        })()}
+                    </View>
+                </Modal>
+
+                {/* Assisting Player Dropdown Modal */}
+                <Modal
+                    isVisible={assistPlayerDropdownVisible}
+                    onBackdropPress={() => setAssistPlayerDropdownVisible(false)}
+                    onBackButtonPress={() => setAssistPlayerDropdownVisible(false)}
+                    style={{ justifyContent: "flex-end", margin: 0 }}
+                    backdropOpacity={0.5}
+                >
+                    <View className="bg-white rounded-t-3xl" style={{ maxHeight: '70%' }}>
+                        <View className="flex-row justify-between items-center px-5 py-4 border-b border-gray-200">
+                            <Text className="text-lg font-bold text-gray-800">Select Assisting Player</Text>
+                            <TouchableOpacity 
+                                onPress={() => setAssistPlayerDropdownVisible(false)}
+                                className="w-8 h-8 items-center justify-center rounded-full"
+                            >
+                                <Ionicons name="close" size={24} color="#6B7280" />
+                            </TouchableOpacity>
+                        </View>
+                        {(() => {
+                            if (!selectedTeamId) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">Please select a team first</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            // Handle ID comparison - convert both to strings for reliable comparison
+                            const normalizeId = (id: any) => id?.toString() || id;
+                            const team1Id = normalizeId(team1?._id);
+                            const team2Id = normalizeId(team2?._id);
+                            const selectedTeamIdStr = normalizeId(selectedTeamId);
+                            
+                            let selectedTeam = null;
+                            if (selectedTeamIdStr === team1Id) {
+                                selectedTeam = team1;
+                            } else if (selectedTeamIdStr === team2Id) {
+                                selectedTeam = team2;
+                            }
+                            
+                            const players = selectedTeam?.players || [];
+                            
+                            console.log('Assist Player Dropdown - selectedTeamId:', selectedTeamIdStr);
+                            console.log('Assist Player Dropdown - team1Id:', team1Id);
+                            console.log('Assist Player Dropdown - team2Id:', team2Id);
+                            console.log('Assist Player Dropdown - selectedTeam:', selectedTeam?.name);
+                            console.log('Assist Player Dropdown - players count:', players.length);
+                            console.log('Assist Player Dropdown - players:', players);
+                            
+                            if (players.length === 0) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">No players available for this team</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            return (
+                                <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={true}>
+                                    {players.map((item: any, index: number) => {
+                                        const playerId = item.id || item._id;
+                                        const playerName = item.name || item.username;
+                                        const isSelected = selectedAssistId === playerId;
+                                        
+                                        return (
+                                            <TouchableOpacity
+                                                key={playerId || index}
+                                                onPress={() => {
+                                                    console.log('Selected assist player:', playerName, playerId);
+                                                    setPlayer(playerName);
+                                                    setSelectedAssistId(playerId);
+                                                    setAssistPlayerDropdownVisible(false);
+                                                }}
+                                                className="flex-row items-center px-5 py-4 border-b border-gray-100"
+                                                style={{ backgroundColor: isSelected ? '#f3f4f6' : 'white' }}
+                                            >
+                                                <Text className="text-base text-gray-700 flex-1">
+                                                    {playerName}
+                                                </Text>
+                                                {isSelected && (
+                                                    <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                                                )}
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </ScrollView>
+                            );
+                        })()}
+                    </View>
+                </Modal>
+
+                {/* Generic Player Dropdown Modal (for Basketball and other sports) */}
+                <Modal
+                    isVisible={playerDropdownVisible}
+                    onBackdropPress={() => {
+                        setPlayerDropdownVisible(false);
+                        setPlayerDropdownType(null);
+                    }}
+                    onBackButtonPress={() => {
+                        setPlayerDropdownVisible(false);
+                        setPlayerDropdownType(null);
+                    }}
+                    style={{ justifyContent: "flex-end", margin: 0 }}
+                    backdropOpacity={0.5}
+                >
+                    <View className="bg-white rounded-t-3xl" style={{ maxHeight: '70%' }}>
+                        <View className="flex-row justify-between items-center px-5 py-4 border-b border-gray-200">
+                            <Text className="text-lg font-bold text-gray-800">Select Player</Text>
+                            <TouchableOpacity 
+                                onPress={() => {
+                                    setPlayerDropdownVisible(false);
+                                    setPlayerDropdownType(null);
+                                }}
+                                className="w-8 h-8 items-center justify-center rounded-full"
+                            >
+                                <Ionicons name="close" size={24} color="#6B7280" />
+                            </TouchableOpacity>
+                        </View>
+                        {(() => {
+                            let players: any[] = [];
+                            if (playerDropdownType === 'basketball') {
+                                if (selectedTeamId) {
+                                    const normalizeId = (id: any) => id?.toString() || id;
+                                    const team1Id = normalizeId(team1?._id);
+                                    const team2Id = normalizeId(team2?._id);
+                                    const selectedTeamIdStr = normalizeId(selectedTeamId);
+                                    
+                                    if (selectedTeamIdStr === team1Id) {
+                                        players = team1?.players || [];
+                                    } else if (selectedTeamIdStr === team2Id) {
+                                        players = team2?.players || [];
+                                    }
+                                }
+                            } else if (playerDropdownType === 'other') {
+                                players = [...(team1?.players || []), ...(team2?.players || [])];
+                            }
+                            
+                            if (playerDropdownType === 'basketball' && !selectedTeamId) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">Please select a team first</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            if (players.length === 0) {
+                                return (
+                                    <View className="px-5 py-8 items-center">
+                                        <Text className="text-gray-500">No players available</Text>
+                                    </View>
+                                );
+                            }
+                            
+                            return (
+                                <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={true}>
+                                    {players.map((item: any, index: number) => {
+                                        const playerId = item.id || item._id;
+                                        const playerName = item.name || item.username;
+                                        const isSelected = selectedPlayerId === playerId;
+                                        
+                                        return (
+                                            <TouchableOpacity
+                                                key={playerId || index}
+                                                onPress={() => {
+                                                    console.log('Selected player:', playerName, playerId);
+                                                    setGoalScorer(playerName);
+                                                    setSelectedPlayerId(playerId);
+                                                    setPlayerDropdownVisible(false);
+                                                    setPlayerDropdownType(null);
+                                                }}
+                                                className="flex-row items-center px-5 py-4 border-b border-gray-100"
+                                                style={{ backgroundColor: isSelected ? '#f3f4f6' : 'white' }}
+                                            >
+                                                <Text className="text-base text-gray-700 flex-1">
+                                                    {playerName}
+                                                </Text>
+                                                {isSelected && (
+                                                    <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                                                )}
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </ScrollView>
+                            );
+                        })()}
                     </View>
                 </Modal>
             </ScrollView>
