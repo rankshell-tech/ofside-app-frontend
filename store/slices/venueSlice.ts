@@ -28,8 +28,8 @@ const venueSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
       state.filteredVenues = state.venues.filter(venue =>
-        venue.name.toLowerCase().includes(action.payload.toLowerCase()) ||
-        venue.address.toLowerCase().includes(action.payload.toLowerCase())
+        venue.venueName.toLowerCase().includes(action.payload.toLowerCase()) ||
+        venue.location.address.toLowerCase().includes(action.payload.toLowerCase())
       );
     },
     toggleSportFilter: (state, action: PayloadAction<SportType>) => {
@@ -44,8 +44,8 @@ const venueSlice = createSlice({
         state.filteredVenues = state.venues;
       } else {
         state.filteredVenues = state.venues.filter(venue =>
-          venue.facilities.some(facility =>
-            state.selectedSports.includes(facility.sport)
+          venue.sportsOffered?.some(sport  =>
+            state.selectedSports.includes(sport as SportType)
           )
         );
       }

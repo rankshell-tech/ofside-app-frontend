@@ -17,49 +17,89 @@
    
   }
 export interface Venue {
-  id: string;
-  name: string;
+  _id?: string;
+  venueName: string;
+  venueType?: string;
+  sportsOffered?: string[];
   description: string;
-  address: string;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  ownerId: string;
-  facilities: Facility[];
-  amenities: string[];
-  coordinates: {
-    latitude: number;
-    longitude: number;
+  amenities?: string[];
+  is24HoursOpen: boolean;
+  location: {
+    address: string;
+    city: string;
+    country?: string;
+    pincode: string;
+    coordinates: {
+      type: string;
+      coordinates: number[]; // [longitude, latitude]
+    };
   };
-}
-
-export interface Facility {
-  id: string;
-  name: string;
-  sport: SportType;
-  courts: Court[];
+  contact: {
+    name: string;
+    phone: string;
+    email: string;
+  };
+  owner?: {
+    name?: string;
+    phone?: string;
+    email?: string;
+  };
+  courts: string[]; // Array of Court IDs
+  declarationAgreed?: boolean;
+  rating?: number;
+  reviewsCount?: number;
+  isActive?: boolean;
+  isTrending?: boolean;
+  isVerified?: boolean;
+  pendingChanges?: any;
+  rawVenueData?: any;
+  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Court {
-  id: string;
+  _id?: string;
   name: string;
-  hourlyRate: number;
-  facilityId: string;
+  venue: string; // Venue ID
+  sportType: string;
+  surfaceType?: string;
+  size?: string;
+  isIndoor?: boolean;
+  hasLighting?: boolean;
+  images?: {
+    cover?: string;
+    logo?: string;
+    others?: string[];
+  };
+  slotDuration?: number; // in minutes
+  maxPeople: number;
+  pricePerSlot: number;
+  peakEnabled?: boolean;
+  peakDays?: number[];
+  peakStart?: string;
+  peakEnd?: string;
+  peakPricePerSlot?: number;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  days?: number[];
 }
 
 export interface Booking {
-  id: string;
-  venueId: string;
-  courtId: string;
-  playerId: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  _id?: string;
+  user: string; // User ID
+  court: string; // Court ID
+  venue: string; // Venue ID
+  date: Date;
+  startTime: string; // HH:mm format
+  endTime: string; // HH:mm format
   totalPrice: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  venue: Venue;
-  court: Court;
+  status: 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus: 'pending' | 'paid' | 'refunded';
   paymentId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type SportType =

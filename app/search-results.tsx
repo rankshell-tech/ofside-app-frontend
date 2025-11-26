@@ -68,77 +68,43 @@ export default function SearchResults() {
   };
 
   const getMinPrice = (venue: Venue): number => {
-    const allCourts = venue.facilities.flatMap(f => f.courts);
-    return Math.min(...allCourts.map(c => c.hourlyRate));
-  };
-
-  const getSportCategory = (sport: string): 'team' | 'individual' => {
-    const teamSports = ['football', 'basketball', 'volleyball', 'cricket'];
-    return teamSports.includes(sport) ? 'team' : 'individual';
-  };
-
-  const getCourtType = (venue: Venue): CourtType[] => {
-    // Mock court types based on venue - in real app this would come from venue data
-    const courtTypes: CourtType[] = [];
-
-    venue.facilities.forEach(facility => {
-      switch (facility.sport) {
-        case 'football':
-          courtTypes.push('natural', 'synthetic');
-          break;
-        case 'tennis':
-          courtTypes.push('clay', 'hardcourt', 'indoor');
-          break;
-        case 'basketball':
-          courtTypes.push('indoor', 'outdoor');
-          break;
-        case 'badminton':
-        case 'squash':
-        case 'table_tennis':
-          courtTypes.push('indoor');
-          break;
-        default:
-          courtTypes.push('outdoor');
-      }
-    });
-
-    return [...new Set(courtTypes)]; // Remove duplicates
+    // Since courts is now an array of IDs, we can't access price directly
+    // Return a default price or 0 if no courts
+    // TODO: If courts are populated elsewhere, access pricePerSlot from populated courts
+    return venue.courts && venue.courts.length > 0 ? 0 : 0;
   };
 
   const filterVenues = (venues: Venue[]): Venue[] => {
     let filtered = venues.filter(venue => {
       // Text search
       const matchesSearch = !localSearchQuery ||
-        venue.name.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
-        venue.address.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
+        venue.venueName.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
+        venue.location.address.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
         venue.description.toLowerCase().includes(localSearchQuery.toLowerCase());
 
       // Sport filter
       const matchesSport = selectedSports.length === 0 ||
-        venue.facilities.some(facility => selectedSports.includes(facility.sport));
+        venue.sportsOffered?.some(sport => selectedSports.includes(sport as SportType));
 
       // Rating filter
-      const matchesRating = venue.rating >= minRating;
+      const matchesRating = venue.rating ? venue.rating >= minRating : true;
 
       // Price filter
-      const minPrice = getMinPrice(venue);
-      const matchesPrice = minPrice >= minPrice && minPrice <= maxPrice;
+      const venueMinPrice = getMinPrice(venue);
+      const matchesPrice = venueMinPrice >= minPrice && venueMinPrice <= maxPrice;
 
       // Category filter
       const matchesCategory = category === 'all' ||
-        venue.facilities.some(facility => getSportCategory(facility.sport) === category);
+        venue.sportsOffered?.some(sport => sport === category);
 
       // Court type filter
-      const venueCourtTypes = getCourtType(venue);
-      const matchesCourtType = courtType === 'all' || venueCourtTypes.includes(courtType);
-
-      return matchesSearch && matchesSport && matchesRating && matchesPrice && matchesCategory && matchesCourtType;
+      return matchesSearch && matchesSport && matchesRating && matchesPrice && matchesCategory;
     });
 
     // Sort venues
     switch (sortBy) {
       case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'price_low':
         filtered.sort((a, b) => getMinPrice(a) - getMinPrice(b));
@@ -148,7 +114,7 @@ export default function SearchResults() {
         break;
       case 'distance':
         // Mock distance sorting - in real app would use user location
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        filtered.sort((a, b) => a.venueName.localeCompare(b.venueName));
         break;
       default: // relevance
         // Keep original order for relevance
@@ -343,7 +309,7 @@ export default function SearchResults() {
           {filteredVenues.length > 0 ? (
             filteredVenues.map((venue) => (
               <VenueCard
-                key={venue.id}
+                key={venue._id}
                 venue={venue}
                 onPress={() => router.push(`/`)}
               />
@@ -723,4 +689,4 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
   },
-});
+})
