@@ -104,7 +104,7 @@ export default function About() {
                                 build communities, and create unforgettable experiences. Our mission is to make sports 
                                 accessible to everyone by connecting players with venues and like-minded enthusiasts.
                             </Text>
-                            <View style={styles.missionEmoji}>🏆</View>
+                            <Text style={styles.missionEmoji}>🏆</Text>
                         </View>
                     </View>
 
