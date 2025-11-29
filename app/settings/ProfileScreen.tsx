@@ -21,6 +21,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
+  Linking,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,14 +36,20 @@ export default function profileScreen() {
   console.log('user:', user);
 
 
-  const openSocialLink = (url: string) => {
-    // Use Linking API to open the URL
-    import("react-native").then(({ Linking }) => {
-      Linking.openURL(url).catch((err) =>
-        console.error("Failed to open URL:", err)
-      );
-    });
+  const openSocialLink = async (url: string) => {
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert("Error", "Cannot open this URL");
+      }
+    } catch (err) {
+      console.error("Failed to open URL:", err);
+      Alert.alert("Error", "Failed to open URL");
+    }
   };
+
 
   const getMenuItems = () => {
     const allMenuItems = [
