@@ -25,10 +25,15 @@ export interface Venue {
   amenities?: string[];
   is24HoursOpen: boolean;
   location: {
-    address: string;
+    shopNo: string;
+    floorTower: string;
+    areaSectorLocality: string;
     city: string;
+    state: string;
+    landmark: string;
     country?: string;
     pincode: string;
+    fullAddress: string;
     coordinates: {
       type: string;
       coordinates: number[]; // [longitude, latitude]
