@@ -80,7 +80,7 @@ export default function profileScreen() {
         label: "Add/Update your Venue", 
         icon: "pluscircleo", 
         onPress: () => router.push("/venue/addVenue"),
-        requiresAuth: true 
+        requiresAuth: false 
       },
       { 
         label: "Invite & Earn", 

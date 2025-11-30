@@ -88,6 +88,8 @@ export default function VenueOnboarding() {
     <SafeAreaView className="flex-1 bg-white">
         {/* Header */}
         <LinearGradient
+
+       
             colors={["#FFF201", "#FFFFFF"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 0.4 }}
@@ -100,7 +102,8 @@ export default function VenueOnboarding() {
 
             {/* Form */}
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 100, padding:20 }} // 👈 leaves space for button
+                   style={{ position: 'relative', height: '80%' }} 
+                contentContainerStyle={{ paddingBottom: 50, padding:20 }} // 👈 leaves space for button
                 showsVerticalScrollIndicator={false}
             >
                 <InputField
@@ -212,18 +215,20 @@ export default function VenueOnboarding() {
                   Please fill correct details of your venue/turf/ground.
                 </Text>
             </ScrollView>
+           
         </LinearGradient>
-        {/* Sticky Bottom Button */}
-        <TouchableOpacity onPress={()=> router.push('/venue/addAddressDetails')} className="rounded-lg border overflow-hidden absolute bottom-0 right-0 mr-2 mb-10">
+        <TouchableOpacity onPress={()=> router.push('/venue/addAddressDetails')} className="rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center">
             <LinearGradient
                 colors={["#FFF201", "#E0E0E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                className="px-6 py-1 items-center rounded-full"
+                className="p-4 items-center rounded-xl"
             >
-                <Text className="font-bold text-black text-lg">Next</Text>
+                <Text className="font-bold text-black text-lg text-center p-4">Next</Text>
             </LinearGradient>
         </TouchableOpacity>
+        {/* Sticky Bottom Button */}
+    
     </SafeAreaView>
   );
 }
