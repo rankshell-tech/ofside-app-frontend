@@ -29,7 +29,7 @@ const venueSlice = createSlice({
       state.searchQuery = action.payload;
       state.filteredVenues = state.venues.filter(venue =>
         venue.venueName.toLowerCase().includes(action.payload.toLowerCase()) ||
-        venue.location.address.toLowerCase().includes(action.payload.toLowerCase())
+        venue.location.fullAddress.toLowerCase().includes(action.payload.toLowerCase())
       );
     },
     toggleSportFilter: (state, action: PayloadAction<SportType>) => {
