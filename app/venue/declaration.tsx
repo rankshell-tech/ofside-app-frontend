@@ -19,6 +19,9 @@ export default function Declaration() {
     "Facility Images for Each Sport",
     ];
 
+
+    
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
