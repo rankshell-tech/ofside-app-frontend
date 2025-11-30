@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Venue } from '@/types';
-
+import { RootState } from '..';
 
 interface NewVenueState {
   newVenue: Venue | null;
@@ -17,13 +17,18 @@ const newVenueSlice = createSlice({
   initialState,
   reducers: {
 
+    // Use this once in the first step to create the base object
     addNewVenue: (state, action: PayloadAction<Venue>) => {
       state.newVenue = action.payload;
     },
 
-    updateNewVenue: (state, action: PayloadAction<Venue>) => {
+    // Use this in later steps to patch fields
+    updateNewVenue: (state, action: PayloadAction<Partial<Venue>>) => {
       if (state.newVenue) {
-        Object.assign(state.newVenue, action.payload);
+        state.newVenue = { ...state.newVenue, ...action.payload };
+      } else {
+        // optional: if somehow called before addNewVenue
+        state.newVenue = action.payload as Venue;
       }
     },
 
@@ -34,4 +39,8 @@ const newVenueSlice = createSlice({
 });
 
 export const { addNewVenue, updateNewVenue, setLoading } = newVenueSlice.actions;
+
+export const getNewVenueCurrentData = (state: RootState): Venue | null =>
+  state.newVenue.newVenue;
+
 export default newVenueSlice.reducer;
