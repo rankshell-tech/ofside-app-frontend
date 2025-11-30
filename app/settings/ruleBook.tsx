@@ -283,7 +283,7 @@ export default function RulesOverview() {
               placeholder="Search rule, terms, foul..."
               value={search}
               onChangeText={setSearch}
-              className="ml-2 text-gray-700"
+              className="ml-2 py-4 text-gray-700"
             />
             <FontAwesome name="search" size={20} color="black" />
           </View>
