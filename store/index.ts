@@ -4,7 +4,7 @@ import themeSlice from './slices/themeSlice';
 import venueSlice from './slices/venueSlice';
 import bookingSlice from './slices/bookingSlice';
 import matchScoringSlice from './slices/matchScoringSlice';
-
+import newVenueSlice from './slices/newVenueSlice';
 export const store = configureStore({
   reducer: {
     auth: authSlice,
@@ -12,6 +12,7 @@ export const store = configureStore({
     venues: venueSlice,
     bookings: bookingSlice,
     matchScoring: matchScoringSlice,
+    newVenue: newVenueSlice,
   },
 });
 

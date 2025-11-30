@@ -1,139 +1,90 @@
 // screens/VenueAddress.tsx
 import React, { JSX, useState, useRef, useEffect } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  Alert, 
-  Switch,
-  ActivityIndicator,
-  FlatList,
-  Keyboard
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch, ActivityIndicator, Modal, FlatList } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Marker, MapPressEvent, Region } from "react-native-maps";
+import MapView, { Marker, MapPressEvent } from "react-native-maps";
 import * as Location from "expo-location";
 import { router } from "expo-router";
-import { Entypo, Ionicons, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+import Constants from "expo-constants";
 
-// Types
-interface LocationState {
-  latitude: number;
-  longitude: number;
-}
-
-interface FormState {
-  shopNo: string;
-  floor: string;
-  area: string;
-  city: string;
-  landmark: string;
-  pincode: string;
-  contactPersonName: string;
-  contactPersonEmail: string;
-  contactPersonContact: string;
-  ownerName: string;
-  ownerEmail: string;
-  ownerContact: string;
-}
-
-interface SearchSuggestion {
-  id: string;
-  description: string;
-  place_id: string;
-  main_text: string;
-  secondary_text: string;
-}
-
-interface FloatingLabelInputProps {
+// Floating Label Input component
+const FloatingLabelInput = ({
+  label,
+  value,
+  onPress,
+  onChangeText,
+  isPicker,
+  icon,
+}: {
   label: string;
   value: string;
   onPress?: () => void;
   onChangeText?: (text: string) => void;
   isPicker?: boolean;
   icon?: JSX.Element;
-  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
-}
-
-// Google Places API Configuration
-const GOOGLE_PLACES_API_KEY = "YOUR_GOOGLE_PLACES_API_KEY"; // Replace with your actual API key
-const GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/place";
-
-// Floating Label Input component
-const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
-  label,
-  value,
-  onPress,
-  onChangeText,
-  isPicker = false,
-  icon,
-  keyboardType = "default"
 }) => (
-  <View className="mt-4">
+  <View className="mt-6">
+    {/* Label */}
     <View className="absolute -top-2 left-4 bg-white px-1 z-10">
-      <Text className="text-xs font-semibold text-gray-700">{label}</Text>
+      <Text className="text-xs font-semibold ">{label}</Text>
     </View>
 
+    {/* Input / Picker style */}
     {isPicker ? (
       <TouchableOpacity
         onPress={onPress}
-        className="border border-gray-300 rounded-xl px-4 py-3 flex-row justify-between items-center bg-white"
+        className="border border-black rounded-2xl px-4 py-4 flex-row justify-between items-center"
       >
-        <Text className="flex-1 text-base">{value || `Select ${label}`}</Text>
-        {icon || <MaterialIcons name="arrow-drop-down" size={24} color="gray" />}
+        <Text className="flex-1 text-center">{value}</Text>
+        {icon}
       </TouchableOpacity>
     ) : (
-      <View className="border border-gray-300 rounded-xl px-4 py-2 bg-white">
+      <View className="border border-black rounded-2xl px-4 py-1">
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          className="text-base"
-          keyboardType={keyboardType}
-          placeholderTextColor="#9CA3AF"
+          className="text-left py-2"
         />
       </View>
     )}
   </View>
 );
 
-// Search Suggestion Item Component
-const SearchSuggestionItem: React.FC<{
-  suggestion: SearchSuggestion;
-  onPress: (suggestion: SearchSuggestion) => void;
-}> = ({ suggestion, onPress }) => (
-  <TouchableOpacity
-    onPress={() => onPress(suggestion)}
-    className="flex-row items-center py-3 px-4 border-b border-gray-100 bg-white active:bg-gray-50"
-  >
-    <FontAwesome5 name="map-marker-alt" size={16} color="#EF4444" />
-    <View className="ml-3 flex-1">
-      <Text className="text-base font-medium text-gray-900" numberOfLines={1}>
-        {suggestion.main_text}
-      </Text>
-      <Text className="text-sm text-gray-500 mt-1" numberOfLines={1}>
-        {suggestion.secondary_text}
-      </Text>
-    </View>
-    <MaterialIcons name="chevron-right" size={20} color="#9CA3AF" />
-  </TouchableOpacity>
-);
+interface PlacePrediction {
+  place_id: string;
+  description: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+  };
+}
+
+interface PlaceDetails {
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+  address_components: any[];
+  formatted_address: string;
+  name: string;
+}
 
 export default function VenueAddress() {
   const navigation = useNavigation();
-  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
-  const mapRef = useRef<MapView>(null);
-  
-  const [form, setForm] = useState<FormState>({
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [form, setForm] = useState({
     shopNo: "",
     floor: "",
+    floorTower: "",
     area: "",
+    areaSectorLocality: "",
     city: "",
+    state: "",
     landmark: "",
     pincode: "",
     contactPersonName: "",
@@ -144,12 +95,12 @@ export default function VenueAddress() {
     ownerContact: "",
   });
 
-  const [location, setLocation] = useState<LocationState>({
-    latitude: 28.6139,
+  const [location, setLocation] = useState({
+    latitude: 28.6139, // Default: New Delhi
     longitude: 77.2090,
   });
 
-  const [region, setRegion] = useState<Region>({
+  const [region, setRegion] = useState({
     latitude: 28.6139,
     longitude: 77.2090,
     latitudeDelta: 0.01,
@@ -157,254 +108,288 @@ export default function VenueAddress() {
   });
 
   const [areOwnerDetailsSame, setAreOwnerDetailsSame] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
+  const [showPredictions, setShowPredictions] = useState(false);
 
-  // 🔹 Auto-fetch current location on mount
+  // Google Places API Key - You need to add this to your app.config.js
+  const GOOGLE_API_KEY = Constants.expoConfig?.extra?.GOOGLE_PLACES_API_KEY;
+
+  // 🔹 Request location permission on component mount
   useEffect(() => {
-    getCurrentLocation();
+    requestLocationPermission();
   }, []);
 
-  const getCurrentLocation = async (): Promise<void> => {
+  const requestLocationPermission = async () => {
     try {
-      setIsLoading(true);
-      
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission denied', 'Location permission is required to auto-fill address');
-        return;
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        setHasLocationPermission(true);
+        getCurrentLocation();
+      } else {
+        Alert.alert('Permission denied', 'Location permission is required for better experience');
       }
-
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-
-      const { latitude, longitude } = currentLocation.coords;
-      
-      setLocation({ latitude, longitude });
-      setRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-
-      await fetchAddressFromCoordinates(latitude, longitude);
-      
     } catch (error) {
-      console.error('Error getting location:', error);
-      Alert.alert('Error', 'Unable to fetch current location');
-    } finally {
-      setIsLoading(false);
+      console.error('Error requesting location permission:', error);
     }
   };
 
-  // 🔹 Get address from coordinates using Google Geocoding API
-  const fetchAddressFromCoordinates = async (lat: number, lng: number): Promise<void> => {
+  // 🔹 Get current location
+  const getCurrentLocation = async () => {
     try {
-      const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_PLACES_API_KEY}`
-      );
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      
+      setLocation({ latitude, longitude });
+      setRegion(prev => ({
+        ...prev,
+        latitude,
+        longitude,
+      }));
+      
+      fetchAddress(latitude, longitude);
+    } catch (error) {
+      console.error('Error getting current location:', error);
+    }
+  };
 
-      if (response.data.results && response.data.results.length > 0) {
-        const address = response.data.results[0];
-        const addressComponents = address.address_components;
-        
-        // Extract address components
-        const getComponent = (type: string) => {
-          const component = addressComponents.find((comp: any) => comp.types.includes(type));
-          return component ? component.long_name : '';
+  // 🔹 Get address from coordinates
+  const fetchAddress = async (lat: number, lng: number) => {
+    try {
+      let [addr] = await Location.reverseGeocodeAsync({ 
+        latitude: lat, 
+        longitude: lng 
+      });
+      console.log("addr", addr);
+
+      if (addr) {
+        // Map expo-location address to our comprehensive address structure
+        const addressComponents = {
+          shopNo: addr.streetNumber || addr.name || "",
+          
+          floorTower: "", // expo-location doesn't provide this
+          
+          areaSectorLocality: [
+            addr.street,
+            addr.district,
+            addr.subregion,
+            addr.name,
+          ]
+            .filter(Boolean)
+            .filter((v, i, arr) => arr.indexOf(v) === i)
+            .join(", "),
+          
+          city: addr.city || addr.subregion || "",
+          
+          state: addr.region || "",
+          
+          landmark: addr.street || addr.name || "",
+          
+          pincode: addr.postalCode || "",
         };
 
+        // Update form with extracted components
         setForm((prev) => ({
           ...prev,
-          area: getComponent('sublocality') || getComponent('locality') || prev.area,
-          city: getComponent('locality') || getComponent('administrative_area_level_2') || prev.city,
-          pincode: getComponent('postal_code') || prev.pincode,
-          landmark: getComponent('route') || address.formatted_address.split(',')[0] || prev.landmark,
+          shopNo: addressComponents.shopNo || '',
+          floorTower: addressComponents.floorTower || '',
+          area: addressComponents.areaSectorLocality || '',
+          areaSectorLocality: addressComponents.areaSectorLocality || '',
+          city: addressComponents.city || '',
+          state: addressComponents.state || '',
+          landmark: addressComponents.landmark || '',
+          pincode: addressComponents.pincode || '',
         }));
       }
     } catch (error) {
-      console.error('Reverse geocoding error:', error);
+      console.error("Error fetching address:", error);
     }
   };
 
-  // 🔹 Fetch search suggestions from Google Places Autocomplete API
-  const fetchSearchSuggestions = async (query: string): Promise<void> => {
-    if (!query.trim() || query.length < 2) {
-      setSearchSuggestions([]);
-      setShowSuggestions(false);
+  // 🔹 Search for places with debouncing
+  const searchPlaces = async (query: string) => {
+    if (!query.trim() || !GOOGLE_API_KEY) {
+      setPredictions([]);
+      setShowPredictions(false);
       return;
     }
 
+    setIsSearching(true);
     try {
-      setIsSearching(true);
-      
-      const response = await axios.get(
-        `${GOOGLE_PLACES_BASE_URL}/autocomplete/json?input=${encodeURIComponent(query)}&key=${GOOGLE_PLACES_API_KEY}&components=country:in`
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?` +
+        `input=${encodeURIComponent(query)}` +
+        `&key=${GOOGLE_API_KEY}` +
+        `&components=country:in` +
+        `&location=20.5937,78.9629` +
+        `&radius=2000000` +
+        `&types=establishment`
       );
 
-      if (response.data.predictions && response.data.predictions.length > 0) {
-        const suggestions: SearchSuggestion[] = response.data.predictions.map((prediction: any, index: number) => {
-          // Split the description into main text and secondary text
-          const parts = prediction.description.split(', ');
-          const main_text = parts[0];
-          const secondary_text = parts.slice(1).join(', ');
+      const data = await response.json();
 
-          return {
-            id: prediction.id || `suggestion-${index}-${Date.now()}`,
-            description: prediction.description,
-            place_id: prediction.place_id,
-            main_text,
-            secondary_text
-          };
-        });
-
-        setSearchSuggestions(suggestions);
-        setShowSuggestions(suggestions.length > 0);
+      if (data.status === 'OK') {
+        setPredictions(data.predictions);
+        setShowPredictions(true);
       } else {
-        setSearchSuggestions([]);
-        setShowSuggestions(false);
+        setPredictions([]);
+        setShowPredictions(false);
       }
-      
     } catch (error) {
-      console.error('Search suggestions error:', error);
-      setSearchSuggestions([]);
-      setShowSuggestions(false);
-      
-      // Fallback to expo-location if Google API fails
-      if (query.length >= 3) {
-        try {
-          const results = await Location.geocodeAsync(query);
-          const fallbackSuggestions: SearchSuggestion[] = results.slice(0, 5).map((result, index) => ({
-            id: `fallback-${index}-${Date.now()}`,
-            description: result.name || query,
-            place_id: `fallback-${index}`,
-            main_text: result.name || 'Location',
-            secondary_text: result.city || result.region || 'Unknown area'
-          }));
-          setSearchSuggestions(fallbackSuggestions);
-          setShowSuggestions(fallbackSuggestions.length > 0);
-        } catch (fallbackError) {
-          console.error('Fallback search error:', fallbackError);
-        }
-      }
+      console.error('Error searching places:', error);
+      setPredictions([]);
+      setShowPredictions(false);
     } finally {
       setIsSearching(false);
     }
   };
 
-  // 🔹 Handle search input changes with debouncing
-  const handleSearchChange = (text: string): void => {
+  // 🔹 Handle search input with debouncing
+  const handleSearchChange = (text: string) => {
     setSearchQuery(text);
-    setShowSuggestions(text.length > 0);
-
-    // Clear previous timeout
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
+    
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
     }
 
-    // Set new timeout for debounced search
-    searchTimeout.current = setTimeout(() => {
-      if (text.length >= 2) {
-        fetchSearchSuggestions(text);
-      } else {
-        setSearchSuggestions([]);
-        setShowSuggestions(false);
-      }
+    typingTimeout.current = setTimeout(() => {
+      searchPlaces(text);
     }, 300);
   };
 
-  // 🔹 Get place details from Google Places API
-  const getPlaceDetails = async (placeId: string): Promise<any> => {
+  // 🔹 Get place details
+  const getPlaceDetails = async (placeId: string) => {
+    if (!GOOGLE_API_KEY) {
+      Alert.alert('Error', 'Google Places API key not configured');
+      return;
+    }
+
+    setIsSearching(true);
     try {
-      const response = await axios.get(
-        `${GOOGLE_PLACES_BASE_URL}/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}&fields=geometry,name,formatted_address,address_components`
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?` +
+        `place_id=${placeId}` +
+        `&key=${GOOGLE_API_KEY}` +
+        `&fields=name,formatted_address,geometry,address_components`
       );
-      return response.data.result;
+
+      const data = await response.json();
+
+      if (data.status === 'OK') {
+        const place: PlaceDetails = data.result;
+        updateFormWithPlaceDetails(place);
+      } else {
+        Alert.alert('Error', 'Failed to get place details');
+      }
     } catch (error) {
-      console.error('Place details error:', error);
-      throw error;
+      console.error('Error getting place details:', error);
+      Alert.alert('Error', 'Failed to get place details');
+    } finally {
+      setIsSearching(false);
+      setShowPredictions(false);
+      setSearchQuery("");
     }
   };
 
-  // 🔹 When user selects a search suggestion
-  const handleSuggestionSelect = async (suggestion: SearchSuggestion): Promise<void> => {
-    try {
-      setIsLoading(true);
-      setSearchQuery(suggestion.description);
-      setShowSuggestions(false);
-      setSearchSuggestions([]);
-      Keyboard.dismiss();
+  // 🔹 Update form with place details
+  const updateFormWithPlaceDetails = (place: PlaceDetails) => {
+    const { address_components, geometry, formatted_address } = place;
+    console.log("formatted_address", formatted_address);
+    
+    // Extract address components - accepts multiple type strings
+    const getComponent = (...types: string[]): string => {
+      const component = address_components?.find((comp: any) =>
+        types.some(type => comp.types.includes(type))
+      );
+      return component?.long_name || '';
+    };
 
-      // Get detailed place information
-      const placeDetails = await getPlaceDetails(suggestion.place_id);
-      
-      if (placeDetails && placeDetails.geometry && placeDetails.geometry.location) {
-        const { lat: latitude, lng: longitude } = placeDetails.geometry.location;
-        
-        setLocation({ latitude, longitude });
-        setRegion(prev => ({
-          ...prev,
-          latitude,
-          longitude,
-        }));
+    // Extract address components as per recommendation
+    const addressComponents = {
+      shopNo:
+        getComponent(
+          "street_number",
+          "subpremise",
+          "premise",
+          "establishment"
+        ) ||
+        place.address_components?.[0]?.long_name ||
+        "",
 
-        // Animate map to new location
-        mapRef.current?.animateToRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }, 1000);
+      floorTower: getComponent("floor", "tower", "room"),
 
-        // Update form with place details
-        if (placeDetails.address_components) {
-          const addressComponents = placeDetails.address_components;
-          
-          const getComponent = (type: string) => {
-            const component = addressComponents.find((comp: any) => comp.types.includes(type));
-            return component ? component.long_name : '';
-          };
+      areaSectorLocality: [
+        getComponent("route"),
+        getComponent("neighborhood"),
+        getComponent("sublocality_level_3"),
+        getComponent("sublocality_level_2"),
+        getComponent("sublocality_level_1"),
+        getComponent("political"),
+        getComponent("premise"),
+      ]
+        .filter(Boolean)
+        .filter((v, i, arr) => arr.indexOf(v) === i)
+        .join(", "),
 
+      city: getComponent(
+        "locality",
+        "administrative_area_level_2",
+        "sublocality",
+        "postal_town"
+      ),
+
+      state: getComponent(
+        "administrative_area_level_1",
+        "administrative_area_level_2"
+      ),
+
+      landmark: getComponent("landmark"),
+
+      pincode: getComponent("postal_code", "postal_code_suffix"),
+    };
+
+    // Update form with extracted components
           setForm(prev => ({
             ...prev,
-            area: getComponent('sublocality') || getComponent('locality') || prev.area,
-            city: getComponent('locality') || getComponent('administrative_area_level_2') || prev.city,
-            pincode: getComponent('postal_code') || prev.pincode,
-            landmark: getComponent('route') || placeDetails.name || prev.landmark,
-          }));
-        }
+      shopNo: addressComponents.shopNo || '',
+      floorTower: addressComponents.floorTower || '',
+      area: addressComponents.areaSectorLocality || '',
+      areaSectorLocality: addressComponents.areaSectorLocality || '',
+      city: addressComponents.city || '',
+      state: addressComponents.state || '',
+      landmark: addressComponents.landmark || '',
+      pincode: addressComponents.pincode || '',
+    }));
 
-        await fetchAddressFromCoordinates(latitude, longitude);
-      }
-    } catch (error) {
-      console.error('Suggestion selection error:', error);
-      Alert.alert("Error", "Failed to get location details. Please try again.");
-    } finally {
-      setIsLoading(false);
+    // Update map location
+    if (geometry?.location) {
+      const { lat, lng } = geometry.location;
+      setLocation({ latitude: lat, longitude: lng });
+      setRegion(prev => ({
+        ...prev,
+        latitude: lat,
+        longitude: lng,
+      }));
     }
   };
 
   // 🔹 When user taps map
-  const handleMapPress = (e: MapPressEvent): void => {
+  const handleMapPress = (e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
 
     setLocation({ latitude, longitude });
-    setRegion(prev => ({
+    setRegion((prev) => ({
       ...prev,
       latitude,
       longitude,
     }));
 
-    fetchAddressFromCoordinates(latitude, longitude);
+    fetchAddress(latitude, longitude);
   };
 
-  // 🔹 Sync owner details with contact person
-  const setOwnerDetails = (): void => {
+  const setOwnerDetails = () => {
     if (!areOwnerDetailsSame) {
       setForm(prev => ({
         ...prev,
@@ -422,22 +407,69 @@ export default function VenueAddress() {
     }
   };
 
-  const handleFormChange = (field: keyof FormState, value: string): void => {
-    setForm(prev => ({ ...prev, [field]: value }));
-  };
+  // 🔹 Forward geocode (convert text → lat/lng)
+  const updateLocationFromForm = async () => {
+    try {
+      const addressParts = [
+        form.shopNo,
+        form.floor,
+        form.area,
+        form.city,
+        form.pincode
+      ].filter(Boolean);
+      
+      const address = addressParts.join(" ");
+      
+      if (!address.trim()) return;
 
-  const handleSearchSubmit = (): void => {
-    if (searchQuery.trim()) {
-      setShowSuggestions(false);
-      Keyboard.dismiss();
+      let results = await Location.geocodeAsync(address);
+
+      if (results.length > 0) {
+        const { latitude, longitude } = results[0];
+        setLocation({ latitude, longitude });
+        setRegion((prev) => ({
+          ...prev,
+          latitude,
+          longitude,
+        }));
+      }
+    } catch (err) {
+      console.error("Geocoding failed", err);
     }
   };
 
-  // Clear search suggestions when clicking outside
-  const handleBackdropPress = (): void => {
-    setShowSuggestions(false);
-    Keyboard.dismiss();
+  const handleFormChange = (field: keyof typeof form, value: string) => {
+    setForm({ ...form, [field]: value });
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+    const addressFields = ['area', 'city', 'pincode'];
+    if (addressFields.includes(field)) {
+      typingTimeout.current = setTimeout(() => {
+        updateLocationFromForm();
+      }, 800);
+    }
   };
+
+  // 🔹 Render prediction item
+  const renderPrediction = ({ item }: { item: PlacePrediction }) => (
+    <TouchableOpacity
+      className="p-3 border-b border-gray-200 bg-white"
+      onPress={() => getPlaceDetails(item.place_id)}
+    >
+      <View className="flex-row items-start">
+        <MaterialIcons name="place" size={20} color="#666" />
+        <View className="ml-2 flex-1">
+          <Text className="font-semibold text-gray-900">
+            {item.structured_formatting.main_text}
+          </Text>
+          <Text className="text-xs text-gray-500 mt-1">
+            {item.structured_formatting.secondary_text}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -446,89 +478,84 @@ export default function VenueAddress() {
         colors={["#FFF201", "#FFFFFF"]}
         start={{ x: 1, y: 0 }}
         end={{ x: 1, y: 0.3 }}
-        className="flex-1"
+        className="flex-1 relative"
+        style={{ height: '90%' }} 
       >
-        {/* Compact Header */}
-        <View className="flex-row items-center px-4 pt-2">
-          <TouchableOpacity 
-            onPress={() => navigation.goBack()}
-            className="w-8 h-8 rounded-full border border-gray-300 items-center justify-center mr-3"
-          >
-            <Entypo name="chevron-left" size={20} color="black" />
-          </TouchableOpacity>
-          <View className="flex-1">
-            <Text className="text-lg font-bold">Add your venue's location</Text>
-            <Text className="text-xs text-gray-600">
-              Pin your venue location to the map below
-            </Text>
-          </View>
+        <View className="w-8 h-8 rounded-full border-4 mx-2 mt-2" >
+          <Entypo onPress={() => navigation.goBack()} name="chevron-left" size={20} color="black" />
         </View>
+        <Text className="text-xl font-bold mt-5 px-5">Add your venue's location</Text>
+        <Text className="text-[10px] text-gray-700 px-5">
+          Pin your venue location to the map below
+        </Text>
 
-        {/* Search Bar with Suggestions */}
-        <View className="px-4 mt-3 z-50">
-          <View className="flex-row items-center border border-gray-300 rounded-xl px-3 py-2 bg-white shadow-sm">
-            <Ionicons name="search" size={20} color="#6B7280" />
+        {/* Search Box */}
+        <View className="mt-3 px-5" style={{ zIndex: 1000, elevation: 1000 }}>
+          <View className="relative">
+            <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-3 bg-white">
+              <Ionicons name="search" size={20} color="gray" />
             <TextInput
-              placeholder="Search for venues, areas, or landmarks..."
+                placeholder="Search for your venue (e.g., Smash2Play, Play Arena)"
               value={searchQuery}
               onChangeText={handleSearchChange}
-              onSubmitEditing={handleSearchSubmit}
-              className="flex-1 ml-2 text-base"
+                className="flex-1 ml-2"
               returnKeyType="search"
-              onFocus={() => setShowSuggestions(searchQuery.length > 0)}
-              placeholderTextColor="#9CA3AF"
-            />
-            {searchQuery ? (
-              <TouchableOpacity onPress={() => {
-                setSearchQuery("");
-                setSearchSuggestions([]);
-                setShowSuggestions(false);
-              }}>
-                <Ionicons name="close-circle" size={20} color="#6B7280" />
-              </TouchableOpacity>
-            ) : null}
+              />
+              {isSearching && (
+                <ActivityIndicator size="small" color="#666" />
+              )}
           </View>
 
-          {/* Search Suggestions Dropdown */}
-          {showSuggestions && (
-            <View className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 max-h-60 z-50">
-              {isSearching ? (
-                <View className="py-4 items-center">
-                  <ActivityIndicator size="small" color="#FFF201" />
-                  <Text className="text-gray-500 mt-2">Searching venues...</Text>
-                </View>
-              ) : searchSuggestions.length > 0 ? (
+            {/* Predictions Dropdown */}
+            {showPredictions && predictions.length > 0 && (
+              <View 
+                style={{ 
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  marginTop: 4,
+                  backgroundColor: 'white',
+                  borderWidth: 1,
+                  borderColor: '#D1D5DB',
+                  borderRadius: 16,
+                  maxHeight: 192,
+                  zIndex: 1001,
+                  elevation: 1001,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                }}
+              >
                 <FlatList
-                  data={searchSuggestions}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <SearchSuggestionItem
-                      suggestion={item}
-                      onPress={handleSuggestionSelect}
-                    />
-                  )}
+                  data={predictions}
+                  renderItem={renderPrediction}
+                  keyExtractor={(item) => item.place_id}
                   keyboardShouldPersistTaps="handled"
-                  nestedScrollEnabled
-                  showsVerticalScrollIndicator={false}
                 />
-              ) : searchQuery.length >= 2 ? (
-                <View className="py-4 items-center">
-                  <Ionicons name="location-outline" size={24} color="#9CA3AF" />
-                  <Text className="text-gray-500 mt-1">No venues found</Text>
-                  <Text className="text-gray-400 text-xs">Try a different search term</Text>
-                </View>
-              ) : null}
             </View>
           )}
+          </View>
         </View>
 
+        {/* Current Location Button */}
+        <TouchableOpacity 
+          onPress={getCurrentLocation}
+          className="mt-2 px-5"
+        >
+          <View className="flex-row items-center justify-center bg-blue-50 py-2 rounded-2xl border border-blue-200">
+            <Ionicons name="locate" size={16} color="#3B82F6" />
+            <Text className="text-blue-600 font-medium ml-2">Use Current Location</Text>
+          </View>
+        </TouchableOpacity>
+
         {/* Interactive Map */}
-        <View className="mt-3 px-4 h-40">
+        <View className="mt-3 px-5" style={{ zIndex: 1, elevation: 1 }}>
           <MapView
-            ref={mapRef}
-            style={{ width: "100%", height: "100%", borderRadius: 12 }}
+            style={{ width: "100%", height: 90, borderRadius: 15 }}
             region={region}
-            onRegionChangeComplete={setRegion}
+            onRegionChangeComplete={(r) => setRegion(r)}
             onPress={handleMapPress}
           >
             <Marker
@@ -537,62 +564,136 @@ export default function VenueAddress() {
               onDragEnd={(e) => {
                 const { latitude, longitude } = e.nativeEvent.coordinate;
                 setLocation({ latitude, longitude });
-                setRegion(prev => ({ ...prev, latitude, longitude }));
-                fetchAddressFromCoordinates(latitude, longitude);
+                setRegion((prev) => ({
+                  ...prev,
+                  latitude,
+                  longitude,
+                }));
+                fetchAddress(latitude, longitude);
               }}
             />
           </MapView>
-          
-          {/* Current Location Button */}
-          <TouchableOpacity
-            onPress={getCurrentLocation}
-            className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg border border-gray-200"
-            disabled={isLoading}
-          >
-            <MaterialIcons 
-              name="my-location" 
-              size={20} 
-              color={isLoading ? "#9CA3AF" : "#3B82F6"} 
-            />
-          </TouchableOpacity>
-          
-          {isLoading && (
-            <View className="absolute inset-0 bg-black bg-opacity-20 rounded-xl items-center justify-center">
-              <ActivityIndicator size="large" color="#FFF201" />
-            </View>
-          )}
         </View>
 
-        {/* Backdrop for suggestions */}
-        {showSuggestions && (
-          <TouchableOpacity
-            className="absolute inset-0 bg-transparent z-40"
-            onPress={handleBackdropPress}
-            activeOpacity={1}
+        {/* Address Form */}
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 20, padding: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text className="text-lg font-bold mb-3">Venue address details</Text>
+
+          <FloatingLabelInput
+            label="Shop no./ building no.*"
+            value={form.shopNo}
+            onChangeText={(t) => setForm({ ...form, shopNo: t })}
           />
-        )}
+          <FloatingLabelInput
+            label="Floor / tower (optional)"
+            value={form.floorTower || form.floor}
+            onChangeText={(t) => setForm({ ...form, floorTower: t, floor: t })}
+          />
+          <FloatingLabelInput
+            label="Area / Sector / Locality*"
+            value={form.areaSectorLocality || form.area}
+            onChangeText={(t) => {
+              setForm({ ...form, areaSectorLocality: t, area: t });
+              handleFormChange("area", t);
+            }}
+          />
+          <FloatingLabelInput
+            label="City*"
+            value={form.city}
+            onChangeText={(t) => handleFormChange("city", t)}
+          />
+          <FloatingLabelInput
+            label="State (optional)"
+            value={form.state}
+            onChangeText={(t) => setForm({ ...form, state: t })}
+          />
+          <FloatingLabelInput
+            label="Any landmark area (optional)"
+            value={form.landmark}
+            onChangeText={(t) => setForm({ ...form, landmark: t })}
+          />
+          <FloatingLabelInput
+            label="Area pincode*"
+            value={form.pincode}
+            onChangeText={(t) => handleFormChange("pincode", t)}
+          />
 
-        {/* Rest of your form component remains the same */}
-        {/* ... (form code from previous version) ... */}
+          <Text className="text-xs text-gray-600 my-5">
+            Please note Users will see this address on Ofside
+          </Text>
 
+          <FloatingLabelInput
+            label="Contact Person Name"
+            value={form.contactPersonName}
+            onChangeText={(t) => setForm({ ...form, contactPersonName: t })}
+          />
+          <FloatingLabelInput
+            label="Contact Person Phone number*"
+            value={form.contactPersonContact}
+            onChangeText={(t) => setForm({ ...form, contactPersonContact: t })}
+          />
+          <FloatingLabelInput
+            label="Contact Person Email Address*"
+            value={form.contactPersonEmail}
+            onChangeText={(t) => setForm({ ...form, contactPersonEmail: t })}
+          />
+          <Text className="text-xs text-gray-600 bg-yellow-100 my-2 mx-3 p-2 rounded">
+            Booking Confirmation emails will be sent to this address
+          </Text>
+          
+          <View className="flex-row items-center justify-between mt-4 mb-2">
+            <Text className="text-base font-medium flex-1 mr-4">
+              Are Owner details same as contact person?
+            </Text>
+            <Switch
+              value={areOwnerDetailsSame}
+              onValueChange={() => { 
+                setAreOwnerDetailsSame(!areOwnerDetailsSame); 
+                setOwnerDetails(); 
+              }}
+              trackColor={{ false: "#ccc", true: "#4CAF50" }}
+            />
+          </View>
+          
+          {!areOwnerDetailsSame && (
+            <>
+              <FloatingLabelInput
+                label="Owner Name"
+                value={form.ownerName}
+                onChangeText={(t) => setForm({ ...form, ownerName: t })}
+              />
+              <FloatingLabelInput
+                label="Owner Phone number*"
+                value={form.ownerContact}
+                onChangeText={(t) => setForm({ ...form, ownerContact: t })}
+              />
+              <FloatingLabelInput
+                label="Owner Email Address*"
+                value={form.ownerEmail}
+                onChangeText={(t) => setForm({ ...form, ownerEmail: t })}
+              />
+            </>
+          )}
+        </ScrollView>
       </LinearGradient>
 
       {/* Sticky Next Button */}
-      <View className="absolute bottom-4 right-4 z-30">
-        <TouchableOpacity 
+      <TouchableOpacity 
           onPress={() => router.push('/venue/addAmenities')}
-          className="rounded-full overflow-hidden shadow-lg"
+          className="rounded-lg border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center"
         >
           <LinearGradient
-            colors={["#FFF201", "#F59E0B"]}
+            colors={["#FFF201", "#E0E0E0"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="px-6 py-3 items-center justify-center"
+            className="px-6 py-3 items-center rounded-full"
           >
-            <Text className="font-bold text-black text-base">Next</Text>
+            <Text className="font-bold p-4 text-center text-black text-lg">Next</Text>
           </LinearGradient>
         </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }

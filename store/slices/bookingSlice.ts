@@ -22,7 +22,7 @@ const bookingSlice = createSlice({
       state.bookings.push(action.payload);
     },
     cancelBooking: (state, action: PayloadAction<string>) => {
-      const booking = state.bookings.find(b => b.id === action.payload);
+      const booking = state.bookings.find(b => b._id === action.payload);
       if (booking) {
         booking.status = 'cancelled';
       }

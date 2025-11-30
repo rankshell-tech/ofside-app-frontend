@@ -55,6 +55,7 @@ export default {
       "googleIosClientId": "your-google-ios-client-id",
       API_URL: 'http://192.168.1.8:5000',
       // API_URL: 'http://172.19.0.239:5000',
+      GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     },
   },
 };  

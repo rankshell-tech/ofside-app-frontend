@@ -1,6 +1,6 @@
 // screens/VenueOnboarding.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Platform, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Iconify from "@/components/Iconify";
+import { useNewVenue } from "@/hooks/useNewVenue";
+import { Venue } from "@/types";
+
+
 
 // Reusable Input Component
 type InputFieldProps = {
@@ -42,8 +46,8 @@ export default function VenueOnboarding() {
 
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const [form, setForm] = useState({
-    brandName: "Xyz turfs",
-    description: ""
+    venueName: "Xyz turfs",
+    description: "Desc fkjrjfkrfk"
   });
   const [is24Hours, setIs24Hours] = useState(false);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -84,6 +88,31 @@ export default function VenueOnboarding() {
     setCloseTime(null)
   }
 
+
+  const { addNewVenue, updateNewVenue } = useNewVenue();
+
+  const allFieldsFilled = form.venueName && form.description && selectedDays.length > 0 && (openTime && closeTime || is24Hours);
+
+
+
+  const handleSaveAndNext =  () => {
+
+    if (!allFieldsFilled) {
+      Alert.alert("Please fill all the fields to proceed");
+      return;
+    }
+
+    updateNewVenue({
+      venueName: form.venueName,
+      description: form.description,
+      is24HoursOpen: is24Hours,
+      days: selectedDays,
+      openTime: openTime ? formatTime(openTime) : "",
+      closeTime: closeTime ? formatTime(closeTime) : "",
+    } as unknown as Venue);
+    router.push('/venue/addAddressDetails');
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
         {/* Header */}
@@ -110,8 +139,8 @@ export default function VenueOnboarding() {
                     label="Venue name"
                     sublabel="Users will see this name on Ofside"
                     placeholder="Xyz turfs"
-                    value={form.brandName}
-                    onChangeText={(text) => setForm({ ...form, brandName: text })}
+                    value={form.venueName}
+                    onChangeText={(text) => setForm({ ...form, venueName: text })}
                 />
 
                 <View className="mb-5">
@@ -217,9 +246,9 @@ export default function VenueOnboarding() {
             </ScrollView>
            
         </LinearGradient>
-        <TouchableOpacity onPress={()=> router.push('/venue/addAddressDetails')} className="rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center">
+        <TouchableOpacity onPress={()=> handleSaveAndNext()} className={`rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center ${!allFieldsFilled ? 'opacity-50' : 'opacity-100'}`}>
             <LinearGradient
-                colors={["#FFF201", "#E0E0E0"]}
+                colors={!allFieldsFilled ? ["#E0E0E0", "#E0E0E0"] : ["#FFF201", "#E0E0E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 className="p-4 items-center rounded-xl"
