@@ -9,6 +9,8 @@ import { router } from "expo-router";
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
+import { useNewVenue } from "@/hooks/useNewVenue";
+import { Venue } from "@/types";
 
 // Floating Label Input component
 const FloatingLabelInput = ({
@@ -76,17 +78,18 @@ interface PlaceDetails {
 
 export default function VenueAddress() {
   const navigation = useNavigation();
+  const { currentNewVenue ,updateNewVenue,updateVenuePartial} = useNewVenue();
   const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [form, setForm] = useState({
     shopNo: "",
-    floor: "",
     floorTower: "",
-    area: "",
     areaSectorLocality: "",
     city: "",
     state: "",
     landmark: "",
     pincode: "",
+    fullAddress: "",
+    country: "India",
     contactPersonName: "",
     contactPersonEmail: "",
     contactPersonContact: "",
@@ -407,14 +410,66 @@ export default function VenueAddress() {
     }
   };
 
+
+  const handleSaveAndNext = () => {
+    console.log("form", form);
+    
+    // Build full address string
+    const fullAddressParts = [
+      form.shopNo,
+      form.floorTower,
+      form.areaSectorLocality,
+      form.city,
+      form.state,
+      form.pincode,
+      form.country,
+    ].filter(Boolean);
+    const fullAddress = fullAddressParts.join(', ');
+
+    // Update location, contact, and owner using the helper function (properly merges nested objects)
+    updateVenuePartial({
+      location: {
+        shopNo: form.shopNo || '',
+        floorTower: form.floorTower || '',
+        areaSectorLocality: form.areaSectorLocality || '',
+        city: form.city || '',
+        state: form.state || '',
+        landmark: form.landmark || '',
+        country: form.country || 'India',
+        pincode: form.pincode || '',
+        fullAddress: fullAddress || '',
+        coordinates: {
+          type: "Point",
+          coordinates: [location.longitude, location.latitude],
+        }
+      },
+      contact: {
+        name: form.contactPersonName || '',
+        phone: form.contactPersonContact || '',
+        email: form.contactPersonEmail || '',
+      },
+      ...(form.ownerName || form.ownerEmail || form.ownerContact ? {
+        owner: {
+          name: form.ownerName || '',
+          phone: form.ownerContact || '',
+          email: form.ownerEmail || '',
+        }
+      } : {})
+    });
+  
+
+    router.push('/venue/addAmenities');
+  };
+
   // 🔹 Forward geocode (convert text → lat/lng)
   const updateLocationFromForm = async () => {
     try {
       const addressParts = [
         form.shopNo,
-        form.floor,
-        form.area,
+        form.floorTower,
+        form.areaSectorLocality,
         form.city,
+        form.state,
         form.pincode
       ].filter(Boolean);
       
@@ -589,16 +644,13 @@ export default function VenueAddress() {
           />
           <FloatingLabelInput
             label="Floor / tower (optional)"
-            value={form.floorTower || form.floor}
-            onChangeText={(t) => setForm({ ...form, floorTower: t, floor: t })}
+            value={form.floorTower}
+            onChangeText={(t) => setForm({ ...form, floorTower: t })}
           />
           <FloatingLabelInput
             label="Area / Sector / Locality*"
-            value={form.areaSectorLocality || form.area}
-            onChangeText={(t) => {
-              setForm({ ...form, areaSectorLocality: t, area: t });
-              handleFormChange("area", t);
-            }}
+            value={form.areaSectorLocality}
+            onChangeText={(t) => setForm({ ...form, areaSectorLocality: t })}
           />
           <FloatingLabelInput
             label="City*"
@@ -681,8 +733,8 @@ export default function VenueAddress() {
       </LinearGradient>
 
       {/* Sticky Next Button */}
-      <TouchableOpacity 
-          onPress={() => router.push('/venue/addAmenities')}
+        <TouchableOpacity 
+          onPress={() => handleSaveAndNext()}
           className="rounded-lg border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center"
         >
           <LinearGradient
