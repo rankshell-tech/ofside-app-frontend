@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
+import { useSelector } from "react-redux";
+import { useNewVenue } from "@/hooks/useNewVenue";
+import { Venue } from "@/types";
 
 const amenitiesList = [
   "Wi-fi",
@@ -85,21 +88,54 @@ function AmenityIcon({ name, lib, size = 18, color = "#333" }: any) {
 
 export default function VenueAmenities() {
   const navigation = useNavigation();
-  const [selected, setSelected] = useState<string[]>([]);
+  const { currentNewVenue, updateNewVenue } = useNewVenue();
+  
+  // Initialize selected amenities from Redux store or empty array
+  const [selected, setSelected] = useState<string[]>(
+    currentNewVenue?.amenities || []
+  );
+
+  // Update local state when Redux data changes
+  useEffect(() => {
+    if (currentNewVenue?.amenities) {
+      setSelected(currentNewVenue.amenities);
+    }
+  }, [currentNewVenue?.amenities]);
 
   const toggleAmenity = (item: string) => {
-    setSelected((prev) =>
-      prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item]
-    );
+    const newSelected = selected.includes(item) 
+      ? selected.filter((a) => a !== item) 
+      : [...selected, item];
+    
+    setSelected(newSelected);
   };
 
-  const clearAll = () => setSelected([]);
+  const clearAll = () => {
+    setSelected([]);
+    // Also clear from Redux
+    if (currentNewVenue) {
+      updateNewVenue({ ...currentNewVenue, amenities: [] });
+    }
+  };
 
   const selectedCountLabel = useMemo(() => {
     if (selected.length === 0) return "None selected";
     if (selected.length === 1) return "1 selected";
     return `${selected.length} selected`;
   }, [selected]);
+
+  const handleSaveAndNext = () => {
+    if (currentNewVenue) {
+      console.log("currentNewVenue", currentNewVenue);
+      // Update Redux with selected amenities
+      updateNewVenue({ 
+        ...currentNewVenue, 
+        amenities: selected 
+      });
+    }
+    // Navigate to next step
+    router.push("/venue/addCourts");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -111,7 +147,6 @@ export default function VenueAmenities() {
         className="px-4 pt-4 pb-3"
       >
         <View className="flex-row items-center justify-between">
-
           <Pressable
             onPress={() => navigation.goBack()}
             className="w-10 h-10 rounded-full bg-white/80 items-center justify-center shadow"
@@ -134,11 +169,18 @@ export default function VenueAmenities() {
         </View>
 
         <Text className="mx-4 text-2xl font-bold mt-4">Select amenities at your venue</Text>
-        <Text className="mx-4 mb-2 text-sm text-gray-500 mt-1">Users will see these details on Ofside</Text>
+        <Text className="mx-4 mb-2 text-sm text-gray-500 mt-1">
+          Users will see these details on Ofside
+        </Text>
       </LinearGradient>
 
       {/* Amenities Grid */}
-      <ScrollView className="px-4 pt-4 bottom-28"  style={{ position: 'absolute', height: '78%' }}  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100}} >
+      <ScrollView 
+        className="px-4 pt-4 bottom-28"  
+        style={{ position: 'absolute', height: '78%' }}  
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={{ paddingBottom: 100 }} 
+      >
         <View className="flex-row flex-wrap justify-between">
           {amenitiesList.map((item) => {
             const isSelected = selected.includes(item);
@@ -160,11 +202,19 @@ export default function VenueAmenities() {
                     isSelected ? "bg-white/20" : "bg-gray-100"
                   }`}
                 >
-                  <AmenityIcon lib={mapped.lib} name={mapped.name} size={20} color={isSelected ? "#fff" : "#333"} />
+                  <AmenityIcon 
+                    lib={mapped.lib} 
+                    name={mapped.name} 
+                    size={20} 
+                    color={isSelected ? "#fff" : "#333"} 
+                  />
                 </View>
 
                 <View style={{ flex: 1 }}>
-                  <Text className={`font-semibold ${isSelected ? "text-white" : "text-black"}`} numberOfLines={1}>
+                  <Text 
+                    className={`font-semibold ${isSelected ? "text-white" : "text-black"}`} 
+                    numberOfLines={1}
+                  >
                     {item}
                   </Text>
                   {!isSelected ? (
@@ -182,44 +232,20 @@ export default function VenueAmenities() {
         </View>
       </ScrollView>
 
-
-         {/* Sticky Bottom Bar */}
+      {/* Sticky Bottom Bar */}
       <View className="absolute bottom-0 left-2 right-2">
-        <View className="flex-row justify-between items-center mb-3">
-          {/* <Text className="text-sm text-gray-600">{selected.length} selected</Text> */}
-          {/* <TouchableOpacity
-            onPress={() => {
-              // Quick action example: if nothing selected, select popular ones
-              if (selected.length === 0) {
-                // prefer Wi-fi, Parking, Washroom
-                const quick = ["Wi-fi", "Bike/Car parking", "Washroom/Restroom"];
-                // setSelected(quick) // can't call setter here because it's out of scope; do toggle
-                quick.forEach((a) => toggleAmenity(a));
-              } else {
-                // navigate forward
-                router.push("/venue/addAvailableSports");
-              }
-            }}
-            className="px-3 py-1 rounded-full bg-white/90 border"
+        <TouchableOpacity 
+          onPress={handleSaveAndNext} 
+          className="rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center"
+        >
+          <LinearGradient
+            colors={["#FFF201", "#E0E0E0"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="p-4 items-center rounded-xl"
           >
-            <Text className="text-xs font-semibold">Quick add</Text>
-          </TouchableOpacity> */}
-        </View>
-
-      
-
-
-
-
-        <TouchableOpacity   onPress={() => router.push("/venue/addAvailableSports")} className="rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center">
-            <LinearGradient
-                colors={["#FFF201", "#E0E0E0"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                className="p-4 items-center rounded-xl"
-            >
-                <Text className="font-bold text-black text-lg text-center p-4">Next</Text>
-            </LinearGradient>
+            <Text className="font-bold text-black text-lg text-center p-4">Next</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
