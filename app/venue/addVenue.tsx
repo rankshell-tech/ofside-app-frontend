@@ -89,7 +89,7 @@ export default function VenueOnboarding() {
   }
 
 
-  const { addNewVenue, updateNewVenue } = useNewVenue();
+  const { updateNewVenue,currentNewVenue } = useNewVenue();
 
   const allFieldsFilled = form.venueName && form.description && selectedDays.length > 0 && (openTime && closeTime || is24Hours);
 
@@ -102,7 +102,7 @@ export default function VenueOnboarding() {
       return;
     }
 
-    updateNewVenue({
+    updateNewVenue({...currentNewVenue,
       venueName: form.venueName,
       description: form.description,
       is24HoursOpen: is24Hours,
@@ -110,6 +110,8 @@ export default function VenueOnboarding() {
       openTime: openTime ? formatTime(openTime) : "",
       closeTime: closeTime ? formatTime(closeTime) : "",
     } as unknown as Venue);
+
+
     router.push('/venue/addAddressDetails');
   }
 
