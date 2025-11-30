@@ -1,64 +1,116 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
+import { useNewVenue } from "@/hooks/useNewVenue";
+import { Court } from "@/types";
 
-export default function Declaration() {
+// Day mapping for display
+const DAY_FULL_NAMES: { [key: string]: string } = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
+
+// Day number to name mapping (as stored in Court.peakDays)
+const DAY_NUMBER_TO_NAME: { [key: number]: string } = {
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat",
+  7: "Sun",
+};
+
+export default function Review() {
   const navigation = useNavigation();
-  const details = {
-    brandName: "XYZ",
-    contactPerson: "Xyz",
-    contactNumber: "xxxx xxxxxx",
-    email: "xya@gmail.com",
-    ownerName: "Owner Name",
-    ownerEmail: "Owner Email",
-    address: "Full Address",
-    sports: ["Name1", "Name2", "Name3"],
-    fee: 449,
-    tax: 80.82,
-  };
+  const { currentNewVenue, updateVenuePartial } = useNewVenue();
 
-  const venueDetails = {
-    brandName: "Chetana Turf",
-    description: "fghjkl;kjh hgfddhgjk kjhgf hgfhjkj jiuhgvfcgggggggggggggggggggggg ghjkjlkjlkjk hjggggggggggggggggggggggg hhkjwkedhgjgfuiqwhdiowjckschhscvas kahdjabgdjagdiuhaiudhq dihwawjdgjadbjabdjq dihaudhaqh",
-    venueType: "Not Specified",
-    sportsOfferred: "Not Specified",
-    operationDays: "Monday, Tuesday, Saturday, Sunday",
-    timings: "24 hours",
-  };
+  const [selectedPlan, setSelectedPlan] = useState<"revenue" | "introductory" | null>(
+    (currentNewVenue as any)?.selectedPlan || "revenue"
+  );
+  const [acknowledged, setAcknowledged] = useState(
+    currentNewVenue?.declarationAgreed || false
+  );
 
-  const contactDetails = {
-    contactPerson: "Xyz",
-    contactNumber: "xxxx xxxxxx",
-    contactEmail: "xya@gmail.com",
-    ownerName: "Owner Name",
-    ownerNumber: "xxxx xxxxxx",
-    ownerEmail: "Owner Email",
-    address: "Full Address",
-    landmark: "None"
-  };
+  // Extract data from Redux
+  const venueName = currentNewVenue?.venueName || "Not specified";
+  const description = currentNewVenue?.description || "Not specified";
+  const venueType = currentNewVenue?.venueType || "Not specified";
+  const sportsOffered = currentNewVenue?.sportsOffered || [];
+  const amenities = currentNewVenue?.amenities || [];
+  const is24Hours = currentNewVenue?.is24HoursOpen || false;
+  const days = (currentNewVenue as any)?.days || [];
+  const openTime = (currentNewVenue as any)?.openTime || "";
+  const closeTime = (currentNewVenue as any)?.closeTime || "";
+  
+  const location = currentNewVenue?.location;
+  const contact = currentNewVenue?.contact;
+  const owner = currentNewVenue?.owner;
+  
+  // Get courts from rawVenueData
+  const courts = (currentNewVenue?.rawVenueData?.courts as Court[]) || [];
 
-  const courts = [
-    {
-      sport:"Football",
-      surface:"Wooden",
-      slotDuration:"5",
-      maxDuration:"3",
-      price:"500"
+  // Format operational days
+  const formattedDays = useMemo(() => {
+    if (days.length === 0) return "Not specified";
+    return days.map((day: string) => DAY_FULL_NAMES[day] || day).join(", ");
+  }, [days]);
+
+  // Format timings
+  const formattedTimings = useMemo(() => {
+    if (is24Hours) return "24 hours";
+    if (openTime && closeTime) return `${openTime} - ${closeTime}`;
+    return "Not specified";
+  }, [is24Hours, openTime, closeTime]);
+
+  // Format full address
+  const fullAddress = useMemo(() => {
+    if (!location) return "Not specified";
+    const parts = [
+      location.shopNo,
+      location.floorTower,
+      location.areaSectorLocality,
+      location.city,
+      location.state,
+      location.pincode,
+      location.country,
+    ].filter(Boolean);
+    return parts.length > 0 ? parts.join(", ") : location.fullAddress || "Not specified";
+  }, [location]);
+
+  // Calculate total based on selected plan
+  const total = useMemo(() => {
+    if (selectedPlan === "revenue") {
+      const fee = 499;
+      const tax = fee * 0.18;
+      return fee + tax;
+    } else if (selectedPlan === "introductory") {
+      const fee = 2990;
+      const tax = fee * 0.18;
+      return fee + tax;
     }
-  ]
-
-  const [selectedPlan, setSelectedPlan] = useState<"revenue" | "introductory" | null>("revenue");
-    const [acknowledged, setAcknowledged] = useState(false);
+    return 0;
+  }, [selectedPlan]);
 
   const handleSelectPlan = (plan: "revenue" | "introductory") => {
-    setSelectedPlan(plan === selectedPlan ? null : plan);
+    const newPlan = plan === selectedPlan ? null : plan;
+    setSelectedPlan(newPlan);
+    updateVenuePartial({ selectedPlan: newPlan } as any);
   };
 
-  const total = details.fee + details.tax;
+  const handleAcknowledge = (value: boolean) => {
+    setAcknowledged(value);
+    updateVenuePartial({ declarationAgreed: value });
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -101,27 +153,31 @@ export default function Declaration() {
 
           <Text className="font-bold">
             Venue Name:{" "}
-            <Text className="font-normal">{venueDetails.brandName}</Text>
+            <Text className="font-normal">{venueName}</Text>
           </Text>
           <Text className="font-bold">
             Description:{" "}
-            <Text className="font-normal">{venueDetails.description}</Text>
+            <Text className="font-normal">{description}</Text>
           </Text>
-          {/* <Text className="font-bold">
-            Venue Type:{" "}
-            <Text className="font-normal">{venueDetails.venueType}</Text>
-          </Text> */}
+          {venueType && venueType !== "Not specified" && (
+            <Text className="font-bold">
+              Venue Type:{" "}
+              <Text className="font-normal">{venueType}</Text>
+            </Text>
+          )}
           <Text className="font-bold">
             Sports Offered:{" "}
-            <Text className="font-normal">{venueDetails.sportsOfferred}</Text>
+            <Text className="font-normal">
+              {sportsOffered.length > 0 ? sportsOffered.join(", ") : "Not specified"}
+            </Text>
           </Text>
           <Text className="font-bold">
             Operational days:{" "}
-            <Text className="font-normal">{venueDetails.operationDays}</Text>
+            <Text className="font-normal">{formattedDays}</Text>
           </Text>
           <Text className="font-bold">
             Timings:{" "}
-            <Text className="font-normal">{venueDetails.timings}</Text>
+            <Text className="font-normal">{formattedTimings}</Text>
           </Text>
         </View>
 
@@ -130,71 +186,126 @@ export default function Declaration() {
 
         <Text className="font-bold">
           Contact Person:{" "}
-          <Text className="font-normal">{contactDetails.contactPerson}</Text>
+          <Text className="font-normal">{contact?.name || "Not specified"}</Text>
         </Text>
         <Text className="font-bold">
           Contact Number:{" "}
-          <Text className="font-normal">{contactDetails.contactNumber}</Text>
+          <Text className="font-normal">{contact?.phone || "Not specified"}</Text>
         </Text>
         <Text className="font-bold">
           Contact Email:{" "}
-          <Text className="font-normal">{contactDetails.contactEmail}</Text>
+          <Text className="font-normal">{contact?.email || "Not specified"}</Text>
         </Text>
 
-        <Text className="font-bold mt-3">
-          Owner’s Name: <Text className="font-normal">{contactDetails.ownerName}</Text>
-        </Text>
-        <Text className="font-bold">
-          Owner’s Number: <Text className="font-normal">{contactDetails.ownerEmail}</Text>
-        </Text>
-        <Text className="font-bold">
-          Owner’s Email: <Text className="font-normal">{contactDetails.ownerEmail}</Text>
-        </Text>
+        {owner && (owner.name || owner.phone || owner.email) && (
+          <>
+            <Text className="font-bold mt-3">
+              Owner's Name: <Text className="font-normal">{owner.name || "Not specified"}</Text>
+            </Text>
+            <Text className="font-bold">
+              Owner's Number: <Text className="font-normal">{owner.phone || "Not specified"}</Text>
+            </Text>
+            <Text className="font-bold">
+              Owner's Email: <Text className="font-normal">{owner.email || "Not specified"}</Text>
+            </Text>
+          </>
+        )}
 
         <Text className="font-bold mt-3">
-          Address: <Text className="font-normal">{contactDetails.address}</Text>
+          Address: <Text className="font-normal">{fullAddress}</Text>
         </Text>
-        <Text className="font-bold">
-          Landmark:{" "}
-          <Text className="font-normal">{contactDetails.landmark}</Text>
-        </Text>
+        {location?.landmark && (
+          <Text className="font-bold">
+            Landmark:{" "}
+            <Text className="font-normal">{location.landmark}</Text>
+          </Text>
+        )}
         </View>
         <View className="bg-yellow-100 p-4 rounded-xl shadow-md mt-4">
-          {/* Venue Info */}
           <Text className="text-lg font-bold mb-3">Amenities</Text>
-
+          {amenities.length > 0 ? (
+            <View className="flex-row flex-wrap gap-2">
+              {amenities.map((amenity, index) => (
+                <View key={index} className="bg-white px-3 py-1 rounded-full border border-gray-300">
+                  <Text className="text-sm text-gray-700">{amenity}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text className="text-gray-600">No amenities specified</Text>
+          )}
         </View>
         <View className="bg-white p-4 rounded-xl shadow-md mt-4">
-          {/* Venue Info */}
-          <Text className="text-lg font-bold mb-3">Courts</Text>
-          {courts.map((court, index) => (
-            <View key={index} className="mb-4">
-              <Text className="font-bold">
-                Court {index + 1}{" "}
-                <Text className="font-normal"></Text>
-              </Text>
-               <Text className="font-bold">
-                Sport {" "}
-                <Text className="font-normal">{court.sport}</Text>
-              </Text>
-              <Text className="font-bold">
-                Surface:{" "}
-                <Text className="font-normal">{court.surface}</Text>
-              </Text>
-              <Text className="font-bold">
-                Slot:{" "}
-                <Text className="font-normal">{court.slotDuration}</Text>
-              </Text>
-              <Text className="font-bold">
-                Max bookings/slot:{" "}
-                <Text className="font-normal">{court.maxDuration}</Text>
-              </Text>
-              <Text className="font-bold">
-                Price/slot:{" "}
-                <Text className="font-normal">{court.price}</Text>
-              </Text>
-            </View>
-          ))}
+          <Text className="text-lg font-bold mb-3">Courts ({courts.length})</Text>
+          {courts.length > 0 ? (
+            courts.map((court, index) => (
+              <View key={index} className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <Text className="font-bold text-base mb-2">
+                  Court {index + 1}: {court.name || `Court ${index + 1}`}
+                </Text>
+                <Text className="font-bold">
+                  Sport:{" "}
+                  <Text className="font-normal">{court.sportType || "Not specified"}</Text>
+                </Text>
+                {court.surfaceType && (
+                  <Text className="font-bold">
+                    Surface:{" "}
+                    <Text className="font-normal">{court.surfaceType}</Text>
+                  </Text>
+                )}
+                <Text className="font-bold">
+                  Slot Duration:{" "}
+                  <Text className="font-normal">
+                    {court.slotDuration 
+                      ? court.slotDuration >= 60 
+                        ? `${Math.floor(court.slotDuration / 60)} hour${Math.floor(court.slotDuration / 60) > 1 ? 's' : ''}${court.slotDuration % 60 > 0 ? ` ${court.slotDuration % 60} min${court.slotDuration % 60 > 1 ? 's' : ''}` : ''}`
+                        : `${court.slotDuration} minute${court.slotDuration > 1 ? 's' : ''}`
+                      : "Not specified"}
+                  </Text>
+                </Text>
+                <Text className="font-bold">
+                  Max bookings/slot:{" "}
+                  <Text className="font-normal">{court.maxPeople || "Not specified"}</Text>
+                </Text>
+                <Text className="font-bold">
+                  Price/slot:{" "}
+                  <Text className="font-normal">₹{court.pricePerSlot || "Not specified"}</Text>
+                </Text>
+                {court.peakEnabled && (
+                  <View className="mt-2 pt-2 border-t border-gray-300">
+                    <Text className="font-bold text-sm text-orange-600">Peak Hours Pricing:</Text>
+                    {court.peakDays && court.peakDays.length > 0 && (
+                      <Text className="font-bold text-xs">
+                        Peak Days:{" "}
+                        <Text className="font-normal">
+                          {court.peakDays
+                            .map((d: number) => {
+                              const dayName = DAY_NUMBER_TO_NAME[d];
+                              return dayName ? DAY_FULL_NAMES[dayName] || dayName : `Day ${d}`;
+                            })
+                            .join(", ")}
+                        </Text>
+                      </Text>
+                    )}
+                    {court.peakStart && court.peakEnd && (
+                      <Text className="font-bold text-xs">
+                        Peak Hours:{" "}
+                        <Text className="font-normal">{court.peakStart} - {court.peakEnd}</Text>
+                      </Text>
+                    )}
+                    {court.peakPricePerSlot && (
+                      <Text className="font-bold text-xs">
+                        Peak Price/slot:{" "}
+                        <Text className="font-normal">₹{court.peakPricePerSlot}</Text>
+                      </Text>
+                    )}
+                  </View>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text className="text-gray-600">No courts added</Text>
+          )}
         </View>
         <View className="bg-yellow-50 p-4 rounded-xl shadow-md mt-4">
           {/* Venue Info */}
@@ -240,7 +351,7 @@ export default function Declaration() {
           <Text className="text-xl font-bold text-center mb-5">Venue Partner Declaration</Text>
           <Text className="text-sm mb-5">
             <Text className="font-bold">Authorization & Accuracy:</Text>
-            I hereby confirm that I am an authorized representative of <Text className="font-bold">venue test</Text>, and that all details provided in the official Ofside mobile app/website onboarding form are true, complete, and accurate. I understand that Ofside (powered by Rankshell – India’s ultimate sports ecosystem) will rely on this information to list, manage, and promote my venue on the platform.
+            I hereby confirm that I am an authorized representative of <Text className="font-bold">{venueName}</Text>, and that all details provided in the official Ofside mobile app/website onboarding form are true, complete, and accurate. I understand that Ofside (powered by Rankshell – India's ultimate sports ecosystem) will rely on this information to list, manage, and promote my venue on the platform.
           </Text>
           <Text className="text-sm mb-5">
             <Text className="font-bold">Consent & Compliance:</Text>
@@ -249,7 +360,7 @@ export default function Declaration() {
             {/* Checkbox */}
             <View className="flex-row justify-between items-start mt-5 mx-1">
                 <TouchableOpacity
-                    onPress={() => setAcknowledged(!acknowledged)}
+                    onPress={() => handleAcknowledge(!acknowledged)}
                 >
                     <Ionicons
                         name={acknowledged ? "checkbox" : "square-outline"}
@@ -291,12 +402,22 @@ export default function Declaration() {
 
         {/* Sticky Bottom Bar */}
         <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-300 flex-row justify-between items-center px-4 pt-3 pb-10">
-            <Text className="text-3xl font-bold">INR {total.toFixed(2)}</Text>
+            <View>
+              <Text className="text-xs text-gray-600">Total Amount</Text>
+              <Text className="text-3xl font-bold">₹{total.toFixed(2)}</Text>
+            </View>
             <TouchableOpacity
-              disabled={!acknowledged}
-              onPress={()=>router.push('/venue/paymentScreen')}
-              className={`bg-green-600 px-8 py-1 rounded-lg ${!acknowledged ? "opacity-50" : "opacity-100"}`}>
-                <Text className="font-bold text-white text-lg">Pay</Text>
+              disabled={!acknowledged || !selectedPlan}
+              onPress={() => {
+                // Save plan and declaration before navigating
+                updateVenuePartial({ 
+                  selectedPlan,
+                  declarationAgreed: acknowledged 
+                } as any);
+                router.push('/venue/paymentScreen');
+              }}
+              className={`px-8 py-3 rounded-lg ${!acknowledged || !selectedPlan ? "bg-gray-400" : "bg-green-600"}`}>
+                <Text className="font-bold text-white text-lg">Pay & Submit</Text>
             </TouchableOpacity>
         </View>
     </SafeAreaView>
