@@ -200,10 +200,10 @@ export default function HomeScreen() {
 
   const handleVenuePress = (venueId: string) => {
     // Using backend ID (_id) – ensure your /venue screen reads this param
-    router.push({
-      pathname: '/venue',
-      params: { venueId },
-    });
+    // router.push({
+    //   pathname: '/venue',
+    //   params: { venueId },
+    // });
   };
 
   const renderSportCard = ({
