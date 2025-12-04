@@ -90,9 +90,9 @@ export default function VenueAddress() {
     pincode: "",
     fullAddress: "",
     country: "India",
-    contactPersonName: "",
-    contactPersonEmail: "",
-    contactPersonContact: "",
+    contactPersonName: "Ashi Singh",
+    contactPersonEmail: "ashi@gmail.com",
+    contactPersonContact: "9898989898",
     ownerName: "",
     ownerEmail: "",
     ownerContact: "",
@@ -412,7 +412,7 @@ export default function VenueAddress() {
 
 
   const handleSaveAndNext = () => {
-    console.log("form", form);
+    // console.log("form", form);
     
     // Build full address string
     const fullAddressParts = [
@@ -444,9 +444,9 @@ export default function VenueAddress() {
         }
       },
       contact: {
-        name: form.contactPersonName || '',
-        phone: form.contactPersonContact || '',
-        email: form.contactPersonEmail || '',
+        name: form.contactPersonName,
+        phone: form.contactPersonContact,
+        email: form.contactPersonEmail,
       },
       ...(form.ownerName || form.ownerEmail || form.ownerContact ? {
         owner: {
@@ -735,7 +735,32 @@ export default function VenueAddress() {
       {/* Sticky Next Button */}
         <TouchableOpacity 
           onPress={() => handleSaveAndNext()}
-          className="rounded-lg border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center"
+          disabled={
+            !form.shopNo ||
+            !form.areaSectorLocality ||
+            !form.city ||
+            !form.pincode ||
+            !form.contactPersonName ||
+            !form.contactPersonContact ||
+            !form.contactPersonEmail ||
+            (!areOwnerDetailsSame && (
+              !form.ownerName ||
+              !form.ownerContact ||
+              !form.ownerEmail
+            ))
+          }
+          className={` ${!form.shopNo ||
+            !form.areaSectorLocality ||
+            !form.city ||
+            !form.pincode ||
+            !form.contactPersonName ||
+            !form.contactPersonContact ||
+            !form.contactPersonEmail ||
+            (!areOwnerDetailsSame && (
+              !form.ownerName ||
+              !form.ownerContact ||
+              !form.ownerEmail
+            )) ? 'opacity-50' : 'opacity-100'} rounded-lg border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center`}
         >
           <LinearGradient
             colors={["#FFF201", "#E0E0E0"]}

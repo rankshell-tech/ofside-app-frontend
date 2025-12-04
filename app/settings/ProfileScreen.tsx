@@ -71,11 +71,7 @@ export default function profileScreen() {
         onPress: () => router.push("/staticPages/refundAndCancellation"),
         requiresAuth: false 
       },
-      { 
-        label: "Corporate event booking", 
-        icon: "team",
-        requiresAuth: false 
-      },
+      
       { 
         label: "Add/Update your Venue", 
         icon: "pluscircleo", 

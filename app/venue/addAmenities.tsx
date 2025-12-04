@@ -61,11 +61,11 @@ const iconMap: Record<
   "Match referee": { lib: "MaterialCommunityIcons", name: "whistle" },
   "Warm-up track": { lib: "MaterialCommunityIcons", name: "run" },
   "Rental equipments": { lib: "Entypo", name: "briefcase" },
-  "First aid": { lib: "MaterialCommunityIcons", name: "first-aid" },
-  "Locker Rooms": { lib: "Ionicons", name: "locker" },
+  "First aid": { lib: "MaterialCommunityIcons", name: "medical-bag" }, // Changed from "first-aid"
+  "Locker Rooms": { lib: "MaterialCommunityIcons", name: "locker" }, // Changed to MaterialCommunityIcons
   "Seating areas": { lib: "MaterialCommunityIcons", name: "seat" },
   "Cafeteria": { lib: "Feather", name: "coffee" },
-  "Coaching": { lib: "MaterialCommunityIcons", name: "teach" },
+  "Coaching": { lib: "MaterialCommunityIcons", name: "whistle" }, // Changed from "teach" to "whistle"
 };
 
 function AmenityIcon({ name, lib, size = 18, color = "#333" }: any) {
@@ -236,7 +236,8 @@ export default function VenueAmenities() {
       <View className="absolute bottom-0 left-2 right-2">
         <TouchableOpacity 
           onPress={handleSaveAndNext} 
-          className="rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center"
+          disabled={selected.length === 0}
+          className={`rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center ${selected.length === 0 ? 'opacity-50' : 'opacity-100'}`}
         >
           <LinearGradient
             colors={["#FFF201", "#E0E0E0"]}

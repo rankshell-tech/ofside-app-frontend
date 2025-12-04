@@ -146,6 +146,62 @@ const FloatingLabelPicker = ({
   </View>
 );
 
+
+// Picker Modal Component
+const PickerModal = ({
+  visible,
+  value,
+  items,
+  onValueChange,
+  onClose,
+  title,
+}: {
+  visible: boolean;
+  value: string;
+  items: { label: string; value: string }[];
+  onValueChange: (value: string) => void;
+  onClose: () => void;
+  title: string;
+}) => {
+  if (!visible) return null;
+
+  return (
+    <View className="absolute inset-0 bg-black/40 bg-opacity-50 justify-center items-center z-50">
+      <View className="bg-white rounded-2xl w-11/12 max-w-sm">
+        <View className="p-4 border-b border-gray-200">
+          <Text className="text-lg font-semibold text-gray-900 text-center">{title}</Text>
+        </View>
+        <ScrollView className="max-h-80">
+          {items.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                onValueChange(item.value);
+                onClose();
+              }}
+              className={`px-4 py-3 border-b border-gray-100 ${
+                value === item.value ? 'bg-yellow-50' : 'bg-white'
+              }`}
+            >
+              <Text className={`text-base ${
+                value === item.value ? 'text-gray-900 font-semibold' : 'text-gray-700'
+              }`}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <TouchableOpacity
+          onPress={onClose}
+          className="p-4 border-t border-gray-200"
+        >
+          <Text className="text-red-500 font-semibold text-center">Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 const FloatingLabelTimePicker = ({
   label,
   value,
@@ -236,60 +292,7 @@ const FloatingLabelImageUpload = ({
   </View>
 );
 
-// Picker Modal Component
-const PickerModal = ({
-  visible,
-  value,
-  items,
-  onValueChange,
-  onClose,
-  title,
-}: {
-  visible: boolean;
-  value: string;
-  items: { label: string; value: string }[];
-  onValueChange: (value: string) => void;
-  onClose: () => void;
-  title: string;
-}) => {
-  if (!visible) return null;
 
-  return (
-    <View className="absolute inset-0 bg-black bg-opacity-50 justify-center items-center z-50">
-      <View className="bg-white rounded-2xl w-11/12 max-w-sm">
-        <View className="p-4 border-b border-gray-200">
-          <Text className="text-lg font-semibold text-gray-900 text-center">{title}</Text>
-        </View>
-        <ScrollView className="max-h-80">
-          {items.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                onValueChange(item.value);
-                onClose();
-              }}
-              className={`px-4 py-3 border-b border-gray-100 ${
-                value === item.value ? 'bg-yellow-50' : 'bg-white'
-              }`}
-            >
-              <Text className={`text-base ${
-                value === item.value ? 'text-gray-900 font-semibold' : 'text-gray-700'
-              }`}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <TouchableOpacity
-          onPress={onClose}
-          className="p-4 border-t border-gray-200"
-        >
-          <Text className="text-red-500 font-semibold text-center">Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
 
 export default function AddCourts() {
   const navigation = useNavigation();
@@ -307,6 +310,9 @@ export default function AddCourts() {
     mode: "open" | "close" | null;
     index: number | null;
   }>({ mode: null, index: null });
+
+
+
 
   // Picker options
   const surfaceTypes = [
@@ -329,44 +335,46 @@ export default function AddCourts() {
     { label: "Volleyball", value: "Volleyball" },
   ];
 
-  const slotDurations = [
-    { label: "Select Duration", value: "" },
-    { label: "30 minutes", value: "30 min" },
-    { label: "1 hour", value: "1 hour" },
-    { label: "2 hours", value: "2 hours" },
-    { label: "3 hours", value: "3 hours" },
-    { label: "4 hours", value: "4 hours" },
-    { label: "5 hours", value: "5 hours" },
-  ];
+const slotDurations = [
+  { label: "Select Duration", value: "" },
+  { label: "30 minutes", value: "30 minutes" },
+  { label: "1 hour", value: "1 hour" },
+  { label: "2 hours", value: "2 hours" },
+  { label: "3 hours", value: "3 hours" },
+  { label: "4 hours", value: "4 hours" },
+  { label: "5 hours", value: "5 hours" },
+];
 
   // Load courts from Redux on mount
-  useEffect(() => {
-    const storedCourts = currentNewVenue?.rawVenueData?.courts;
-    if (storedCourts && storedCourts.length > 0) {
-      const formCourts: CourtFormData[] = storedCourts.map((court: any) => ({
-        courtName: court.name || "",
-        surfaceType: court.surfaceType || "",
-        sportType: court.sportType || "",
-        slotDuration: court.slotDuration ? `${court.slotDuration} min` : "",
-        maxBooking: court.maxPeople?.toString() || "",
-        price: court.pricePerSlot?.toString() || "",
-        peakEnabled: court.peakEnabled || false,
-        peakDays: court.peakDays ? court.peakDays.map((d: number) => DAY_REVERSE_MAP[d] || "") : [],
-        peakStart: court.peakStart ? new Date(court.peakStart) : null,
-        peakEnd: court.peakEnd ? new Date(court.peakEnd) : null,
-        peakPrice: court.peakPricePerSlot?.toString() || "",
-        images: [
-          court.images?.cover,
-          court.images?.logo,
-          ...(court.images?.others || []),
-        ].slice(0, 5),
-      }));
-      setCourts(formCourts);
-    } else {
-      const initialCourts = [{ ...initialCourt }];
-      setCourts(initialCourts);
-    }
-  }, [currentNewVenue?.rawVenueData?.courts]);
+useEffect(() => {
+  const storedCourts = currentNewVenue?.rawVenueData?.courts;
+  if (storedCourts && storedCourts.length > 0) {
+    const formCourts: CourtFormData[] = storedCourts.map((court: any) => ({
+      courtName: court.name || "",
+      surfaceType: court.surfaceType || "",
+      sportType: court.sportType || "",
+      slotDuration: court.slotDuration ? 
+        (court.slotDuration === 0.5 ? "30 minutes" : `${court.slotDuration} hour${court.slotDuration !== 1 ? 's' : ''}`) : 
+        "",
+      maxBooking: court.maxPeople?.toString() || "",
+      price: court.pricePerSlot?.toString() || "",
+      peakEnabled: court.peakEnabled || false,
+      peakDays: court.peakDays ? court.peakDays.map((d: number) => DAY_REVERSE_MAP[d] || "") : [],
+      peakStart: court.peakStart ? new Date(`2000-01-01T${court.peakStart}`) : null,
+      peakEnd: court.peakEnd ? new Date(`2000-01-01T${court.peakEnd}`) : null,
+      peakPrice: court.peakPricePerSlot?.toString() || "",
+      images: [
+        court.images?.cover,
+        court.images?.logo,
+        ...(court.images?.others || []),
+      ].slice(0, 5),
+    }));
+    setCourts(formCourts);
+  } else {
+    const initialCourts = [{ ...initialCourt }];
+    setCourts(initialCourts);
+  }
+}, [currentNewVenue?.rawVenueData?.courts]);
 
   // Safe getter for current court
   const getCurrentCourt = () => {
@@ -379,10 +387,22 @@ export default function AddCourts() {
     if (!newCourts[index]) {
       newCourts[index] = { ...initialCourt };
     }
+
+      // If updating slotDuration, parse it
     (newCourts[index] as any)[field] = value;
+   
     setCourts(newCourts);
     saveCourtsToRedux(newCourts);
   };
+// Helper function to format slot duration for display
+const formatSlotDurationForDisplay = (value:  number | string): string => {
+  console.log(value)
+  if (!value) return "";
+  if (value == 0.5 || value == .5) return "30 min";
+  if (typeof value === "string" && value.includes("hour")) return value; // Already formatted
+  return `${value} hour${value === "1" ? "" : "s"}`;
+};
+
 
   const formatTime = (date: Date) => {
     if (!date) return "";
@@ -395,33 +415,47 @@ export default function AddCourts() {
   };
 
   // Convert CourtFormData[] to Court[] for Redux
-  const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
-    return formCourts.map((formCourt) => {
-      const slotDurationMinutes = parseInt(formCourt.slotDuration.replace(/\D/g, "")) || 60;
-      const images = {
-        cover: formCourt.images[0],
-        logo: formCourt.images[1],
-        others: formCourt.images.slice(2).filter(Boolean) as string[],
-      };
+const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
+  return formCourts.map((formCourt) => {
+    
+    // Parse slot duration from display text to number
+    let slotDuration = 0;
+    if (formCourt.slotDuration) {
+      if (formCourt.slotDuration.includes("30")) {
+        slotDuration = 0.5;
+      } else {
+        // Extract the number from the string (e.g., "1 hour" -> 1)
+        const match = formCourt.slotDuration.match(/(\d+)/);
+        if (match) {
+          slotDuration = parseFloat(match[1]);
+        }
+      }
+    }
 
-      return {
-        name: formCourt.courtName,
-        venue: "",
-        sportType: formCourt.sportType,
-        surfaceType: formCourt.surfaceType || undefined,
-        slotDuration: slotDurationMinutes,
-        maxPeople: parseInt(formCourt.maxBooking) || 0,
-        pricePerSlot: parseFloat(formCourt.price) || 0,
-        peakEnabled: formCourt.peakEnabled || false,
-        peakDays: formCourt.peakDays.map((d) => DAY_MAP[d]).filter(Boolean),
-        peakStart: formCourt.peakStart ? formatTime(formCourt.peakStart) : undefined,
-        peakEnd: formCourt.peakEnd ? formatTime(formCourt.peakEnd) : undefined,
-        peakPricePerSlot: formCourt.peakEnabled ? parseFloat(formCourt.peakPrice) || 0 : undefined,
-        images: Object.keys(images).length > 0 ? images : undefined,
-        isActive: true,
-      } as Court;
-    });
-  };
+    const images = {
+      cover: formCourt.images[0],
+      logo: formCourt.images[1],
+      others: formCourt.images.slice(2).filter(Boolean) as string[],
+    };
+
+    return {
+      name: formCourt.courtName,
+      venue: "",
+      sportType: formCourt.sportType,
+      surfaceType: formCourt.surfaceType || undefined,
+      slotDuration: slotDuration, // Store as number (0.5, 1, 2, etc.)
+      maxPeople: parseInt(formCourt.maxBooking) || 0,
+      pricePerSlot: parseFloat(formCourt.price) || 0,
+      peakEnabled: formCourt.peakEnabled || false,
+      peakDays: formCourt.peakDays.map((d) => DAY_MAP[d]).filter(Boolean),
+      peakStart: formCourt.peakStart ? formatTime(formCourt.peakStart) : undefined,
+      peakEnd: formCourt.peakEnd ? formatTime(formCourt.peakEnd) : undefined,
+      peakPricePerSlot: formCourt.peakEnabled ? parseFloat(formCourt.peakPrice) || 0 : undefined,
+      images: Object.keys(images).length > 0 ? images : undefined,
+      isActive: true,
+    } as Court;
+  });
+};
 
   const saveCourtsToRedux = (formCourts: CourtFormData[]) => {
     if (!updateVenuePartial) {
@@ -675,14 +709,13 @@ export default function AddCourts() {
               />
 
               {/* Slot Duration */}
-              <FloatingLabelPicker
-                label="Slot Duration"
-                value={currentCourt.slotDuration}
-                onPress={() => setShowPickerModal({ type: 'duration', index: activeCourtIndex })}
-                items={slotDurations}
-                required={true}
-              />
-
+<FloatingLabelPicker
+  label="Slot Duration"
+  value={currentCourt.slotDuration} // Now this is the display text like "30 minutes"
+  onPress={() => setShowPickerModal({ type: 'duration', index: activeCourtIndex })}
+  items={slotDurations}
+  required={true}
+/>
               {/* Max Booking */}
               <FloatingLabelInput
                 label="Max Booking Per Slot"
@@ -847,16 +880,14 @@ export default function AddCourts() {
         onClose={() => setShowPickerModal({ type: null, index: 0 })}
         title="Select Sport Type"
       />
-
-      <PickerModal
-        visible={showPickerModal.type === 'duration' && showPickerModal.index === activeCourtIndex}
-        value={currentCourt?.slotDuration || ''}
-        items={slotDurations}
-        onValueChange={(value) => updateCourt(activeCourtIndex, "slotDuration", value)}
-        onClose={() => setShowPickerModal({ type: null, index: 0 })}
-        title="Select Slot Duration"
-      />
-
+<PickerModal
+  visible={showPickerModal.type === 'duration' && showPickerModal.index === activeCourtIndex}
+  value={currentCourt?.slotDuration || ''}
+  items={slotDurations}
+  onValueChange={(value) => updateCourt(activeCourtIndex, "slotDuration", value)}
+  onClose={() => setShowPickerModal({ type: null, index: 0 })}
+  title="Select Slot Duration"
+/>
       {/* Sticky Bottom Button */}
       <TouchableOpacity
           onPress={handleNext}

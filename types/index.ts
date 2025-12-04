@@ -77,7 +77,7 @@ export interface Court {
     logo?: string;
     others?: string[];
   };
-  slotDuration?: number; // in minutes
+  slotDuration?: number | string; // in minutes or hours
   maxPeople: number;
   pricePerSlot: number;
   peakEnabled?: boolean;
