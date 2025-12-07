@@ -16,11 +16,14 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Entypo, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Court, Venue } from "@/types";
 import { useNewVenue } from "@/hooks/useNewVenue";
+import { useSelector } from "react-redux";
+import Constants from "expo-constants";
+import { ActivityIndicator } from "react-native";
 
 // Day mapping: Mon=1, Tue=2, ..., Sun=7
 const DAY_MAP: { [key: string]: number } = {
@@ -297,6 +300,14 @@ const FloatingLabelImageUpload = ({
 export default function AddCourts() {
   const navigation = useNavigation();
   const { currentNewVenue, updateVenuePartial } = useNewVenue();
+  const user = useSelector((state: any) => state.auth.user);
+  const params = useLocalSearchParams<{ venueId?: string; courtId?: string }>();
+  const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
+
+  // Determine if we're in edit mode
+  const isEditMode = !!params.venueId && !!params.courtId;
+  const venueId = params.venueId;
+  const courtId = params.courtId;
 
   const [courts, setCourts] = useState<CourtFormData[]>([]);
   const [activeCourtIndex, setActiveCourtIndex] = useState(0);
@@ -310,6 +321,9 @@ export default function AddCourts() {
     mode: "open" | "close" | null;
     index: number | null;
   }>({ mode: null, index: null });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(isEditMode);
 
 
 
@@ -345,36 +359,149 @@ const slotDurations = [
   { label: "5 hours", value: "5 hours" },
 ];
 
-  // Load courts from Redux on mount
-useEffect(() => {
-  const storedCourts = currentNewVenue?.rawVenueData?.courts;
-  if (storedCourts && storedCourts.length > 0) {
-    const formCourts: CourtFormData[] = storedCourts.map((court: any) => ({
-      courtName: court.name || "",
-      surfaceType: court.surfaceType || "",
-      sportType: court.sportType || "",
-      slotDuration: court.slotDuration ? 
-        (court.slotDuration === 0.5 ? "30 minutes" : `${court.slotDuration} hour${court.slotDuration !== 1 ? 's' : ''}`) : 
-        "",
-      maxBooking: court.maxPeople?.toString() || "",
-      price: court.pricePerSlot?.toString() || "",
-      peakEnabled: court.peakEnabled || false,
-      peakDays: court.peakDays ? court.peakDays.map((d: number) => DAY_REVERSE_MAP[d] || "") : [],
-      peakStart: court.peakStart ? new Date(`2000-01-01T${court.peakStart}`) : null,
-      peakEnd: court.peakEnd ? new Date(`2000-01-01T${court.peakEnd}`) : null,
-      peakPrice: court.peakPricePerSlot?.toString() || "",
-      images: [
-        court.images?.cover,
-        court.images?.logo,
-        ...(court.images?.others || []),
-      ].slice(0, 5),
-    }));
-    setCourts(formCourts);
-  } else {
-    const initialCourts = [{ ...initialCourt }];
-    setCourts(initialCourts);
-  }
-}, [currentNewVenue?.rawVenueData?.courts]);
+  // Helper function to parse time string to Date
+  const parseTimeString = (timeStr: string): Date | null => {
+    if (!timeStr) return null;
+    
+    // If already in "HH:mm" format (24-hour)
+    if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes)) return null;
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    }
+    
+    // If in "HH:mm AM/PM" format
+    if (/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(timeStr)) {
+      const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!match) return null;
+      let hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+      
+      if (isNaN(hours) || isNaN(minutes)) return null;
+      
+      if (period === 'PM' && hours !== 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+      
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    }
+    
+    // Try parsing as ISO date string
+    const date = new Date(timeStr);
+    if (!isNaN(date.getTime())) return date;
+    
+    return null;
+  };
+
+  const formatTime = (date: Date | null) => {
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) return "";
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (isNaN(hours) || isNaN(minutes)) return "";
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const minutesStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    return `${hours}:${minutesStr} ${ampm}`;
+  };
+
+  // Fetch court data if in edit mode
+  useEffect(() => {
+    if (isEditMode && courtId && venueId) {
+      fetchCourtData();
+    } else {
+      // Create mode: Load courts from Redux
+      loadCourtsFromRedux();
+    }
+  }, [isEditMode, courtId, venueId]);
+
+  const loadCourtsFromRedux = () => {
+    const storedCourts = currentNewVenue?.rawVenueData?.courts;
+    if (storedCourts && storedCourts.length > 0) {
+      const formCourts: CourtFormData[] = storedCourts.map((court: any) => ({
+        courtName: court.name || "",
+        surfaceType: court.surfaceType || "",
+        sportType: court.sportType || "",
+        slotDuration: court.slotDuration ? 
+          (court.slotDuration === 0.5 ? "30 minutes" : `${court.slotDuration} hour${court.slotDuration !== 1 ? 's' : ''}`) : 
+          "",
+        maxBooking: court.maxPeople?.toString() || "",
+        price: court.pricePerSlot?.toString() || "",
+        peakEnabled: court.peakEnabled || false,
+        peakDays: court.peakDays ? court.peakDays.map((d: number) => DAY_REVERSE_MAP[d] || "") : [],
+        peakStart: court.peakStart ? parseTimeString(court.peakStart) : null,
+        peakEnd: court.peakEnd ? parseTimeString(court.peakEnd) : null,
+        peakPrice: court.peakPricePerSlot?.toString() || "",
+        images: [
+          court.images?.cover,
+          court.images?.logo,
+          ...(court.images?.others || []),
+        ].slice(0, 5),
+      }));
+      setCourts(formCourts);
+    } else {
+      const initialCourts = [{ ...initialCourt }];
+      setCourts(initialCourts);
+    }
+  };
+
+  const fetchCourtData = async () => {
+    if (!courtId || !venueId || !user?.accessToken) return;
+
+    setIsFetching(true);
+    try {
+      const response = await fetch(`${API_URL}/api/courts/${courtId}`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch court');
+      }
+
+      const result = await response.json();
+      if (result.success && result.data?.court) {
+        const court = result.data.court;
+        
+        // Convert court data to form format
+        const formCourt: CourtFormData = {
+          courtName: court.name || "",
+          surfaceType: court.surfaceType || "",
+          sportType: court.sportType || "",
+          slotDuration: court.slotDuration ? 
+            (court.slotDuration === 0.5 ? "30 minutes" : 
+             court.slotDuration >= 1 && court.slotDuration <= 5 ? 
+             `${court.slotDuration} hour${court.slotDuration !== 1 ? 's' : ''}` : 
+             `${court.slotDuration} minutes`) : 
+            "",
+          maxBooking: court.maxPeople?.toString() || "",
+          price: court.pricePerSlot?.toString() || "",
+          peakEnabled: court.peakEnabled || false,
+          peakDays: court.peakDays ? court.peakDays.map((d: number) => DAY_REVERSE_MAP[d] || "") : [],
+          peakStart: court.peakStart ? parseTimeString(court.peakStart) : null,
+          peakEnd: court.peakEnd ? parseTimeString(court.peakEnd) : null,
+          peakPrice: court.peakPricePerSlot?.toString() || "",
+          images: [
+            court.images?.cover,
+            court.images?.logo,
+            ...(court.images?.others || []),
+          ].slice(0, 5),
+        };
+        
+        setCourts([formCourt]);
+        setActiveCourtIndex(0);
+      }
+    } catch (error) {
+      console.error('Error fetching court:', error);
+      Alert.alert('Error', 'Failed to load court data. Please try again.');
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   // Safe getter for current court
   const getCurrentCourt = () => {
@@ -402,17 +529,6 @@ const formatSlotDurationForDisplay = (value:  number | string): string => {
   if (typeof value === "string" && value.includes("hour")) return value; // Already formatted
   return `${value} hour${value === "1" ? "" : "s"}`;
 };
-
-
-  const formatTime = (date: Date) => {
-    if (!date) return "";
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
-    return `${hours}:${minutesStr} ${ampm}`;
-  };
 
   // Convert CourtFormData[] to Court[] for Redux
 const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
@@ -575,7 +691,7 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
     return true;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const invalidCourts = courts.filter(court => !validateCourt(court));
     if (invalidCourts.length > 0) {
       Alert.alert(
@@ -585,9 +701,111 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
       );
       return;
     }
-    
-    saveCourtsToRedux(courts);
-    router.push("/venue/review");
+
+    if (isEditMode && courtId && venueId) {
+      // Update mode: Save to backend
+      await handleUpdateCourt();
+    } else {
+      // Create mode: Update Redux and navigate
+      saveCourtsToRedux(courts);
+      router.push("/venue/review");
+    }
+  };
+
+  const handleUpdateCourt = async () => {
+    if (!courtId || !venueId || !user?.accessToken) {
+      Alert.alert('Error', 'Missing court ID, venue ID or authentication');
+      return;
+    }
+
+    const courtToUpdate = courts[0]; // In edit mode, there's only one court
+    if (!courtToUpdate) {
+      Alert.alert('Error', 'No court data to update');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Parse slot duration
+      let slotDuration = 0;
+      if (courtToUpdate.slotDuration) {
+        if (courtToUpdate.slotDuration.includes("30")) {
+          slotDuration = 0.5;
+        } else {
+          const match = courtToUpdate.slotDuration.match(/(\d+)/);
+          if (match) {
+            slotDuration = parseFloat(match[1]);
+          }
+        }
+      }
+
+      // Format peak times to HH:mm format (24-hour) for API
+      const formatTimeForAPI = (date: Date | null): string | undefined => {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) return undefined;
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        if (isNaN(hours) || isNaN(minutes)) return undefined;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      };
+
+      // Prepare update data in API format (schema expects courtName, but model uses name)
+      // Sending in schema format - backend should handle mapping
+      const updateData: any = {
+        courtName: courtToUpdate.courtName,
+        venue: venueId,
+        sportType: courtToUpdate.sportType,
+        surfaceType: courtToUpdate.surfaceType || undefined,
+        slotDuration: slotDuration || undefined,
+        maxPeople: parseInt(courtToUpdate.maxBooking) || undefined,
+        pricePerSlot: parseFloat(courtToUpdate.price) || undefined,
+        peakEnabled: courtToUpdate.peakEnabled || false,
+        peakDays: courtToUpdate.peakDays.length > 0 
+          ? courtToUpdate.peakDays.map((d) => DAY_MAP[d]).filter(Boolean).map(String)
+          : undefined,
+        peakStart: courtToUpdate.peakStart ? formatTimeForAPI(courtToUpdate.peakStart) : undefined,
+        peakEnd: courtToUpdate.peakEnd ? formatTimeForAPI(courtToUpdate.peakEnd) : undefined,
+        peakPricePerSlot: courtToUpdate.peakEnabled ? parseFloat(courtToUpdate.peakPrice) || undefined : undefined,
+        images: {
+          cover: courtToUpdate.images[0] || null,
+          logo: courtToUpdate.images[1] || null,
+          others: courtToUpdate.images.slice(2).filter(Boolean) as string[],
+        },
+      };
+
+      // Remove undefined fields
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key] === undefined) {
+          delete updateData[key];
+        }
+      });
+
+      const response = await fetch(`${API_URL}/api/courts/${courtId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`,
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to update court');
+      }
+
+      Alert.alert('Success', 'Court updated successfully', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Error updating court:', error);
+      Alert.alert('Error', error.message || 'Failed to update court. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Get current court safely
@@ -606,9 +824,13 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
             <Entypo name="chevron-left" size={20} color="#374151" />
           </TouchableOpacity>
           <View className="flex-1">
-            <Text className="text-2xl font-bold text-gray-900">Add Courts</Text>
+            <Text className="text-2xl font-bold text-gray-900">
+              {isEditMode ? 'Update Court' : 'Add Courts'}
+            </Text>
             <Text className="text-sm text-gray-600 mt-1">
-              Add details for each court in your venue
+              {isEditMode 
+                ? 'Update court details' 
+                : 'Add details for each court in your venue'}
             </Text>
           </View>
         </View>
@@ -649,12 +871,18 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
           colors={["#FFFDF6", "#FFFFFF"]}
           className="flex-1"
         >
-          <ScrollView 
-            contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Current Court Form */}
-            <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
+          {isFetching ? (
+            <View className="flex-1 items-center justify-center py-20">
+              <ActivityIndicator size="large" color="#FFF201" />
+              <Text className="text-gray-600 mt-4">Loading court data...</Text>
+            </View>
+          ) : (
+            <ScrollView 
+              contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Current Court Form */}
+              <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
               <View className="flex-row justify-between items-center mb-6">
                 <View>
                   <Text className="font-bold text-xl text-gray-900">
@@ -846,19 +1074,22 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
               )}
             </View>
 
-            {/* Add More Courts Button */}
-            <TouchableOpacity
-              onPress={addCourt}
-              className="bg-white py-4 rounded-xl items-center mb-6 border-2 border-dashed border-gray-300"
-            >
-              <View className="flex-row items-center">
-                <View className="w-6 h-6 rounded-full bg-[#FFF201] items-center justify-center mr-2">
-                  <Text className="text-gray-900 font-bold">+</Text>
-                </View>
-                <Text className="text-gray-700 font-semibold text-base">Add Another Court</Text>
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
+              {/* Add More Courts Button - Only show in create mode */}
+              {!isEditMode && (
+                <TouchableOpacity
+                  onPress={addCourt}
+                  className="bg-white py-4 rounded-xl items-center mb-6 border-2 border-dashed border-gray-300"
+                >
+                  <View className="flex-row items-center">
+                    <View className="w-6 h-6 rounded-full bg-[#FFF201] items-center justify-center mr-2">
+                      <Text className="text-gray-900 font-bold">+</Text>
+                    </View>
+                    <Text className="text-gray-700 font-semibold text-base">Add Another Court</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          )}
         </LinearGradient>
       </KeyboardAvoidingView>
 
@@ -892,17 +1123,30 @@ const convertToCourtArray = (formCourts: CourtFormData[]): Court[] => {
       <TouchableOpacity
           onPress={handleNext}
           className="absolute bottom-10 left-4 right-4 rounded-xl overflow-hidden shadow-lg"
-          disabled={courts.filter(validateCourt).length === 0}
+          disabled={courts.filter(validateCourt).length === 0 || isLoading || isFetching}
         >
           <LinearGradient
-            colors={courts.filter(validateCourt).length > 0 ? ["#FFF201", "#F59E0B"] : ["#E5E7EB", "#9CA3AF"]}
+            colors={
+              (courts.filter(validateCourt).length > 0 && !isLoading && !isFetching) 
+                ? ["#FFF201", "#F59E0B"] 
+                : ["#E5E7EB", "#9CA3AF"]
+            }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className="px-6 m-4 py-4 items-center justify-center"
           >
-            <Text className="font-bold text-black text-center text-lg p-4">
-              Review Venue ({courts.filter(validateCourt).length}/{courts.length})
-            </Text>
+            {isLoading ? (
+              <View className="flex-row items-center">
+                <ActivityIndicator size="small" color="#000" style={{ marginRight: 8 }} />
+                <Text className="font-bold text-black text-center text-lg p-4">Saving...</Text>
+              </View>
+            ) : (
+              <Text className="font-bold text-black text-center text-lg p-4">
+                {isEditMode 
+                  ? 'Save Court' 
+                  : `Review Venue (${courts.filter(validateCourt).length}/${courts.length})`}
+              </Text>
+            )}
           </LinearGradient>
         </TouchableOpacity>
     </SafeAreaView>

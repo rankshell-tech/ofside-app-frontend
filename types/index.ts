@@ -3,6 +3,7 @@
     name: string;
     mobile: string;
     email?: string;
+    plan: string;
     referralCode?: string;
     role: 0 | 1 | 2; // 0: user, 1: venue owner, 2: admin
     isActive: boolean;
@@ -14,6 +15,7 @@
     dateOfBirth?: Date;
     accessToken?: string;
     refreshToken?: string;
+    isProfileSwitchedToVenuePartner?: boolean;
    
   }
 export interface Venue {
@@ -24,6 +26,9 @@ export interface Venue {
   description: string;
   amenities?: string[];
   is24HoursOpen: boolean;
+  days: string[];
+  openTime: string;
+  closeTime: string;
   location: {
     shopNo: string;
     floorTower: string;

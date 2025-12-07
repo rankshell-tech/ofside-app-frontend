@@ -55,8 +55,12 @@ const venueSlice = createSlice({
       state.searchQuery = '';
       state.filteredVenues = state.venues;
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
   },
 });
 
-export const { setVenues, setSearchQuery, toggleSportFilter, clearFilters } = venueSlice.actions;
+export const { setVenues, setSearchQuery, toggleSportFilter, clearFilters, setLoading } = venueSlice.actions;
+
 export default venueSlice.reducer;

@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import React, { useState, useMemo, useEffect } from "react";
+import { View, Text, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,48 @@ import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useNewVenue } from "@/hooks/useNewVenue";
 import { Court } from "@/types";
+import { useSelector } from "react-redux";
+import Constants from "expo-constants";
+import { Platform } from "react-native";
+
+// Lazy load Razorpay to avoid NativeEventEmitter issues
+// Note: react-native-razorpay requires a custom development build (not Expo Go)
+const getRazorpayCheckout = (): any => {
+  if (Platform.OS === 'web') {
+    return null; // Razorpay doesn't work on web
+  }
+  
+  // Check if we're in Expo Go (which doesn't support custom native modules)
+  const executionEnvironment = Constants.executionEnvironment;
+  if (executionEnvironment === 'storeClient') {
+    console.warn("Razorpay requires a custom development build. Expo Go doesn't support native modules.");
+    return null;
+  }
+  
+  try {
+    // @ts-ignore - Razorpay package types
+    const razorpayModule = require("react-native-razorpay");
+    const RazorpayCheckout = razorpayModule.default || razorpayModule;
+    
+    // Check if the module has the open method (basic validation)
+    if (RazorpayCheckout && typeof RazorpayCheckout.open === 'function') {
+      return RazorpayCheckout;
+    }
+    
+    console.warn("Razorpay module loaded but open method not available");
+    return null;
+  } catch (error: any) {
+    // Check if it's the NativeEventEmitter error
+    if (error?.message?.includes('NativeEventEmitter') || 
+        error?.message?.includes('null') ||
+        error?.message?.includes('requires a non-null argument')) {
+      console.warn("Razorpay native module not properly linked. This requires a custom development build.");
+    } else {
+      console.warn("Razorpay module not available:", error?.message || error);
+    }
+    return null;
+  }
+};
 
 // Day mapping for display
 const DAY_FULL_NAMES: { [key: string]: string } = {
@@ -33,6 +75,9 @@ const DAY_NUMBER_TO_NAME: { [key: number]: string } = {
 export default function Review() {
   const navigation = useNavigation();
   const { currentNewVenue, updateVenuePartial } = useNewVenue();
+  const user = useSelector((state: any) => state.auth.user);
+  const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
+  const RAZORPAY_KEY_ID = Constants.expoConfig?.extra?.RAZORPAY_KEY_ID ?? 'YOUR_RAZORPAY_KEY_ID';
 
   const [selectedPlan, setSelectedPlan] = useState<"revenue" | "introductory" | null>(
     (currentNewVenue as any)?.selectedPlan || "revenue"
@@ -40,6 +85,11 @@ export default function Review() {
   const [acknowledged, setAcknowledged] = useState(
     currentNewVenue?.declarationAgreed || false
   );
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    console.log("currentNewVenue courts", currentNewVenue?.rawVenueData?.courts);
+  }, [currentNewVenue]);
 
   // Extract data from Redux
   const venueName = currentNewVenue?.venueName || "Not specified";
@@ -110,6 +160,226 @@ export default function Review() {
   const handleAcknowledge = (value: boolean) => {
     setAcknowledged(value);
     updateVenuePartial({ declarationAgreed: value });
+  };
+
+  // Convert venue data to API format
+  const prepareVenueData = () => {
+    const location = currentNewVenue?.location;
+    const contact = currentNewVenue?.contact;
+    const owner = currentNewVenue?.owner;
+    const courts = (currentNewVenue?.rawVenueData?.courts as Court[]) || [];
+
+    // Convert courts to API format
+    const formattedCourts = courts.map((court) => ({
+      courtName: court.name,
+      courtSportType: court.sportType,
+      surfaceType: court.surfaceType,
+      courtSlotDuration: typeof court.slotDuration === 'number' 
+        ? court.slotDuration >= 1 && court.slotDuration <= 5 
+          ? court.slotDuration * 60  // Convert hours to minutes
+          : court.slotDuration 
+        : parseFloat(court.slotDuration as string) || 60,
+      courtMaxPeople: court.maxPeople,
+      courtPricePerSlot: court.pricePerSlot,
+      courtPeakEnabled: court.peakEnabled,
+      courtPeakDays: court.peakDays || [],
+      courtPeakStart: court.peakStart,
+      courtPeakEnd: court.peakEnd,
+      courtPeakPricePerSlot: court.peakPricePerSlot,
+      courtImages: court.images,
+    }));
+
+    return {
+      venueName: currentNewVenue?.venueName,
+      venueType: currentNewVenue?.venueType,
+      sportsOffered: currentNewVenue?.sportsOffered || [],
+      description: currentNewVenue?.description,
+      is24HoursOpen: currentNewVenue?.is24HoursOpen || false,
+      shopNo: location?.shopNo || "",
+      floorTower: location?.floorTower || "",
+      areaSectorLocality: location?.areaSectorLocality || "",
+      city: location?.city || "",
+      pincode: location?.pincode || "",
+      latitude: location?.coordinates?.coordinates?.[1]?.toString() || "",
+      longitude: location?.coordinates?.coordinates?.[0]?.toString() || "",
+      contactPersonName: contact?.name || "",
+      contactPhone: contact?.phone || "",
+      contactEmail: contact?.email || "",
+      ownerName: owner?.name || "",
+      ownerPhone: owner?.phone || "",
+      ownerEmail: owner?.email || "",
+      amenities: currentNewVenue?.amenities || [],
+      courts: formattedCourts,
+      declarationAgreed: acknowledged,
+      selectedPlan: selectedPlan,
+    };
+  };
+
+  // Create venue after successful payment
+  const createVenue = async (paymentId: string, paymentSignature: string) => {
+    try {
+      const venueData = prepareVenueData();
+      
+      const response = await fetch(`${API_URL}/api/venues`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.accessToken || ''}`,
+        },
+        body: JSON.stringify({
+          ...venueData,
+          paymentId,
+          paymentSignature,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create venue');
+      }
+
+      return result;
+    } catch (error: any) {
+      console.error('Error creating venue:', error);
+      throw error;
+    }
+  };
+
+  // Handle Razorpay payment
+  const handlePayment = async () => {
+    if (!acknowledged || !selectedPlan) {
+      Alert.alert("Error", "Please acknowledge the declaration and select a plan");
+      return;
+    }
+
+    if (!user?.accessToken) {
+      Alert.alert("Error", "Please login to continue");
+      router.push('/login');
+      return;
+    }
+
+    // Lazy load Razorpay when needed
+    const RazorpayCheckout = getRazorpayCheckout();
+    
+    if (!RazorpayCheckout) {
+      const executionEnvironment = Constants.executionEnvironment;
+      let message = "Razorpay is not available.";
+      
+      if (Platform.OS === 'web') {
+        message = "Razorpay is not supported on web. Please use the mobile app.";
+      } else if (executionEnvironment === 'storeClient') {
+        message = "Razorpay requires a custom development build. Expo Go doesn't support native modules.\n\nPlease create a development build:\n1. Run: npx expo prebuild\n2. Run: npx expo run:android (or run:ios)\n3. Or use EAS Build to create a development build";
+      } else {
+        message = "Razorpay native module is not properly linked.\n\nPlease ensure:\n1. react-native-razorpay is installed\n2. For iOS: Run 'cd ios && pod install'\n3. Rebuild the app\n4. You're using a custom development build (not Expo Go)";
+      }
+      
+      Alert.alert("Razorpay Not Available", message);
+      setIsProcessing(false);
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // Razorpay configuration
+      if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
+        Alert.alert(
+          "Configuration Error",
+          "Razorpay Key ID is not configured. Please set RAZORPAY_KEY_ID in your environment variables."
+        );
+        setIsProcessing(false);
+        return;
+      }
+      
+      const options = {
+        description: `Venue Onboarding - ${selectedPlan === 'revenue' ? 'Revenue Share' : 'Introductory'} Plan`,
+        image: require('../../assets/images/logo.png'),
+        currency: 'INR',
+        key: RAZORPAY_KEY_ID,
+        amount: Math.round(total * 100), // Convert to paise
+        name: 'Ofside',
+        prefill: {
+          email: contact?.email || user?.email || '',
+          contact: contact?.phone || user?.mobile || '',
+          name: contact?.name || user?.name || '',
+        },
+        theme: { color: '#FFF201' },
+        order_id: undefined as string | undefined, // Will be set if order is created on backend
+      };
+
+      // Optional: Create order on backend first for better security
+      // Uncomment this if you want to create orders on backend
+      
+      try {
+        const orderResponse = await fetch(`${API_URL}/api/payments/create-order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user?.accessToken}`,
+          },
+          body: JSON.stringify({
+            amount: Math.round(total * 100),
+            currency: 'INR',
+            receipt: `venue_${Date.now()}`,
+          }),
+        });
+        const orderData = await orderResponse.json();
+        if (orderData.success && orderData.data?.orderId) {
+          options.order_id = orderData.data.orderId;
+        }
+      } catch (error) {
+        console.log('Order creation failed, proceeding with direct payment');
+      }
+      
+
+      // Open Razorpay checkout
+      const paymentData = await RazorpayCheckout.open(options);
+
+      // Payment successful - Razorpay returns payment details
+      if (paymentData && (paymentData.razorpay_payment_id || paymentData.payment_id)) {
+        const paymentId = paymentData.razorpay_payment_id || paymentData.payment_id;
+        const signature = paymentData.razorpay_signature || paymentData.signature || '';
+        // Save plan and declaration before creating venue
+        updateVenuePartial({ 
+          selectedPlan,
+          declarationAgreed: acknowledged 
+        } as any);
+
+        // Create venue with payment details
+        await createVenue(paymentId, signature);
+
+        Alert.alert(
+          "Payment Successful!",
+          "Your venue has been submitted successfully. Our team will review and activate it shortly.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Navigate to venue partner dashboard or home
+                router.replace('/(venuePartnerTabs)');
+              },
+            },
+          ]
+        );
+      }
+    } catch (error: any) {
+      console.error('Payment error:', error);
+      
+      // Handle different error types
+      if (error.code === 'NETWORK_ERROR') {
+        Alert.alert("Network Error", "Please check your internet connection and try again.");
+      } else if (error.code === 'BAD_REQUEST_ERROR') {
+        Alert.alert("Payment Error", "Invalid payment details. Please try again.");
+      } else if (error.code === 'SERVER_ERROR') {
+        Alert.alert("Server Error", "Payment server error. Please try again later.");
+      } else if (error.code !== 'PAYMENT_CANCELLED') {
+        Alert.alert("Payment Failed", error.description || "Payment could not be completed. Please try again.");
+      }
+      // If payment was cancelled, don't show error
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -257,9 +527,17 @@ export default function Review() {
                   Slot Duration:{" "}
                   <Text className="font-normal">
                     {court.slotDuration 
-                      ? court.slotDuration >= 60 
-                        ? `${Math.floor(court.slotDuration / 60)} hour${Math.floor(court.slotDuration / 60) > 1 ? 's' : ''}${court.slotDuration % 60 > 0 ? ` ${court.slotDuration % 60} min${court.slotDuration % 60 > 1 ? 's' : ''}` : ''}`
-                        : `${court.slotDuration} minute${court.slotDuration > 1 ? 's' : ''}`
+                      ? (() => {
+                          const duration = typeof court.slotDuration === 'string' 
+                            ? parseFloat(court.slotDuration) 
+                            : court.slotDuration;
+                          if (isNaN(duration)) return "Not specified";
+                          // Values 1-5 represent hours, other values represent minutes
+                          if (duration >= 1 && duration <= 5) {
+                            return `${duration} hour${duration > 1 ? 's' : ''}`;
+                          }
+                          return `${duration} minute${duration > 1 ? 's' : ''}`;
+                        })()
                       : "Not specified"}
                   </Text>
                 </Text>
@@ -407,17 +685,17 @@ export default function Review() {
               <Text className="text-3xl font-bold">₹{total.toFixed(2)}</Text>
             </View>
             <TouchableOpacity
-              disabled={!acknowledged || !selectedPlan}
-              onPress={() => {
-                // Save plan and declaration before navigating
-                updateVenuePartial({ 
-                  selectedPlan,
-                  declarationAgreed: acknowledged 
-                } as any);
-                router.push('/venue/paymentScreen');
-              }}
-              className={`px-8 py-3 rounded-lg ${!acknowledged || !selectedPlan ? "bg-gray-400" : "bg-green-600"}`}>
+              disabled={!acknowledged || !selectedPlan || isProcessing}
+              onPress={handlePayment}
+              className={`px-8 py-3 rounded-lg flex-row items-center justify-center ${!acknowledged || !selectedPlan || isProcessing ? "bg-gray-400" : "bg-green-600"}`}>
+              {isProcessing ? (
+                <>
+                  <ActivityIndicator size="small" color="white" style={{ marginRight: 8 }} />
+                  <Text className="font-bold text-white text-lg">Processing...</Text>
+                </>
+              ) : (
                 <Text className="font-bold text-white text-lg">Pay & Submit</Text>
+              )}
             </TouchableOpacity>
         </View>
     </SafeAreaView>

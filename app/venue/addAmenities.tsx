@@ -6,6 +6,8 @@ import {
   ScrollView,
   Pressable,
   Platform,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -17,14 +19,17 @@ import {
 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSelector } from "react-redux";
 import { useNewVenue } from "@/hooks/useNewVenue";
 import { Venue } from "@/types";
+import Constants from "expo-constants";
 
 const amenitiesList = [
   "Wi-fi",
   "Flood lights",
+  "Parking",
+  "Food and Drinks",
   "Washroom/Restroom",
   "Changing area",
   "Drinking water",
@@ -50,6 +55,7 @@ const iconMap: Record<
 > = {
   "Wi-fi": { lib: "Ionicons", name: "wifi" },
   "Flood lights": { lib: "MaterialCommunityIcons", name: "lightning-bolt" },
+  "Parking": { lib: "MaterialCommunityIcons", name: "parking" },
   "Washroom/Restroom": { lib: "MaterialCommunityIcons", name: "toilet" },
   "Changing area": { lib: "MaterialCommunityIcons", name: "tshirt-crew" },
   "Drinking water": { lib: "Feather", name: "coffee" },
@@ -64,6 +70,7 @@ const iconMap: Record<
   "First aid": { lib: "MaterialCommunityIcons", name: "medical-bag" }, // Changed from "first-aid"
   "Locker Rooms": { lib: "MaterialCommunityIcons", name: "locker" }, // Changed to MaterialCommunityIcons
   "Seating areas": { lib: "MaterialCommunityIcons", name: "seat" },
+  "Food and Drinks": { lib: "Feather", name: "coffee" },
   "Cafeteria": { lib: "Feather", name: "coffee" },
   "Coaching": { lib: "MaterialCommunityIcons", name: "whistle" }, // Changed from "teach" to "whistle"
 };
@@ -89,18 +96,62 @@ function AmenityIcon({ name, lib, size = 18, color = "#333" }: any) {
 export default function VenueAmenities() {
   const navigation = useNavigation();
   const { currentNewVenue, updateNewVenue } = useNewVenue();
+  const user = useSelector((state: any) => state.auth.user);
+  const params = useLocalSearchParams<{ venueId?: string }>();
+  const API_URL = Constants.expoConfig?.extra?.API_URL ?? '';
   
-  // Initialize selected amenities from Redux store or empty array
-  const [selected, setSelected] = useState<string[]>(
-    currentNewVenue?.amenities || []
-  );
+  // Determine if we're in edit mode
+  const isEditMode = !!params.venueId;
+  const venueId = params.venueId;
+  
+  const [selected, setSelected] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(isEditMode);
 
-  // Update local state when Redux data changes
+  // Fetch venue amenities if in edit mode
   useEffect(() => {
-    if (currentNewVenue?.amenities) {
+    if (isEditMode && venueId) {
+      fetchVenueAmenities();
+    } else if (currentNewVenue?.amenities) {
+      // Create mode: use Redux data
       setSelected(currentNewVenue.amenities);
     }
-  }, [currentNewVenue?.amenities]);
+  }, [isEditMode, venueId]);
+
+  // Update local state when Redux data changes (only in create mode)
+  useEffect(() => {
+    if (!isEditMode && currentNewVenue?.amenities) {
+      setSelected(currentNewVenue.amenities);
+    }
+  }, [currentNewVenue?.amenities, isEditMode]);
+
+  const fetchVenueAmenities = async () => {
+    if (!venueId || !user?.accessToken) return;
+    
+    setIsFetching(true);
+    try {
+      const response = await fetch(`${API_URL}/api/venues/${venueId}`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch venue');
+      }
+
+      const result = await response.json();
+      if (result.success && result.data?.venue) {
+        const venue = result.data.venue;
+        setSelected(venue.amenities || []);
+      }
+    } catch (error) {
+      console.error('Error fetching venue:', error);
+      Alert.alert('Error', 'Failed to load venue amenities. Please try again.');
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const toggleAmenity = (item: string) => {
     const newSelected = selected.includes(item) 
@@ -124,17 +175,60 @@ export default function VenueAmenities() {
     return `${selected.length} selected`;
   }, [selected]);
 
-  const handleSaveAndNext = () => {
-    if (currentNewVenue) {
-      console.log("currentNewVenue", currentNewVenue);
-      // Update Redux with selected amenities
-      updateNewVenue({ 
-        ...currentNewVenue, 
-        amenities: selected 
-      });
+  const handleSaveAndNext = async () => {
+    if (isEditMode && venueId) {
+      // Update mode: Save to backend
+      await handleUpdateAmenities();
+    } else {
+      // Create mode: Update Redux and navigate
+      if (currentNewVenue) {
+        updateNewVenue({ 
+          ...currentNewVenue, 
+          amenities: selected 
+        });
+      }
+      // Navigate to next step
+      router.push("/venue/addCourts");
     }
-    // Navigate to next step
-    router.push("/venue/addCourts");
+  };
+
+  const handleUpdateAmenities = async () => {
+    if (!venueId || !user?.accessToken) {
+      Alert.alert('Error', 'Missing venue ID or authentication');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/venues/${venueId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`,
+        },
+        body: JSON.stringify({
+          amenities: selected,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to update amenities');
+      }
+
+      Alert.alert('Success', 'Amenities updated successfully', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Error updating amenities:', error);
+      Alert.alert('Error', error.message || 'Failed to update amenities. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -168,7 +262,9 @@ export default function VenueAmenities() {
           </View>
         </View>
 
-        <Text className="mx-4 text-2xl font-bold mt-4">Select amenities at your venue</Text>
+        <Text className="mx-4 text-2xl font-bold mt-4">
+          {isEditMode ? 'Update amenities at your venue' : 'Select amenities at your venue'}
+        </Text>
         <Text className="mx-4 mb-2 text-sm text-gray-500 mt-1">
           Users will see these details on Ofside
         </Text>
@@ -181,7 +277,13 @@ export default function VenueAmenities() {
         showsVerticalScrollIndicator={false} 
         contentContainerStyle={{ paddingBottom: 100 }} 
       >
-        <View className="flex-row flex-wrap justify-between">
+        {isFetching ? (
+          <View className="flex-1 items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#FFF201" />
+            <Text className="text-gray-600 mt-4">Loading amenities...</Text>
+          </View>
+        ) : (
+          <View className="flex-row flex-wrap justify-between">
           {amenitiesList.map((item) => {
             const isSelected = selected.includes(item);
             const mapped = iconMap[item] || { lib: "Ionicons", name: "help" };
@@ -229,15 +331,16 @@ export default function VenueAmenities() {
               </TouchableOpacity>
             );
           })}
-        </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* Sticky Bottom Bar */}
       <View className="absolute bottom-0 left-2 right-2">
         <TouchableOpacity 
           onPress={handleSaveAndNext} 
-          disabled={selected.length === 0}
-          className={`rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center ${selected.length === 0 ? 'opacity-50' : 'opacity-100'}`}
+          disabled={(!isEditMode && selected.length === 0) || isLoading || isFetching}
+          className={`rounded-xl border overflow-hidden absolute bottom-0 right-0 left-0 mx-4 mb-10 text-center ${(!isEditMode && selected.length === 0) || isLoading || isFetching ? 'opacity-50' : 'opacity-100'}`}
         >
           <LinearGradient
             colors={["#FFF201", "#E0E0E0"]}
@@ -245,7 +348,16 @@ export default function VenueAmenities() {
             end={{ x: 1, y: 1 }}
             className="p-4 items-center rounded-xl"
           >
-            <Text className="font-bold text-black text-lg text-center p-4">Next</Text>
+            {isLoading ? (
+              <View className="flex-row items-center">
+                <ActivityIndicator size="small" color="#000" style={{ marginRight: 8 }} />
+                <Text className="font-bold text-black text-lg text-center p-4">Saving...</Text>
+              </View>
+            ) : (
+              <Text className="font-bold text-black text-lg text-center p-4">
+                {isEditMode ? 'Save' : 'Next'}
+              </Text>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </View>

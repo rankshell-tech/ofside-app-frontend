@@ -103,7 +103,7 @@ export default function OtpScreen() {
             // Basic validation
             const joinedOtp = otp.join('');
             if (joinedOtp.length !== 4) {
-                Alert.alert('Invalid code', 'Please enter the 4-digit code.');
+                // Alert.alert('Invalid code', 'Please enter the 4-digit code.');
                 setHasAutoSubmitted(false);
                 return;
             }

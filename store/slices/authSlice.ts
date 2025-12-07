@@ -4,9 +4,9 @@ import { User } from '@/types';
 interface AuthState {
   isAuthenticated: any;
   user: User | null;
-  role: 'player' | 'venue_owner' | 'admin';
   isGuest: boolean;
   isLoading: boolean;
+  isProfileSwitchedToVenuePartner: boolean;
 }
 
 interface LoginPayload {
@@ -18,9 +18,9 @@ interface LoginPayload {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  role: 'player',
   isGuest: false,
   isLoading: false,
+  isProfileSwitchedToVenuePartner: false,
 };
 
 const authSlice = createSlice({

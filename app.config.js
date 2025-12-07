@@ -56,6 +56,7 @@ export default {
       // API_URL: 'http://192.168.1.9:5000',
       API_URL: process.env.API_URL,
       GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
+      RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'YOUR_RAZORPAY_KEY_ID',
     },
   },
 };  

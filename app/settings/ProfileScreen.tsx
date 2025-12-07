@@ -25,6 +25,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { updateProfile } from "@/store/slices/authSlice";
 
 export default function profileScreen() {
   const theme = useTheme();
@@ -34,6 +35,11 @@ export default function profileScreen() {
   const dispatch = useDispatch<AppDispatch>();
   const { user ,isAuthenticated} = useSelector((state: RootState) => state.auth);
   console.log('user:', user);
+
+
+  const switchUserBetweenVenueAndPlayer = () => {
+    dispatch(updateProfile(user?.isProfileSwitchedToVenuePartner == true ? { isProfileSwitchedToVenuePartner: false } : { isProfileSwitchedToVenuePartner: true }));
+  }
 
 
   const openSocialLink = async (url: string) => {
@@ -49,6 +55,7 @@ export default function profileScreen() {
       Alert.alert("Error", "Failed to open URL");
     }
   };
+ 
 
 
   const getMenuItems = () => {
@@ -57,14 +64,71 @@ export default function profileScreen() {
         label: "Complete profile", 
         icon: "user", 
         onPress: () => router.push("/settings/editProfile"),
-        requiresAuth: true 
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: false
+ 
       },
+
+      { 
+        label: "Add your Venue", 
+        icon: "pluscircleo", 
+        onPress: () => router.push("/venue/addVenue"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+      },
+
+
+      { 
+        label: "Update existing venue", 
+        icon: "calendar", 
+        onPress: () => router.push("/venue/selectVenueForUpdating?updateType=venue"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+        
+      },
+      { 
+        label: "Update Timing & Days", 
+        icon: "clock",
+        onPress: () => router.push("/venue/selectVenueForUpdating?updateType=timing"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+      },
+      { 
+        label: "Update Courts", 
+        icon: "star",
+        onPress: () => router.push("/venue/selectVenueForUpdating?updateType=court"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+
+      },
+      { 
+        label: "Update Amenities", 
+        icon: "gift",
+        onPress: () => router.push("/venue/selectVenueForUpdating?updateType=amenities"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+      },
+
+      { 
+        label: "Venue Bookings", 
+        icon: "calendar",
+        onPress: () => router.push("/booking/booking"),
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: true
+      },
+
+
+
+
       { 
         label: "Your Bookings", 
         icon: "calendar", 
         onPress: () => router.push("/booking/booking"),
-        requiresAuth: true 
+        requiresAuth: true ,
+        showOnlyIfSwitchedToVenuePartner: false
+     
       },
+
       { 
         label: "Refunds/Cancellation policy", 
         icon: "exclamationcircleo", 
@@ -72,17 +136,13 @@ export default function profileScreen() {
         requiresAuth: false 
       },
       
-      { 
-        label: "Add/Update your Venue", 
-        icon: "pluscircleo", 
-        onPress: () => router.push("/venue/addVenue"),
-        requiresAuth: false 
-      },
+     
       { 
         label: "Invite & Earn", 
         icon: "gift", 
         onPress: () => router.push("/staticPages/inviteAndEarn"),
-        requiresAuth: false 
+        requiresAuth: false ,
+        showOnlyIfSwitchedToVenuePartner: false
       },
       { 
         label: "Help & Support", 
@@ -104,7 +164,7 @@ export default function profileScreen() {
     }));
   };
 
-  const menuItems = getMenuItems();
+  const menuItems = user?.isProfileSwitchedToVenuePartner == true ? getMenuItems().filter(item => item.showOnlyIfSwitchedToVenuePartner === true || item.requiresAuth === false) : getMenuItems().filter(item => item.showOnlyIfSwitchedToVenuePartner === false || item.requiresAuth === false ) ;
 
   const handleMenuItemPress = (item: any) => {
     if (item.disabled) {
@@ -131,6 +191,40 @@ export default function profileScreen() {
         resizeMode="cover"
         className="flex-1"
       >
+            {(user?.role == 1 || user?.role == 2) && (
+           <View className="absolute top-0 right-0 px-4  mt-2">
+           <TouchableOpacity 
+             onPress={() => switchUserBetweenVenueAndPlayer()}
+             className="rounded-xl overflow-hidden shadow-lg"
+             activeOpacity={0.8}
+           >
+             <LinearGradient
+               colors={user?.isProfileSwitchedToVenuePartner 
+                 ? ["#6B7280", "#4B5563"] 
+                 : ["#FFF201", "#F59E0B"]}
+               start={{ x: 0, y: 0 }}
+               end={{ x: 1, y: 1 }}
+               style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' ,gap: 4 ,paddingHorizontal: 8, paddingVertical: 4}}
+               className=""
+             >
+               <Ionicons 
+                 name={user?.isProfileSwitchedToVenuePartner ? "person-outline" : "business-outline"} 
+                 size={20} 
+                 color={user?.isProfileSwitchedToVenuePartner ? "#FFFFFF" : "#000000"} 
+                 style={{ marginRight: 4 }}
+               />
+               <Text className={`font-bold text-sm ${
+                 user?.isProfileSwitchedToVenuePartner ? "text-white" : "text-black"
+               }`}>
+                 {user?.isProfileSwitchedToVenuePartner 
+                   ? "Switch to Player Mode" 
+                   : "Switch to Venue Partner"}
+               </Text>
+             </LinearGradient>
+           </TouchableOpacity>
+         </View>
+        )}
+
         {/* Header */}
         <View className="w-8 h-8 bg-white rounded-full border-4 mx-2 mt-2" >
           <Entypo onPress={()=> navigation.goBack()} name="chevron-left" size={20} color="black" />
@@ -161,17 +255,54 @@ export default function profileScreen() {
             </View> */}
           </View>
 
-          <Text style={styles.role} numberOfLines={1} ellipsizeMode="tail">
-           {user?.role == 0 ? "Player": (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"))}
-          </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/subscription/PlayerSubscriptionScreen")}
+            activeOpacity={0.7}
+            style={styles.roleButton}
+          >
+            <View style={styles.roleContainer}>
+              {(() => {
+                const role = user?.role == 0 
+                  ? (user?.plan == "pro" ? "Pro Player" : "Elite Player")
+                  : (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"));
+                
+                // Get appropriate icon based on role
+                if (user?.role == 0) {
+                  // Player roles
+                  if (user?.plan == "pro") {
+                    return <FontAwesome5 name="crown" size={14} color="#FFF201" style={{ marginRight: 6 }} />;
+                  } else {
+                    return <FontAwesome5 name="medal" size={14} color="#FFF201" style={{ marginRight: 6 }} />;
+                  }
+                } else if (user?.role == 1) {
+                  // Venue Partner
+                  return <Ionicons name="business" size={14} color="#FFF201" style={{ marginRight: 6 }} />;
+                } else if (user?.role == 2) {
+                  // Superadmin
+                  return <FontAwesome5 name="shield-alt" size={14} color="#FFF201" style={{ marginRight: 6 }} />;
+                } else {
+                  // Guest
+                  return <FontAwesome name="user" size={14} color="#FFF201" style={{ marginRight: 6 }} />;
+                }
+              })()}
+              <Text style={styles.role} numberOfLines={1} ellipsizeMode="tail">
+                {user?.role == 0 ? (user?.plan == "pro" ? "Pro Player": "Elite Player"): (user?.role == 1 ? "Venue Partner" : (user?.role == 2 ? "Superadmin" : "Guest"))}
+              </Text>
+              <Ionicons name="chevron-forward" size={14} color="#FFF201" style={{ marginLeft: 4 }} />
+            </View>
+          </TouchableOpacity>
         </View>
+
+    
+    
       </LinearGradient>
     </View>
+
 
         {/* Menu List */}
                 {/* Menu List */}
         <ScrollView className="flex-1 mt-6 px-6">
-          <View className="space-y-3">
+          <View className="space-y-3 mb-6">
             {menuItems.map((item, index) => (
               <TouchableOpacity
                 key={index}
@@ -191,7 +322,7 @@ export default function profileScreen() {
             
             {/* Sign Out / Sign In Button */}
             <TouchableOpacity 
-              className="mt-4 p-3 bg-gray-100 rounded-xl border border-gray-300" 
+              className="mt-4 mb-4  p-3 bg-gray-100 rounded-xl border border-gray-300" 
               onPress={() => {
                 if (isAuthenticated) {
                   // Handle sign out logic here
@@ -210,12 +341,12 @@ export default function profileScreen() {
         </ScrollView>
 
         {/* Social Icons */}
-        <View className="flex-row absoloute bottom-10 w-full justify-center">
+        <View className="flex-row absoloute bottom-0 w-full justify-center">
           <TouchableOpacity onPress={() => openSocialLink("mailto:play@ofside.in")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8">
             <Zocial name="email" size={26} color="black" />
           </TouchableOpacity>
           <TouchableOpacity 
-              onPress={() => openSocialLink("https://instagram.com/ofsideapp")} className="w-14 h-14 border border-black rounded-lg items-center justify-center mr-8"><FontAwesome5 name="instagram" size={28} color="#E1306C" />
+              onPress={() => openSocialLink("https://instagram.com/ofsideapp")} className="w-14 h-14 border border-black rounded-lg items-center justify-center "><FontAwesome5 name="instagram" size={28} color="#E1306C" />
           </TouchableOpacity>
           {/* <TouchableOpacity className="w-14 h-14 border border-black rounded-lg items-center justify-center">
             <Iconify icon="flowbite:facebook-solid" size={35} color="blue" type="svg" />
@@ -279,7 +410,15 @@ const styles = StyleSheet.create({
   },
   role: {
     color: "#fff201",
-    marginTop: 4,
+    marginTop: 0,
     fontSize: 12,
+    fontWeight: "600",
+  },
+  roleButton: {
+    marginTop: 4,
+  },
+  roleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
