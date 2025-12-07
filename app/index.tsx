@@ -8,19 +8,26 @@ export default function Index() {
   const router = useRouter();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const isGuest = useSelector((state: RootState) => state.auth.isGuest);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isProfileSwitchedToVenuePartner = user?.isProfileSwitchedToVenuePartner;
 
   useEffect(() => {
     // Simulate app initialization
     const timer = setTimeout(() => {
       if (isAuthenticated || isGuest) {
-        router.replace('/(tabs)');
+        // Check if user has switched to venue partner mode
+        if (user && isProfileSwitchedToVenuePartner === true) {
+          router.replace('/(venuePartnerTabs)');
+        } else {
+          router.replace('/(tabs)');
+        }
       } else {
         router.replace('/login');
       }
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated, isGuest, router]);
+  }, [isAuthenticated, isGuest, router, user, isProfileSwitchedToVenuePartner]);
 
   return <LoadingSpinner fullScreen />;
 }

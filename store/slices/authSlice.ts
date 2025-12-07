@@ -6,7 +6,6 @@ interface AuthState {
   user: User | null;
   isGuest: boolean;
   isLoading: boolean;
-  isProfileSwitchedToVenuePartner: boolean;
 }
 
 interface LoginPayload {
@@ -20,7 +19,6 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isGuest: false,
   isLoading: false,
-  isProfileSwitchedToVenuePartner: false,
 };
 
 const authSlice = createSlice({
@@ -65,6 +63,7 @@ const authSlice = createSlice({
     updateProfile: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
+        // console.log('Updated user:', state.user);
       }
     },
   },

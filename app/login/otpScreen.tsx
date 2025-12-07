@@ -97,7 +97,7 @@ export default function OtpScreen() {
     };
 
     const handleCodeVerify = async () => {
-        console.log('Verifying OTP for:', identifier, 'with OTP:', otp.join(''), 'and type:', typeOfAuth);
+        // console.log('Verifying OTP for:', identifier, 'with OTP:', otp.join(''), 'and type:', typeOfAuth);
         
         try {
             // Basic validation
@@ -140,7 +140,7 @@ export default function OtpScreen() {
                 // ignore json parse errors
             }
 
-            console.log('verify-otp status:', response.status, 'body:', parsed);
+            // console.log('verify-otp status:', response.status, 'body:', parsed);
 
             if (!response.ok) {
                 const message =

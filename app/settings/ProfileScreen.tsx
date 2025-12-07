@@ -34,11 +34,21 @@ export default function profileScreen() {
 
   const dispatch = useDispatch<AppDispatch>();
   const { user ,isAuthenticated} = useSelector((state: RootState) => state.auth);
-  console.log('user:', user);
+  
 
 
   const switchUserBetweenVenueAndPlayer = () => {
-    dispatch(updateProfile(user?.isProfileSwitchedToVenuePartner == true ? { isProfileSwitchedToVenuePartner: false } : { isProfileSwitchedToVenuePartner: true }));
+    const newValue = !user?.isProfileSwitchedToVenuePartner;
+    dispatch(updateProfile({ isProfileSwitchedToVenuePartner: newValue }));
+    
+    // Navigate to appropriate tabs based on the new value
+    if (newValue) {
+      // Switching to Venue Partner mode
+      router.replace('/(venuePartnerTabs)');
+    } else {
+      // Switching to Player mode
+      router.replace('/(tabs)');
+    }
   }
 
 
